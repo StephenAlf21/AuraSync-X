@@ -92,7 +92,6 @@
               <h3 class="font-bold truncate" id="trackTitle">No Track Loaded</h3>
               <p class="text-sm text-gray-400" id="trackArtist">Add songs to the playlist to begin</p>
             </div>
-            <!-- === MODIFIED PLAYER CONTROLS START === -->
             <div class="flex items-center space-x-2 sm:space-x-4 flex-1 ml-4">
               <button id="prevBtn" class="p-2 rounded-full bg-gray-700 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Previous track" disabled>
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M8.445 14.832A1 1 0 0010 14.168V5.832a1 1 0 00-1.555-.832L3.11 9.168a1 1 0 000 1.664l5.335 4.001zM11 5v10a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664L12.555 4.168A1 1 0 0011 5z"></path></svg>
@@ -105,20 +104,14 @@
                <button id="nextBtn" class="p-2 rounded-full bg-gray-700 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Next track" disabled>
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M11.555 5.168A1 1 0 0010 5.832v8.336a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664l-5.335-4.168zM4 5v10a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664L5.555 4.168A1 1 0 004 5z"></path></svg>
               </button>
-              
-              <!-- Time display -->
               <span id="currentTime" class="text-sm w-12 text-right">0:00</span>
-            
-              <!-- Clickable progress container -->
               <div id="progressWrapper" class="flex-1 cursor-pointer" aria-label="Track progress">
                 <div class="h-1 bg-gray-700 rounded-full overflow-hidden">
                   <div id="progressBar" class="h-full bg-indigo-500 w-0 transition-all duration-100 ease-linear"></div>
                 </div>
               </div>
-            
               <span id="durationTime" class="text-sm w-12 text-left">0:00</span>
             </div>
-            <!-- === MODIFIED PLAYER CONTROLS END === -->
           </div>
         </section>
 
@@ -150,19 +143,9 @@
             <h3 class="font-semibold mb-2">Animation Speed</h3>
             <input type="range" id="speed" min="1" max="10" value="5" class="w-full accent-indigo-500" aria-valuemin="1" aria-valuemax="10" aria-valuenow="5" />
           </div>
-          <!-- === VOLUME SLIDER ADDED HERE === -->
           <div class="mb-6">
             <h3 class="font-semibold mb-2">Volume</h3>
-            <input
-              type="range"
-              id="volumeSlider"
-              min="0"
-              max="1"
-              step="0.01"
-              value="0.5"
-              class="w-full accent-indigo-500"
-              aria-label="Volume"
-            />
+            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" class="w-full accent-indigo-500" aria-label="Volume" />
           </div>
         </aside>
       </main>
@@ -191,26 +174,62 @@
       </div>
   </aside>
 
-  <!-- Modals remain the same -->
-  <div id="accessibilityModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="accessibilityTitle">
-    <div class="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4">
-      <div class="flex justify-between items-center mb-4">
-        <h2 id="accessibilityTitle" class="text-xl font-bold text-indigo-400">Accessibility Settings</h2>
-        <button id="closeAccessibility" class="p-1 rounded-full hover:bg-gray-700" aria-label="Close accessibility settings">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+  <!-- === UPDATED ACCESSIBILITY MODAL === -->
+  <div id="accessibilityModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="accessibilityTitle">
+    <div class="modal-card">
+      <div class="flex justify-between items-center mb-6">
+        <h2 id="accessibilityTitle" class="text-2xl font-bold text-indigo-400">Accessibility Settings</h2>
+        <button id="closeAccessibility" class="p-2 rounded-full hover:bg-gray-700 transition-colors" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       </div>
-      <div class="space-y-4">
-        <div><h3 class="font-semibold mb-2">Visual Accessibility</h3><div class="flex items-center"><input type="checkbox" id="highContrast" class="mr-2 accent-indigo-500" aria-checked="false" /><label for="highContrast">High Contrast Mode</label></div></div>
-        <div><h3 class="font-semibold mb-2">Animation Sensitivity</h3><input type="range" id="animationSensitivity" min="1" max="5" value="3" class="w-full accent-indigo-500" aria-valuemin="1" aria-valuemax="5" aria-valuenow="3" /></div>
-        <div><h3 class="font-semibold mb-2">Keyboard Shortcuts</h3><ul class="text-sm space-y-1"><li><kbd class="bg-gray-700 px-2 py-1 rounded mr-2">Space</kbd> Play/Pause</li><li><kbd class="bg-gray-700 px-2 py-1 rounded mr-2">→</kbd> Next Track</li><li><kbd class="bg-gray-700 px-2 py-1 rounded mr-2">←</kbd> Previous Track</li><li><kbd class="bg-gray-700 px-2 py-1 rounded mr-2">+/-</kbd> Volume</li></ul></div>
+      <div class="space-y-6">
+        <div>
+          <h3 class="font-semibold mb-2 text-lg">Visual Accessibility</h3>
+          <div class="flex items-center space-x-2">
+            <input type="checkbox" id="highContrast" class="accent-indigo-500" />
+            <label for="highContrast" class="text-gray-200">High Contrast Mode</label>
+          </div>
+        </div>
+        <hr class="border-gray-700" />
+        <div>
+          <h3 class="font-semibold mb-2 text-lg">Animation Sensitivity</h3>
+          <input type="range" id="animationSensitivity" min="1" max="5" value="3" class="w-full accent-indigo-500" />
+        </div>
+        <hr class="border-gray-700" />
+        <div>
+          <h3 class="font-semibold mb-2 text-lg">Keyboard Shortcuts</h3>
+          <ul class="grid grid-cols-2 gap-4 text-sm">
+            <li><kbd class="px-2 py-1 bg-gray-700 rounded">Space</kbd> Play/Pause</li>
+            <li><kbd class="px-2 py-1 bg-gray-700 rounded">→</kbd> Next Track</li>
+            <li><kbd class="px-2 py-1 bg-gray-700 rounded">←</kbd> Previous Track</li>
+            <li><kbd class="px-2 py-1 bg-gray-700 rounded">+ / −</kbd> Volume</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
-  <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
-    <div class="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4">
-      <div class="flex justify-between items-center mb-4"><h2 id="helpTitle" class="text-xl font-bold text-indigo-400">How to Use AuraSync X</h2><button id="closeHelp" class="p-1 rounded-full hover:bg-gray-700" aria-label="Close help"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
-      <div class="space-y-3 text-sm"><p>1. Click the list icon in the header to open the playlist.</p><p>2. Click "Add Songs" to build your playlist.</p><p>3. Click any song in the playlist to start the visualization.</p><p>4. Use the control panel to customize the visualization type, colors, and sensitivity.</p><p>5. Use the player controls or keyboard shortcuts (Space, Arrows) to manage playback.</p></div>
+
+  <!-- === UPDATED HELP MODAL === -->
+  <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="modal-card">
+        <div class="flex justify-between items-center mb-6">
+            <h2 id="helpTitle" class="text-2xl font-bold text-indigo-400">How to Use AuraSync X</h2>
+            <button id="closeHelp" class="p-2 rounded-full hover:bg-gray-700 transition-colors" aria-label="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="space-y-4 text-gray-200">
+            <p>1. Click the list icon <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg> in the header to open the playlist.</p>
+            <p>2. Click the "Add Songs" button to build your playlist from your local files.</p>
+            <p>3. Click any song in the playlist to start the music and the visualization.</p>
+            <p>4. Use the control panel to customize the visualization type, colors, and sensitivity.</p>
+            <p>5. Use the player controls or keyboard shortcuts (Space, Arrows) to manage playback.</p>
+        </div>
     </div>
   </div>
 
@@ -325,7 +344,6 @@
     }
     
     function initAudio(track) {
-      // Prevent multiple animate() loops from stacking
       if (animationId) {
         cancelAnimationFrame(animationId);
         animationId = null;
@@ -631,18 +649,64 @@
     }
     function adjustVolume(delta) {
         if (!audioElement) return;
-        // Calculate new volume and clamp it between 0 and 1
         const newVolume = Math.min(1, Math.max(0, audioElement.volume + delta));
         audioElement.volume = newVolume;
-        // Sync the slider's visual position with the new volume
         if (volumeSlider) {
           volumeSlider.value = newVolume;
         }
     }
 
+    // --- MODAL ANIMATION HELPERS ---
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      const card  = modal.querySelector('.modal-card');
+
+      modal.classList.remove('hidden');
+      modal.style.opacity = 0;
+      card.style.opacity  = 0;
+      card.style.transform = 'translateY(50px)';
+
+      anime.timeline()
+        .add({
+          targets: modal,
+          opacity: [0,1],
+          duration: 200,
+          easing: 'linear'
+        })
+        .add({
+          targets: card,
+          translateY: [50,0],
+          opacity: [0,1],
+          duration: 300,
+          easing: 'easeOutQuad'
+        }, '-=150');
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      const card  = modal.querySelector('.modal-card');
+
+      anime.timeline()
+        .add({
+          targets: card,
+          translateY: [0,50],
+          opacity: [1,0],
+          duration: 200,
+          easing: 'easeInQuad'
+        })
+        .add({
+          targets: modal,
+          opacity: [1,0],
+          duration: 150,
+          easing: 'linear'
+        }, '-=150')
+        .finished.then(() => {
+          modal.classList.add('hidden');
+        });
+    }
+
     // --- EVENT LISTENERS ---
     document.addEventListener('DOMContentLoaded', () => {
-      // === DYNAMIC VERSION & COPYRIGHT ===
       document.getElementById('appVersion').textContent = `v${APP_VERSION}`;
       document.getElementById('appCopyright').textContent = `© ${new Date().getFullYear()} AuraSync X. All rights reserved.`;
 
@@ -650,7 +714,6 @@
       renderPlaylist();
       updateButtons();
 
-      // === GRAB PLAYER CONTROL NODES ===
       currentTimeEl   = document.getElementById('currentTime');
       durationEl      = document.getElementById('durationTime');
       progressWrapper = document.getElementById('progressWrapper');
@@ -659,7 +722,6 @@
       
       progressWrapper.addEventListener('click', seek);
 
-      // === WRAP initAudio TO SET INITIAL VOLUME ===
       const originalInitAudio = initAudio;
       initAudio = function(track) {
         originalInitAudio(track);
@@ -668,7 +730,6 @@
         }
       };
 
-      // === ADD VOLUME SLIDER LISTENER ===
       volumeSlider.addEventListener('input', e => {
         if (audioElement) {
           audioElement.volume = e.target.value;
@@ -715,12 +776,12 @@
           setSidebarVisibility(false);
       });
 
-      const accessibilityModal = document.getElementById('accessibilityModal');
-      document.getElementById('accessibilityBtn').addEventListener('click', () => accessibilityModal.classList.remove('hidden'));
-      document.getElementById('closeAccessibility').addEventListener('click', () => accessibilityModal.classList.add('hidden'));
-      const helpModal = document.getElementById('helpModal');
-      document.getElementById('helpBtn').addEventListener('click', () => helpModal.classList.remove('hidden'));
-      document.getElementById('closeHelp').addEventListener('click', () => helpModal.classList.add('hidden'));
+      // === UPDATED MODAL EVENT LISTENERS ===
+      document.getElementById('accessibilityBtn').addEventListener('click', () => openModal('accessibilityModal'));
+      document.getElementById('closeAccessibility').addEventListener('click', () => closeModal('accessibilityModal'));
+      document.getElementById('helpBtn').addEventListener('click', () => openModal('helpModal'));
+      document.getElementById('closeHelp').addEventListener('click', () => closeModal('helpModal'));
+      
       document.getElementById('highContrast').addEventListener('change', e => document.body.classList.toggle('high-contrast', e.target.checked));
 
       document.addEventListener('keydown', e => {
