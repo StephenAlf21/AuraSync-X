@@ -141,9 +141,23 @@
             <h3 class="font-semibold mb-2">Sensitivity</h3>
             <input type="range" id="sensitivity" min="1" max="10" value="5" class="w-full accent-indigo-500" aria-valuemin="1" aria-valuemax="10" aria-valuenow="5" />
           </div>
-          <div>
+          <div class="mb-6">
             <h3 class="font-semibold mb-2">Animation Speed</h3>
             <input type="range" id="speed" min="1" max="10" value="5" class="w-full accent-indigo-500" aria-valuemin="1" aria-valuemax="10" aria-valuenow="5" />
+          </div>
+          <!-- === VOLUME SLIDER ADDED HERE === -->
+          <div class="mb-6">
+            <h3 class="font-semibold mb-2">Volume</h3>
+            <input
+              type="range"
+              id="volumeSlider"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.5"
+              class="w-full accent-indigo-500"
+              aria-label="Volume"
+            />
           </div>
         </aside>
       </main>
@@ -229,8 +243,8 @@
     const prevBtn = document.getElementById('prevBtn');
     const fileInput = document.getElementById('fileInput');
     
-    // === NEW DOM ELEMENTS FOR PROGRESS BAR ===
-    let currentTimeEl, durationEl, progressWrapper, progressBar;
+    // === DOM ELEMENTS FOR PLAYER CONTROLS ===
+    let currentTimeEl, durationEl, progressWrapper, progressBar, volumeSlider;
 
 
     // --- ICONS ---
@@ -328,8 +342,6 @@
       audioElement.addEventListener('loadedmetadata', setDuration);
       audioElement.addEventListener('timeupdate', updateProgressBar);
       
-      // === BUG FIX APPLIED HERE ===
-      // When a track ends, ensure isPlaying is true before loading the next one.
       audioElement.addEventListener('ended', () => {
           isPlaying = true;
           playNextTrack();
@@ -473,34 +485,28 @@
         prevBtn.disabled = !hasTracks;
     }
 
-    // === NEW HELPER FUNCTIONS FOR PROGRESS BAR ===
-    // Formats seconds into M:SS format
+    // === HELPER FUNCTIONS FOR PLAYER CONTROLS ===
     function formatTime(sec) {
       const m = Math.floor(sec / 60);
       const s = Math.floor(sec % 60).toString().padStart(2, '0');
       return `${m}:${s}`;
     }
     
-    // Once metadata is loaded, set the total duration text
     function setDuration() {
       if (audioElement && audioElement.duration) {
         durationEl.textContent = formatTime(audioElement.duration);
       }
     }
     
-    // Seek to a new time when the progress bar is clicked
     function seek(e) {
       if (!audioElement || !audioElement.duration) return;
       const rect = progressWrapper.getBoundingClientRect();
-      // Use clientX for consistent coordinates regardless of scroll
       const clickX = e.clientX - rect.left;
       const newTime = (clickX / rect.width) * audioElement.duration;
       audioElement.currentTime = newTime;
-      updateProgressBar(); // Immediately update UI
+      updateProgressBar();
     }
 
-    // === UPDATED PROGRESS BAR FUNCTION ===
-    // Updates both bar width and current time text
     function updateProgressBar() {
         if (!audioElement || !audioElement.duration) { 
             progressBar.style.width = '0%'; 
@@ -609,7 +615,13 @@
     }
     function adjustVolume(delta) {
         if (!audioElement) return;
-        audioElement.volume = Math.min(1, Math.max(0, audioElement.volume + delta));
+        // Calculate new volume and clamp it between 0 and 1
+        const newVolume = Math.min(1, Math.max(0, audioElement.volume + delta));
+        audioElement.volume = newVolume;
+        // Sync the slider's visual position with the new volume
+        if (volumeSlider) {
+          volumeSlider.value = newVolume;
+        }
     }
 
     // --- EVENT LISTENERS ---
@@ -618,12 +630,30 @@
       renderPlaylist();
       updateButtons();
 
-      // === GRAB NEW DOM NODES & ADD CLICK LISTENER ===
+      // === GRAB PLAYER CONTROL NODES ===
       currentTimeEl   = document.getElementById('currentTime');
       durationEl      = document.getElementById('durationTime');
       progressWrapper = document.getElementById('progressWrapper');
       progressBar     = document.getElementById('progressBar');
+      volumeSlider    = document.getElementById('volumeSlider');
+      
       progressWrapper.addEventListener('click', seek);
+
+      // === WRAP initAudio TO SET INITIAL VOLUME ===
+      const originalInitAudio = initAudio;
+      initAudio = function(track) {
+        originalInitAudio(track);
+        if (audioElement) {
+          audioElement.volume = volumeSlider.value;
+        }
+      };
+
+      // === ADD VOLUME SLIDER LISTENER ===
+      volumeSlider.addEventListener('input', e => {
+        if (audioElement) {
+          audioElement.volume = e.target.value;
+        }
+      });
 
       document.querySelectorAll('.viz-type').forEach(btn => btn.addEventListener('click', () => switchVisualization(btn.dataset.viz)));
       document.querySelectorAll('.color-scheme').forEach(btn => btn.addEventListener('click', () => switchColorScheme(btn.dataset.scheme)));
