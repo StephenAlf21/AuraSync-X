@@ -325,10 +325,15 @@
       bufferLength = analyser.frequencyBinCount;
       dataArray = new Uint8Array(bufferLength);
 
-      // === NEW EVENT LISTENERS FOR PROGRESS BAR ===
       audioElement.addEventListener('loadedmetadata', setDuration);
       audioElement.addEventListener('timeupdate', updateProgressBar);
-      audioElement.addEventListener('ended', playNextTrack);
+      
+      // === BUG FIX APPLIED HERE ===
+      // When a track ends, ensure isPlaying is true before loading the next one.
+      audioElement.addEventListener('ended', () => {
+          isPlaying = true;
+          playNextTrack();
+      });
 
       if (isPlaying) audioElement.play();
     }
