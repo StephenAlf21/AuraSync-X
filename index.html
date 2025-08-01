@@ -80,8 +80,9 @@
       </header>
 
       <main class="flex flex-col lg:flex-row gap-6">
-        <section class="flex-1 relative rounded-xl overflow-hidden border border-gray-700 glow">
-          <div id="visualizer" class="w-full h-64 sm:h-96 lg:h-[500px] bg-black"></div>
+        <section class="flex-1 relative rounded-xl overflow-hidden border border-gray-700 glow flex">
+          <div id="visualizer" class="flex-1 h-64 sm:h-96 lg:h-[500px] bg-black"></div>
+          <canvas id="spectrumCanvas" class="hidden sm:block w-32 md:w-48 h-full bg-black"></canvas>
           <div class="absolute bottom-0 left-0 right-0 bg-gray-800 bg-opacity-80 p-4 flex items-center">
             <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16 flex items-center justify-center" aria-hidden="true">
                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
@@ -257,6 +258,7 @@
     let currentColorScheme = 'blue';
     let isPlaying = false;
     let animationId;
+    let spectrumAnimationId;
     let currentTrackIndex = -1;
     let animationSpeed = 5;
     let sensitivity = 5;
@@ -272,9 +274,8 @@
     const nextBtn = document.getElementById('nextBtn');
     const prevBtn = document.getElementById('prevBtn');
     const fileInput = document.getElementById('fileInput');
-    
-    // === DOM ELEMENTS FOR PLAYER CONTROLS ===
     let currentTimeEl, durationEl, progressWrapper, progressBar, volumeSlider;
+    let specCanvas, specCtx;
 
 
     // --- ICONS ---
@@ -290,6 +291,11 @@
     // --- INITIALIZATION FUNCTIONS ---
     function initThreeJS() {
       const container = document.getElementById('visualizer');
+      if (!container) return;
+      // Clear previous renderer
+      while (container.firstChild) {
+        container.removeChild(container.firstChild);
+      }
       const width = container.clientWidth; const height = container.clientHeight;
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0x000000);
@@ -303,6 +309,9 @@
         camera.aspect = newWidth / newHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(newWidth, newHeight);
+        if (specCanvas) {
+          specCanvas.height = container.clientHeight;
+        }
       });
       initParticles(); initWaves(); initSphere(); initTunnel();
       scene.add(particles);
@@ -348,6 +357,10 @@
         cancelAnimationFrame(animationId);
         animationId = null;
       }
+      if (spectrumAnimationId) {
+        cancelAnimationFrame(spectrumAnimationId);
+        spectrumAnimationId = null;
+      }
       if (audioContext) audioContext.close();
       if (audioElement) { 
         audioElement.pause(); 
@@ -361,7 +374,11 @@
         audioElement.src = track.url;
       }
 
-      audioElement.addEventListener('play', () => { isPlaying = true; animate(); });
+      audioElement.addEventListener('play', () => { 
+        isPlaying = true; 
+        animate(); 
+        drawSpectrum();
+      });
       audioElement.addEventListener('pause', () => { isPlaying = false; });
 
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -556,7 +573,7 @@
       if (!isPlaying) return;
       animationId = requestAnimationFrame(animate);
       if (!analyser) return;
-      analyser.getByteFrequencyData(dataArray);
+      
       let sum = 0;
       for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
       const avgFrequency = sum / bufferLength;
@@ -571,6 +588,26 @@
       camera.position.y = Math.cos(Date.now() * 0.0001) * 5;
       camera.lookAt(scene.position);
       renderer.render(scene, camera);
+    }
+
+    function drawSpectrum() {
+      if (!isPlaying) return;
+      spectrumAnimationId = requestAnimationFrame(drawSpectrum);
+      analyser.getByteFrequencyData(dataArray);
+
+      specCtx.fillStyle = '#000';
+      specCtx.fillRect(0, 0, specCanvas.width, specCanvas.height);
+
+      const barWidth = specCanvas.width / bufferLength;
+      let x = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        const v = dataArray[i] / 255;
+        const barHeight = v * specCanvas.height;
+        const hue = (i / bufferLength) * 360;
+        specCtx.fillStyle = `hsl(${hue}, 100%, 60%)`;
+        specCtx.fillRect(x, specCanvas.height - barHeight, barWidth - 1, barHeight);
+        x += barWidth;
+      }
     }
 
     function updateParticles(avgFrequency, speed) {
@@ -709,6 +746,10 @@
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('appVersion').textContent = `v${APP_VERSION}`;
       document.getElementById('appCopyright').textContent = `© ${new Date().getFullYear()} AuraSync X. All rights reserved.`;
+
+      specCanvas = document.getElementById('spectrumCanvas');
+      specCtx = specCanvas.getContext('2d');
+      specCanvas.height = document.getElementById('visualizer').clientHeight;
 
       initThreeJS();
       renderPlaylist();
