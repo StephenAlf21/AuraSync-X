@@ -87,7 +87,8 @@
               <h3 class="font-bold truncate" id="trackTitle">No Track Loaded</h3>
               <p class="text-sm text-gray-400" id="trackArtist">Add songs to the playlist to begin</p>
             </div>
-            <div class="flex items-center space-x-2 sm:space-x-4">
+            <!-- === MODIFIED PLAYER CONTROLS START === -->
+            <div class="flex items-center space-x-2 sm:space-x-4 flex-1 ml-4">
               <button id="prevBtn" class="p-2 rounded-full bg-gray-700 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Previous track" disabled>
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M8.445 14.832A1 1 0 0010 14.168V5.832a1 1 0 00-1.555-.832L3.11 9.168a1 1 0 000 1.664l5.335 4.001zM11 5v10a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664L12.555 4.168A1 1 0 0011 5z"></path></svg>
               </button>
@@ -99,12 +100,20 @@
                <button id="nextBtn" class="p-2 rounded-full bg-gray-700 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Next track" disabled>
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M11.555 5.168A1 1 0 0010 5.832v8.336a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664l-5.335-4.168zM4 5v10a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664L5.555 4.168A1 1 0 004 5z"></path></svg>
               </button>
-              <div class="w-20 sm:w-32" aria-label="Track progress">
+              
+              <!-- Time display -->
+              <span id="currentTime" class="text-sm w-12 text-right">0:00</span>
+            
+              <!-- Clickable progress container -->
+              <div id="progressWrapper" class="flex-1 cursor-pointer" aria-label="Track progress">
                 <div class="h-1 bg-gray-700 rounded-full overflow-hidden">
                   <div id="progressBar" class="h-full bg-indigo-500 w-0 transition-all duration-100 ease-linear"></div>
                 </div>
               </div>
+            
+              <span id="durationTime" class="text-sm w-12 text-left">0:00</span>
             </div>
+            <!-- === MODIFIED PLAYER CONTROLS END === -->
           </div>
         </section>
 
@@ -188,21 +197,14 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    // Default tracks embedded in the app.
-    // IMPORTANT: Create an 'assets' folder next to your HTML file and place your MP3s there.
     const defaultTracks = [
       { name: "A Palestinian Protest Anthem", url: "assets/song1.mp3", artist: "zombies21" },
       { name: "Common Flame of Deutschland", url: "assets/song2.mp3", artist: "zombies21" },
       { name: "Arbeiter Canada v2", url: "assets/song3.mp3", artist: "zombies21" }
     ];
 
-    // Initialize playlist with defaults
     let playlist = defaultTracks.map(t => ({
-      file: null,
-      url: t.url,
-      name: t.name,
-      artist: t.artist,
-      isDefault: true
+      file: null, url: t.url, name: t.name, artist: t.artist, isDefault: true
     }));
 
     let scene, camera, renderer, analyser, audioContext, source, dataArray, bufferLength, audioElement;
@@ -226,6 +228,10 @@
     const nextBtn = document.getElementById('nextBtn');
     const prevBtn = document.getElementById('prevBtn');
     const fileInput = document.getElementById('fileInput');
+    
+    // === NEW DOM ELEMENTS FOR PROGRESS BAR ===
+    let currentTimeEl, durationEl, progressWrapper, progressBar;
+
 
     // --- ICONS ---
     const playIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
@@ -301,20 +307,14 @@
       }
       audioElement = new Audio();
       
-      // Handle both local files and default URLs
       if (track.file) {
         audioElement.src = URL.createObjectURL(track.file);
       } else {
         audioElement.src = track.url;
       }
 
-      audioElement.addEventListener('play', () => {
-        isPlaying = true;
-        animate();
-      });
-      audioElement.addEventListener('pause', () => {
-        isPlaying = false;
-      });
+      audioElement.addEventListener('play', () => { isPlaying = true; animate(); });
+      audioElement.addEventListener('pause', () => { isPlaying = false; });
 
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
       source = audioContext.createMediaElementSource(audioElement);
@@ -325,6 +325,8 @@
       bufferLength = analyser.frequencyBinCount;
       dataArray = new Uint8Array(bufferLength);
 
+      // === NEW EVENT LISTENERS FOR PROGRESS BAR ===
+      audioElement.addEventListener('loadedmetadata', setDuration);
       audioElement.addEventListener('timeupdate', updateProgressBar);
       audioElement.addEventListener('ended', playNextTrack);
 
@@ -359,15 +361,12 @@
       if (removedCurrent) {
         if (audioElement) audioElement.pause();
         if (playlist.length > 0) {
-            // Play next track, but only if music was already playing
-            currentTrackIndex = -1; // Prevent wrong track from highlighting
+            currentTrackIndex = -1; 
             playTrack(index % playlist.length);
             if (!wasPlaying) {
-              // If it wasn't playing before, pause the new track
               togglePlayPause();
             }
         } else {
-            // No tracks left
             currentTrackIndex = -1;
             document.getElementById('trackTitle').textContent = 'No Track Loaded';
             document.getElementById('trackArtist').textContent = 'Add songs to the playlist to begin';
@@ -469,13 +468,43 @@
         prevBtn.disabled = !hasTracks;
     }
 
+    // === NEW HELPER FUNCTIONS FOR PROGRESS BAR ===
+    // Formats seconds into M:SS format
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+    
+    // Once metadata is loaded, set the total duration text
+    function setDuration() {
+      if (audioElement && audioElement.duration) {
+        durationEl.textContent = formatTime(audioElement.duration);
+      }
+    }
+    
+    // Seek to a new time when the progress bar is clicked
+    function seek(e) {
+      if (!audioElement || !audioElement.duration) return;
+      const rect = progressWrapper.getBoundingClientRect();
+      // Use clientX for consistent coordinates regardless of scroll
+      const clickX = e.clientX - rect.left;
+      const newTime = (clickX / rect.width) * audioElement.duration;
+      audioElement.currentTime = newTime;
+      updateProgressBar(); // Immediately update UI
+    }
+
+    // === UPDATED PROGRESS BAR FUNCTION ===
+    // Updates both bar width and current time text
     function updateProgressBar() {
-        const bar = document.getElementById('progressBar');
         if (!audioElement || !audioElement.duration) { 
-            bar.style.width = '0%'; 
+            progressBar.style.width = '0%'; 
+            currentTimeEl.textContent = '0:00';
             return; 
         }
-        bar.style.width = (audioElement.currentTime / audioElement.duration * 100) + '%';
+        const pct = (audioElement.currentTime / audioElement.duration) * 100;
+        progressBar.style.width = pct + '%';
+        currentTimeEl.textContent = formatTime(audioElement.currentTime);
     }
     
     function animate() {
@@ -583,6 +612,13 @@
       initThreeJS();
       renderPlaylist();
       updateButtons();
+
+      // === GRAB NEW DOM NODES & ADD CLICK LISTENER ===
+      currentTimeEl   = document.getElementById('currentTime');
+      durationEl      = document.getElementById('durationTime');
+      progressWrapper = document.getElementById('progressWrapper');
+      progressBar     = document.getElementById('progressBar');
+      progressWrapper.addEventListener('click', seek);
 
       document.querySelectorAll('.viz-type').forEach(btn => btn.addEventListener('click', () => switchVisualization(btn.dataset.viz)));
       document.querySelectorAll('.color-scheme').forEach(btn => btn.addEventListener('click', () => switchColorScheme(btn.dataset.scheme)));
