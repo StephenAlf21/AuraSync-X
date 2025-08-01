@@ -80,10 +80,16 @@
       </header>
 
       <main class="flex flex-col lg:flex-row gap-6">
-        <section class="flex-1 relative rounded-xl overflow-hidden border border-gray-700 glow flex">
-          <div id="visualizer" class="flex-1 h-64 sm:h-96 lg:h-[500px] bg-black"></div>
-          <canvas id="spectrumCanvas" class="hidden sm:block w-32 md:w-48 h-full bg-black"></canvas>
-          <div class="absolute bottom-0 left-0 right-0 bg-gray-800 bg-opacity-80 p-4 flex items-center">
+        <!-- === UPDATED VISUALIZER & CONTROLS WRAPPER === -->
+        <div class="flex-1 flex flex-col gap-6">
+          <!-- Visualizer Area -->
+          <section class="rounded-xl overflow-hidden border border-gray-700 glow flex">
+            <div id="visualizer" class="flex-1 h-64 sm:h-96 lg:h-[500px] bg-black"></div>
+            <canvas id="spectrumCanvas" class="hidden sm:block w-32 md:w-48 h-full bg-black"></canvas>
+          </section>
+          
+          <!-- Player Controls Area -->
+          <div class="bg-gray-800 bg-opacity-80 p-4 flex items-center rounded-xl border border-gray-700">
             <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16 flex items-center justify-center" aria-hidden="true">
                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
@@ -114,7 +120,7 @@
               <span id="durationTime" class="text-sm w-12 text-left">0:00</span>
             </div>
           </div>
-        </section>
+        </div>
 
         <aside class="w-full lg:w-80 bg-gray-800 bg-opacity-50 rounded-xl p-6 control-panel border border-gray-700">
           <h2 class="text-xl font-bold mb-4 text-indigo-400">Visualization Controls</h2>
@@ -147,6 +153,13 @@
           <div class="mb-6">
             <h3 class="font-semibold mb-2">Volume</h3>
             <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" class="w-full accent-indigo-500" aria-label="Volume" />
+          </div>
+          <div class="mb-6">
+            <h3 class="font-semibold mb-2">Decibel Meter</h3>
+            <div class="w-full bg-gray-700 rounded overflow-hidden h-2">
+              <div id="decibelBar" class="h-full bg-green-400 w-0 transition-all duration-100 ease-linear"></div>
+            </div>
+            <span id="decibelValue" class="text-sm text-gray-300 mt-1 block">–∞ dB</span>
           </div>
         </aside>
       </main>
@@ -241,7 +254,7 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.0.0'; // App version constant
+    const APP_VERSION = '1.0.0';
     const defaultTracks = [
       { name: "A Palestinian Protest Anthem", url: "assets/song1.mp3", artist: "zombies21" },
       { name: "Common Flame of Deutschland", url: "assets/song2.mp3", artist: "zombies21" },
@@ -257,11 +270,11 @@
     let currentVisualization = 'particles';
     let currentColorScheme = 'blue';
     let isPlaying = false;
-    let animationId;
-    let spectrumAnimationId;
+    let animationId, spectrumAnimationId;
     let currentTrackIndex = -1;
     let animationSpeed = 5;
     let sensitivity = 5;
+    let timeData;
 
     // --- DOM ELEMENTS ---
     const mainContent = document.getElementById('mainContent');
@@ -275,7 +288,7 @@
     const prevBtn = document.getElementById('prevBtn');
     const fileInput = document.getElementById('fileInput');
     let currentTimeEl, durationEl, progressWrapper, progressBar, volumeSlider;
-    let specCanvas, specCtx;
+    let specCanvas, specCtx, decibelBar, decibelValue;
 
 
     // --- ICONS ---
@@ -292,7 +305,6 @@
     function initThreeJS() {
       const container = document.getElementById('visualizer');
       if (!container) return;
-      // Clear previous renderer
       while (container.firstChild) {
         container.removeChild(container.firstChild);
       }
@@ -389,6 +401,7 @@
       analyser.fftSize = 256;
       bufferLength = analyser.frequencyBinCount;
       dataArray = new Uint8Array(bufferLength);
+      timeData = new Float32Array(analyser.fftSize);
 
       audioElement.addEventListener('loadedmetadata', setDuration);
       audioElement.addEventListener('timeupdate', updateProgressBar);
@@ -574,6 +587,9 @@
       animationId = requestAnimationFrame(animate);
       if (!analyser) return;
       
+      analyser.getByteFrequencyData(dataArray);
+      updateDecibelMeter();
+
       let sum = 0;
       for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
       const avgFrequency = sum / bufferLength;
@@ -593,8 +609,7 @@
     function drawSpectrum() {
       if (!isPlaying) return;
       spectrumAnimationId = requestAnimationFrame(drawSpectrum);
-      analyser.getByteFrequencyData(dataArray);
-
+      // Data is already being fetched in animate(), so we can just use it
       specCtx.fillStyle = '#000';
       specCtx.fillRect(0, 0, specCanvas.width, specCanvas.height);
 
@@ -608,6 +623,18 @@
         specCtx.fillRect(x, specCanvas.height - barHeight, barWidth - 1, barHeight);
         x += barWidth;
       }
+    }
+    
+    function updateDecibelMeter() {
+      analyser.getFloatTimeDomainData(timeData);
+      let sumSquares = 0.0;
+      for (const amplitude of timeData) { sumSquares += amplitude * amplitude; }
+      const rms = Math.sqrt(sumSquares / timeData.length);
+      const db = rms > 0 ? 20 * Math.log10(rms) : -100;
+      const displayDb = Math.max(db, -100).toFixed(1);
+      decibelValue.textContent = `${displayDb} dB`;
+      const pct = Math.min(rms * 100, 100);
+      decibelBar.style.width = `${pct}%`;
     }
 
     function updateParticles(avgFrequency, speed) {
@@ -750,6 +777,9 @@
       specCanvas = document.getElementById('spectrumCanvas');
       specCtx = specCanvas.getContext('2d');
       specCanvas.height = document.getElementById('visualizer').clientHeight;
+
+      decibelBar   = document.getElementById('decibelBar');
+      decibelValue = document.getElementById('decibelValue');
 
       initThreeJS();
       renderPlaylist();
