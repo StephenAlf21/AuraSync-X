@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AuraSync X | Ultimate 3D Music Visualizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+      body {
+        font-family: 'Orbitron', monospace;
+        background-color: #1a202c;
+      }
+      .glow {
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.7);
+      }
+      .control-panel {
+        backdrop-filter: blur(10px);
+      }
+      .high-contrast {
+        filter: contrast(1.5);
+      }
+      /* Hide default file input */
+      #fileInput {
+        display: none;
+      }
+      /* Hide focus outlines but keep them for keyboard users */
+      button:focus-visible, input:focus-visible {
+        outline: 2px solid #6366f1;
+        outline-offset: 2px;
+      }
+      /* Scrollbar for playlist */
+      #playlistContainer::-webkit-scrollbar {
+        width: 6px;
+      }
+      #playlistContainer::-webkit-scrollbar-thumb {
+        background-color: rgba(99, 102, 241, 0.7);
+        border-radius: 3px;
+      }
+    </style>
+</head>
+<body class="text-white min-h-screen overflow-hidden flex">
+  <!-- Main Content Area -->
+  <div id="mainContent" class="flex-1 transition-all duration-300 ease-in-out">
+    <div class="container mx-auto px-4 py-6">
+      <header class="flex flex-col md:flex-row justify-between items-center mb-6">
+        <div class="flex items-center mb-4 md:mb-0">
+          <div class="bg-indigo-600 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
+          </div>
+          <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">AuraSync X</h1>
+        </div>
+        <div class="flex space-x-3">
+          <button id="accessibilityBtn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Accessibility settings">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
+               <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </button>
+          <button id="helpBtn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Help">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="flex flex-col lg:flex-row gap-6">
+        <section class="flex-1 relative rounded-xl overflow-hidden border border-gray-700 glow">
+          <div id="visualizer" class="w-full h-96 lg:h-[500px] bg-black"></div>
+          <div class="absolute bottom-0 left-0 right-0 bg-gray-800 bg-opacity-80 p-4 flex items-center">
+            <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16 flex items-center justify-center" aria-hidden="true">
+               <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z" />
+              </svg>
+            </div>
+            <div class="ml-4 flex-1 min-w-0">
+              <h3 class="font-bold truncate" id="trackTitle">No Track Loaded</h3>
+              <p class="text-sm text-gray-400" id="trackArtist">Add songs to the playlist to begin</p>
+            </div>
+            <div class="flex items-center space-x-2 sm:space-x-4">
+              <button id="prevBtn" class="p-2 rounded-full bg-gray-700 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Previous track" disabled>
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M8.445 14.832A1 1 0 0010 14.168V5.832a1 1 0 00-1.555-.832L3.11 9.168a1 1 0 000 1.664l5.335 4.001zM11 5v10a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664L12.555 4.168A1 1 0 0011 5z"></path></svg>
+              </button>
+              <button id="playPauseBtn" class="p-3 rounded-full bg-indigo-600 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Play or pause" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </button>
+               <button id="nextBtn" class="p-2 rounded-full bg-gray-700 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Next track" disabled>
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M11.555 5.168A1 1 0 0010 5.832v8.336a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664l-5.335-4.168zM4 5v10a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664L5.555 4.168A1 1 0 004 5z"></path></svg>
+              </button>
+              <div class="w-20 sm:w-32" aria-label="Track progress">
+                <div class="h-1 bg-gray-700 rounded-full overflow-hidden">
+                  <div id="progressBar" class="h-full bg-indigo-500 w-0 transition-all duration-100 ease-linear"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="w-full lg:w-80 bg-gray-800 bg-opacity-50 rounded-xl p-6 control-panel border border-gray-700">
+          <h2 class="text-xl font-bold mb-4 text-indigo-400">Visualization Controls</h2>
+          <div class="mb-6">
+            <h3 class="font-semibold mb-2">Visualization Type</h3>
+            <div class="grid grid-cols-2 gap-2">
+              <button class="viz-type p-3 rounded-lg bg-gray-700 hover:bg-indigo-600 transition-colors" data-viz="particles" aria-pressed="true">Particles</button>
+              <button class="viz-type p-3 rounded-lg bg-gray-700 hover:bg-indigo-600 transition-colors" data-viz="waves" aria-pressed="false">Waves</button>
+              <button class="viz-type p-3 rounded-lg bg-gray-700 hover:bg-indigo-600 transition-colors" data-viz="sphere" aria-pressed="false">Sphere</button>
+              <button class="viz-type p-3 rounded-lg bg-gray-700 hover:bg-indigo-600 transition-colors" data-viz="tunnel" aria-pressed="false">Tunnel</button>
+            </div>
+          </div>
+          <div class="mb-6">
+            <h3 class="font-semibold mb-2">Color Scheme</h3>
+            <div class="flex space-x-2">
+              <button class="color-scheme w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-teal-400" data-scheme="blue" aria-pressed="true"></button>
+              <button class="color-scheme w-8 h-8 rounded-full bg-gradient-to-r from-purple-400 to-pink-400" data-scheme="purple" aria-pressed="false"></button>
+              <button class="color-scheme w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-red-400" data-scheme="fire" aria-pressed="false"></button>
+              <button class="color-scheme w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-emerald-400" data-scheme="nature" aria-pressed="false"></button>
+            </div>
+          </div>
+          <div class="mb-6">
+            <h3 class="font-semibold mb-2">Sensitivity</h3>
+            <input type="range" id="sensitivity" min="1" max="10" value="5" class="w-full accent-indigo-500" aria-valuemin="1" aria-valuemax="10" aria-valuenow="5" />
+          </div>
+          <div>
+            <h3 class="font-semibold mb-2">Animation Speed</h3>
+            <input type="range" id="speed" min="1" max="10" value="5" class="w-full accent-indigo-500" aria-valuemin="1" aria-valuemax="10" aria-valuenow="5" />
+          </div>
+        </aside>
+      </main>
+    </div>
+  </div>
+
+  <!-- Playlist Panel -->
+  <aside id="playlistPanel" class="w-80 bg-gray-900 bg-opacity-90 backdrop-blur-sm h-screen flex flex-col transition-transform duration-300 ease-in-out translate-x-0 border-l border-gray-700">
+      <div class="flex items-center justify-between p-4 border-b border-gray-700">
+          <h2 class="text-xl font-bold text-indigo-400">Playlist</h2>
+          <button id="togglePlaylistBtn" class="p-2 rounded-lg hover:bg-gray-700">
+              <svg id="playlistToggleIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          </button>
+      </div>
+      <div id="playlistContainer" class="flex-1 overflow-y-auto p-4 space-y-2">
+          <!-- Playlist items will be injected here -->
+          <p class="text-gray-400 text-center">No songs in playlist. Add some!</p>
+      </div>
+      <div class="p-4 border-t border-gray-700">
+          <input type="file" id="fileInput" accept=".mp3" multiple />
+          <label for="fileInput" class="w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center justify-center cursor-pointer" aria-label="Add new track">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Add Songs
+          </label>
+      </div>
+  </aside>
+
+  <!-- Modals remain the same -->
+  <div id="accessibilityModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="accessibilityTitle">
+    <div class="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4">
+      <div class="flex justify-between items-center mb-4">
+        <h2 id="accessibilityTitle" class="text-xl font-bold text-indigo-400">Accessibility Settings</h2>
+        <button id="closeAccessibility" class="p-1 rounded-full hover:bg-gray-700" aria-label="Close accessibility settings">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <div class="space-y-4">
+        <div><h3 class="font-semibold mb-2">Visual Accessibility</h3><div class="flex items-center"><input type="checkbox" id="highContrast" class="mr-2 accent-indigo-500" aria-checked="false" /><label for="highContrast">High Contrast Mode</label></div></div>
+        <div><h3 class="font-semibold mb-2">Animation Sensitivity</h3><input type="range" id="animationSensitivity" min="1" max="5" value="3" class="w-full accent-indigo-500" aria-valuemin="1" aria-valuemax="5" aria-valuenow="3" /></div>
+        <div><h3 class="font-semibold mb-2">Keyboard Shortcuts</h3><ul class="text-sm space-y-1"><li><kbd class="bg-gray-700 px-2 py-1 rounded mr-2">Space</kbd> Play/Pause</li><li><kbd class="bg-gray-700 px-2 py-1 rounded mr-2">→</kbd> Next Track</li><li><kbd class="bg-gray-700 px-2 py-1 rounded mr-2">←</kbd> Previous Track</li><li><kbd class="bg-gray-700 px-2 py-1 rounded mr-2">+/-</kbd> Volume</li></ul></div>
+      </div>
+    </div>
+  </div>
+  <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4">
+      <div class="flex justify-between items-center mb-4"><h2 id="helpTitle" class="text-xl font-bold text-indigo-400">How to Use AuraSync X</h2><button id="closeHelp" class="p-1 rounded-full hover:bg-gray-700" aria-label="Close help"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
+      <div class="space-y-3 text-sm"><p>1. Click "Add Songs" in the right panel to build your playlist.</p><p>2. Click any song in the playlist to start the visualization.</p><p>3. Use the control panel to customize the visualization type, colors, and sensitivity.</p><p>4. Use the player controls or keyboard shortcuts (Space, Arrows) to manage playback.</p><p>5. Click the arrow on the playlist panel to collapse or expand it.</p></div>
+    </div>
+  </div>
+
+  <script>
+    // --- GLOBAL STATE & VARIABLES ---
+    let scene, camera, renderer, analyser, audioContext, source, dataArray, bufferLength, audioElement;
+    let particles, waves, sphere, tunnel;
+    let currentVisualization = 'particles';
+    let currentColorScheme = 'blue';
+    let isPlaying = false;
+    let animationId;
+    let playlist = [];
+    let currentTrackIndex = -1;
+
+    // --- DOM ELEMENTS ---
+    const mainContent = document.getElementById('mainContent');
+    const playlistPanel = document.getElementById('playlistPanel');
+    const playlistContainer = document.getElementById('playlistContainer');
+    const togglePlaylistBtn = document.getElementById('togglePlaylistBtn');
+    const playlistToggleIcon = document.getElementById('playlistToggleIcon');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+
+    // --- COLOR SCHEMES ---
+    const colorSchemes = {
+      blue: [0x4facfe, 0x00f2fe], purple: [0x9d50bb, 0x6e48aa],
+      fire: [0xff9a9e, 0xfad0c4], nature: [0x0ba360, 0x3cba92]
+    };
+
+    // --- INITIALIZATION FUNCTIONS ---
+    function initThreeJS() {
+      const container = document.getElementById('visualizer');
+      const width = container.clientWidth; const height = container.clientHeight;
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x000000);
+      camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+      camera.position.z = 30;
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(width, height);
+      container.appendChild(renderer.domElement);
+      window.addEventListener('resize', () => {
+        const newWidth = container.clientWidth; const newHeight = container.clientHeight;
+        camera.aspect = newWidth / newHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(newWidth, newHeight);
+      });
+      initParticles(); initWaves(); initSphere(); initTunnel();
+      scene.add(particles);
+    }
+    function initParticles() {
+      const particleCount = 2000;
+      const positions = new Float32Array(particleCount * 3);
+      const colors = new Float32Array(particleCount * 3);
+      const baseColor = new THREE.Color(colorSchemes[currentColorScheme][0]);
+      for (let i = 0; i < particleCount; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 100;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
+        colors[i * 3] = baseColor.r; colors[i * 3 + 1] = baseColor.g; colors[i * 3 + 2] = baseColor.b;
+      }
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      const material = new THREE.PointsMaterial({ size: 0.5, vertexColors: true, transparent: true, opacity: 0.8 });
+      particles = new THREE.Points(geometry, material);
+    }
+    function initWaves() {
+        const geometry = new THREE.PlaneGeometry(100, 100, 64, 64);
+        const material = new THREE.MeshBasicMaterial({ color: colorSchemes[currentColorScheme][0], wireframe: true, transparent: true, opacity: 0.7 });
+        waves = new THREE.Mesh(geometry, material);
+        waves.rotation.x = -Math.PI / 2;
+    }
+    function initSphere() {
+        const geometry = new THREE.SphereGeometry(15, 64, 64);
+        const material = new THREE.MeshBasicMaterial({ color: colorSchemes[currentColorScheme][0], wireframe: true, transparent: true, opacity: 0.7 });
+        sphere = new THREE.Mesh(geometry, material);
+        sphere.geometry.setAttribute('initialPosition', sphere.geometry.attributes.position.clone());
+    }
+    function initTunnel() {
+        const geometry = new THREE.CylinderGeometry(10, 10, 200, 64, 32, true);
+        const material = new THREE.MeshBasicMaterial({ color: colorSchemes[currentColorScheme][0], wireframe: true, transparent: true, opacity: 0.7, side: THREE.BackSide });
+        tunnel = new THREE.Mesh(geometry, material);
+        tunnel.rotation.x = Math.PI / 2;
+    }
+    function initAudio(file) {
+      if (audioContext) audioContext.close();
+      if (audioElement) { audioElement.pause(); audioElement.src = ''; }
+      audioElement = new Audio();
+      audioElement.src = URL.createObjectURL(file);
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      source = audioContext.createMediaElementSource(audioElement);
+      analyser = audioContext.createAnalyser();
+      source.connect(analyser);
+      analyser.connect(audioContext.destination);
+      analyser.fftSize = 256;
+      bufferLength = analyser.frequencyBinCount;
+      dataArray = new Uint8Array(bufferLength);
+      audioElement.addEventListener('timeupdate', updateProgressBar);
+      audioElement.addEventListener('ended', playNextTrack);
+      if (isPlaying) audioElement.play();
+    }
+
+    // --- PLAYLIST & PLAYBACK LOGIC ---
+    function handleFiles(files) {
+        for (const file of files) {
+            if (file.type === "audio/mpeg") {
+                playlist.push({ file: file, name: file.name.replace('.mp3', '') });
+            }
+        }
+        renderPlaylist();
+        if (currentTrackIndex === -1 && playlist.length > 0) {
+            playTrack(0);
+        }
+    }
+    function playTrack(index) {
+        if (index < 0 || index >= playlist.length) return;
+        currentTrackIndex = index;
+        const track = playlist[index];
+        document.getElementById('trackTitle').textContent = track.name;
+        document.getElementById('trackArtist').textContent = "Loaded from your device";
+        initAudio(track.file);
+        if (!isPlaying) {
+            togglePlayPause();
+        } else {
+            audioElement.play();
+        }
+        renderPlaylist();
+        updatePlayerButtons();
+    }
+    function playNextTrack() {
+        const nextIndex = (currentTrackIndex + 1) % playlist.length;
+        playTrack(nextIndex);
+    }
+    function playPrevTrack() {
+        const prevIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+        playTrack(prevIndex);
+    }
+    function togglePlayPause() {
+      if (currentTrackIndex === -1) return;
+      if (audioContext.state === 'suspended') audioContext.resume();
+      isPlaying = !isPlaying;
+      if (isPlaying) {
+        audioElement.play();
+        playPauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        playPauseBtn.setAttribute('aria-label', 'Pause');
+        animate();
+      } else {
+        audioElement.pause();
+        playPauseBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+        playPauseBtn.setAttribute('aria-label', 'Play');
+        cancelAnimationFrame(animationId);
+      }
+    }
+
+    // --- UI & VISUALIZATION LOGIC ---
+    function renderPlaylist() {
+        playlistContainer.innerHTML = '';
+        if (playlist.length === 0) {
+            playlistContainer.innerHTML = `<p class="text-gray-400 text-center">No songs in playlist. Add some!</p>`;
+            return;
+        }
+        playlist.forEach((track, index) => {
+            const isActive = index === currentTrackIndex;
+            const item = document.createElement('div');
+            item.className = `p-3 rounded-lg cursor-pointer flex items-center transition-colors ${isActive ? 'bg-indigo-600' : 'bg-gray-700 hover:bg-gray-600'}`;
+            item.innerHTML = `
+                <svg class="w-5 h-5 mr-3 ${isActive ? 'text-white' : 'text-indigo-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"/></svg>
+                <span class="flex-1 truncate">${track.name}</span>
+            `;
+            item.addEventListener('click', () => playTrack(index));
+            playlistContainer.appendChild(item);
+        });
+    }
+    function updatePlayerButtons() {
+        const hasTracks = playlist.length > 0;
+        playPauseBtn.disabled = !hasTracks;
+        nextBtn.disabled = !hasTracks;
+        prevBtn.disabled = !hasTracks;
+    }
+    function updateProgressBar() {
+        if (!audioElement || !audioElement.duration) return;
+        const progress = (audioElement.currentTime / audioElement.duration) * 100;
+        document.getElementById('progressBar').style.width = `${progress}%`;
+    }
+    function animate() {
+      animationId = requestAnimationFrame(animate);
+      analyser.getByteFrequencyData(dataArray);
+      let sum = 0;
+      for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
+      const avgFrequency = sum / bufferLength;
+      const speed = document.getElementById('speed').value / 500;
+      switch (currentVisualization) {
+        case 'particles': updateParticles(avgFrequency, speed); break;
+        case 'waves': updateWaves(speed); break;
+        case 'sphere': updateSphere(); break;
+        case 'tunnel': updateTunnel(speed); break;
+      }
+      camera.position.x = Math.sin(Date.now() * 0.0001) * 5;
+      camera.position.y = Math.cos(Date.now() * 0.0001) * 5;
+      camera.lookAt(scene.position);
+      renderer.render(scene, camera);
+    }
+    function updateParticles(avgFrequency, speed) {
+        particles.rotation.y += speed;
+        const scale = 1 + (avgFrequency / 128) * (document.getElementById('sensitivity').value / 10);
+        particles.scale.set(scale, scale, scale);
+    }
+    function updateWaves(speed) {
+        const positions = waves.geometry.attributes.position.array;
+        const sensitivity = document.getElementById('sensitivity').value / 5;
+        const time = Date.now() * 0.005;
+        for (let i = 0; i < positions.length; i += 3) {
+            const x = positions[i]; const z = positions[i + 2];
+            const dataIndex = Math.floor(Math.abs(x + z) % bufferLength);
+            positions[i + 1] = Math.sin((x + z) * 0.1 + time) * (dataArray[dataIndex] / 255) * 10 * sensitivity;
+        }
+        waves.geometry.attributes.position.needsUpdate = true;
+        waves.rotation.y += speed / 2;
+    }
+    function updateSphere() {
+        const positions = sphere.geometry.attributes.position.array;
+        const initialPositions = sphere.geometry.attributes.initialPosition.array;
+        const sensitivity = document.getElementById('sensitivity').value / 5;
+        for (let i = 0; i < positions.length; i += 3) {
+            const dataIndex = Math.floor((i / 3) % bufferLength);
+            const scale = 1 + (dataArray[dataIndex] / 255) * 0.5 * sensitivity;
+            positions[i] = initialPositions[i] * scale;
+            positions[i + 1] = initialPositions[i + 1] * scale;
+            positions[i + 2] = initialPositions[i + 2] * scale;
+        }
+        sphere.geometry.attributes.position.needsUpdate = true;
+        sphere.rotation.x += 0.001; sphere.rotation.y += 0.001;
+    }
+    function updateTunnel(speed) {
+        tunnel.position.z = (tunnel.position.z - speed * 50) % 100;
+        const positions = tunnel.geometry.attributes.position.array;
+        const sensitivity = document.getElementById('sensitivity').value / 5;
+        for (let i = 0; i < positions.length; i += 3) {
+            const angle = Math.atan2(positions[i], positions[i+1]);
+            const dataIndex = Math.floor(((angle + Math.PI) / (2 * Math.PI)) * bufferLength) % bufferLength;
+            const radius = 10 + (dataArray[dataIndex] / 255) * 10 * sensitivity;
+            positions[i] = Math.cos(angle) * radius;
+            positions[i+1] = Math.sin(angle) * radius;
+        }
+        tunnel.geometry.attributes.position.needsUpdate = true;
+    }
+    function switchVisualization(type) {
+      scene.remove(particles, waves, sphere, tunnel);
+      currentVisualization = type;
+      switch (type) {
+        case 'particles': scene.add(particles); break; case 'waves': scene.add(waves); break;
+        case 'sphere': scene.add(sphere); break; case 'tunnel': scene.add(tunnel); break;
+      }
+      switchColorScheme(currentColorScheme);
+      document.querySelectorAll('.viz-type').forEach(btn => {
+        const pressed = btn.dataset.viz === type;
+        btn.setAttribute('aria-pressed', pressed);
+        btn.classList.toggle('bg-indigo-600', pressed); btn.classList.toggle('bg-gray-700', !pressed);
+      });
+    }
+    function switchColorScheme(scheme) {
+      currentColorScheme = scheme;
+      const newColor = new THREE.Color(colorSchemes[scheme][0]);
+      waves.material.color.set(newColor); sphere.material.color.set(newColor); tunnel.material.color.set(newColor);
+      const particleColors = particles.geometry.attributes.color.array;
+      for (let i = 0; i < particleColors.length; i += 3) {
+        particleColors[i] = newColor.r; particleColors[i + 1] = newColor.g; particleColors[i + 2] = newColor.b;
+      }
+      particles.geometry.attributes.color.needsUpdate = true;
+      document.querySelectorAll('.color-scheme').forEach(btn => {
+        const pressed = btn.dataset.scheme === scheme;
+        btn.setAttribute('aria-pressed', pressed);
+        btn.classList.toggle('ring-2', pressed); btn.classList.toggle('ring-white', pressed);
+      });
+    }
+    function adjustVolume(delta) {
+        if (!audioElement) return;
+        audioElement.volume = Math.min(1, Math.max(0, audioElement.volume + delta));
+        console.log('Volume:', audioElement.volume.toFixed(2));
+    }
+
+    // --- EVENT LISTENERS ---
+    document.addEventListener('DOMContentLoaded', () => {
+      initThreeJS();
+      updatePlayerButtons();
+      renderPlaylist();
+
+      document.querySelectorAll('.viz-type').forEach(btn => btn.addEventListener('click', () => switchVisualization(btn.dataset.viz)));
+      document.querySelectorAll('.color-scheme').forEach(btn => btn.addEventListener('click', () => switchColorScheme(btn.dataset.scheme)));
+      playPauseBtn.addEventListener('click', togglePlayPause);
+      nextBtn.addEventListener('click', playNextTrack);
+      prevBtn.addEventListener('click', playPrevTrack);
+      document.getElementById('fileInput').addEventListener('change', (e) => handleFiles(e.target.files));
+
+      togglePlaylistBtn.addEventListener('click', () => {
+          const isCollapsed = playlistPanel.classList.toggle('translate-x-full');
+          mainContent.classList.toggle('pr-80', !isCollapsed);
+          playlistToggleIcon.innerHTML = isCollapsed ?
+            `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>` :
+            `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>`;
+      });
+
+      const accessibilityModal = document.getElementById('accessibilityModal');
+      document.getElementById('accessibilityBtn').addEventListener('click', () => accessibilityModal.classList.remove('hidden'));
+      document.getElementById('closeAccessibility').addEventListener('click', () => accessibilityModal.classList.add('hidden'));
+      const helpModal = document.getElementById('helpModal');
+      document.getElementById('helpBtn').addEventListener('click', () => helpModal.classList.remove('hidden'));
+      document.getElementById('closeHelp').addEventListener('click', () => helpModal.classList.add('hidden'));
+      document.getElementById('highContrast').addEventListener('change', e => document.body.classList.toggle('high-contrast', e.target.checked));
+
+      document.addEventListener('keydown', e => {
+        if (e.target.tagName === 'INPUT' || e.target.isContentEditable) return;
+        switch (e.key) {
+          case ' ': e.preventDefault(); togglePlayPause(); break;
+          case 'ArrowRight': e.preventDefault(); playNextTrack(); break;
+          case 'ArrowLeft': e.preventDefault(); playPrevTrack(); break;
+          case '+': case '=': e.preventDefault(); adjustVolume(0.1); break;
+          case '-': e.preventDefault(); adjustVolume(-0.1); break;
+        }
+      });
+
+      switchVisualization('particles');
+      switchColorScheme('blue');
+      anime({ targets: '.container > *, #playlistPanel', translateY: [20, 0], opacity: [0, 1], delay: anime.stagger(100), easing: 'easeOutQuad' });
+    });
+  </script>
+</body>
+</html>
