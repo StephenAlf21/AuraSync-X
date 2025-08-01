@@ -44,7 +44,7 @@
 <body class="text-white min-h-screen overflow-hidden flex">
   
   <!-- Main Content Area with padding transition -->
-  <div id="mainContent" class="flex-1 overflow-auto transition-all duration-300 ease-in-out">
+  <div id="mainContent" class="flex-1 overflow-auto transition-all duration-300 ease-in-out pb-12">
     <div class="container mx-auto px-4 py-6">
       <header class="flex flex-col md:flex-row justify-between items-center mb-6">
         <div class="flex items-center mb-4 md:mb-0">
@@ -55,7 +55,7 @@
           </div>
           <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">AuraSync X</h1>
         </div>
-        <div class="flex space-x-3">
+        <div class="flex items-center space-x-3">
            <!-- Playlist toggle button now here -->
            <button id="togglePlaylistBtn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Toggle Playlist" aria-expanded="false" aria-controls="playlistPanel">
               <svg id="playlistToggleIcon" class="w-6 h-6 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -71,6 +71,8 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </button>
+          <!-- Version Number -->
+          <span id="appVersion" class="ml-3 text-gray-400 text-sm"></span>
         </div>
       </header>
 
@@ -165,7 +167,7 @@
   </div>
 
   <!-- Playlist Panel (Sidebar) -->
-  <aside id="playlistPanel" class="fixed top-0 right-0 h-full w-80 bg-gray-800 transform transition-transform duration-300 ease-in-out translate-x-full flex flex-col border-l border-gray-700 z-40">
+  <aside id="playlistPanel" class="fixed top-0 right-0 h-full w-80 bg-gray-800 transform transition-transform duration-300 ease-in-out translate-x-full flex flex-col border-l border-gray-700 z-40 pb-12">
       <div class="flex items-center justify-between p-4 border-b border-gray-700">
           <h2 class="text-xl font-bold text-indigo-400">Playlist</h2>
           <button id="closePlaylistBtn" class="p-2 rounded-lg hover:bg-gray-700" aria-label="Close Playlist">
@@ -209,8 +211,14 @@
     </div>
   </div>
 
+  <!-- Copyright Footer -->
+  <footer class="fixed bottom-0 left-0 w-full bg-gray-900 bg-opacity-75 text-center py-2 z-50">
+    <span id="appCopyright" class="text-gray-400 text-xs"></span>
+  </footer>
+
   <script>
     // --- GLOBAL STATE & VARIABLES ---
+    const APP_VERSION = '1.0.0'; // App version constant
     const defaultTracks = [
       { name: "A Palestinian Protest Anthem", url: "assets/song1.mp3", artist: "zombies21" },
       { name: "Common Flame of Deutschland", url: "assets/song2.mp3", artist: "zombies21" },
@@ -314,6 +322,11 @@
     }
     
     function initAudio(track) {
+      // Prevent multiple animate() loops from stacking
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
       if (audioContext) audioContext.close();
       if (audioElement) { 
         audioElement.pause(); 
@@ -626,6 +639,10 @@
 
     // --- EVENT LISTENERS ---
     document.addEventListener('DOMContentLoaded', () => {
+      // === DYNAMIC VERSION & COPYRIGHT ===
+      document.getElementById('appVersion').textContent = `v${APP_VERSION}`;
+      document.getElementById('appCopyright').textContent = `© ${new Date().getFullYear()} AuraSync X. All rights reserved.`;
+
       initThreeJS();
       renderPlaylist();
       updateButtons();
