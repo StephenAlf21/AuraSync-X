@@ -44,7 +44,7 @@
 <body class="text-white min-h-screen overflow-hidden flex">
   
   <!-- Main Content Area with padding transition -->
-  <div id="mainContent" class="flex-1 overflow-auto transition-all duration-300 ease-in-out pr-0">
+  <div id="mainContent" class="flex-1 overflow-auto transition-all duration-300 ease-in-out">
     <div class="container mx-auto px-4 py-6">
       <header class="flex flex-col md:flex-row justify-between items-center mb-6">
         <div class="flex items-center mb-4 md:mb-0">
@@ -57,7 +57,7 @@
         </div>
         <div class="flex space-x-3">
            <!-- Playlist toggle button now here -->
-           <button id="togglePlaylistBtn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Toggle Playlist">
+           <button id="togglePlaylistBtn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Toggle Playlist" aria-expanded="false" aria-controls="playlistPanel">
               <svg id="playlistToggleIcon" class="w-6 h-6 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
           </button>
           <button id="accessibilityBtn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Accessibility settings">
@@ -142,7 +142,7 @@
   </div>
 
   <!-- Playlist Panel (Sidebar) -->
-  <aside id="playlistPanel" class="sidebar translate-x-full flex flex-col border-l border-gray-700">
+  <aside id="playlistPanel" class="fixed top-0 right-0 h-full w-80 bg-gray-800 transform transition-transform duration-300 ease-in-out translate-x-full flex flex-col border-l border-gray-700 z-40">
       <div class="flex items-center justify-between p-4 border-b border-gray-700">
           <h2 class="text-xl font-bold text-indigo-400">Playlist</h2>
           <button id="closePlaylistBtn" class="p-2 rounded-lg hover:bg-gray-700" aria-label="Close Playlist">
@@ -197,6 +197,9 @@
     let animationId;
     let playlist = [];
     let currentTrackIndex = -1;
+    // FIX: State variables for slider values
+    let animationSpeed = 5;
+    let sensitivity = 5;
 
     // --- DOM ELEMENTS ---
     const mainContent = document.getElementById('mainContent');
@@ -378,11 +381,11 @@
       let sum = 0;
       for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
       const avgFrequency = sum / bufferLength;
-      const speed = document.getElementById('speed').value / 500;
+      const speed = animationSpeed / 500; // FIX: Use state variable for speed
       switch (currentVisualization) {
         case 'particles': updateParticles(avgFrequency, speed); break;
         case 'waves': updateWaves(speed); break;
-        case 'sphere': updateSphere(); break;
+        case 'sphere': updateSphere(speed); break; // FIX: Pass speed to sphere
         case 'tunnel': updateTunnel(speed); break;
       }
       camera.position.x = Math.sin(Date.now() * 0.0001) * 5;
@@ -392,43 +395,44 @@
     }
     function updateParticles(avgFrequency, speed) {
         particles.rotation.y += speed;
-        const scale = 1 + (avgFrequency / 128) * (document.getElementById('sensitivity').value / 10);
+        const scale = 1 + (avgFrequency / 128) * (sensitivity / 10); // FIX: Use state variable
         particles.scale.set(scale, scale, scale);
     }
     function updateWaves(speed) {
         const positions = waves.geometry.attributes.position.array;
-        const sensitivity = document.getElementById('sensitivity').value / 5;
+        const currentSensitivity = sensitivity / 5; // FIX: Use state variable
         const time = Date.now() * 0.005;
         for (let i = 0; i < positions.length; i += 3) {
             const x = positions[i]; const z = positions[i + 2];
             const dataIndex = Math.floor(Math.abs(x + z) % bufferLength);
-            positions[i + 1] = Math.sin((x + z) * 0.1 + time) * (dataArray[dataIndex] / 255) * 10 * sensitivity;
+            positions[i + 1] = Math.sin((x + z) * 0.1 + time) * (dataArray[dataIndex] / 255) * 10 * currentSensitivity;
         }
         waves.geometry.attributes.position.needsUpdate = true;
         waves.rotation.y += speed / 2;
     }
-    function updateSphere() {
+    function updateSphere(speed) { // FIX: Accept and use speed parameter
         const positions = sphere.geometry.attributes.position.array;
         const initialPositions = sphere.geometry.attributes.initialPosition.array;
-        const sensitivity = document.getElementById('sensitivity').value / 5;
+        const currentSensitivity = sensitivity / 5; // FIX: Use state variable
         for (let i = 0; i < positions.length; i += 3) {
             const dataIndex = Math.floor((i / 3) % bufferLength);
-            const scale = 1 + (dataArray[dataIndex] / 255) * 0.5 * sensitivity;
+            const scale = 1 + (dataArray[dataIndex] / 255) * 0.5 * currentSensitivity;
             positions[i] = initialPositions[i] * scale;
             positions[i + 1] = initialPositions[i + 1] * scale;
             positions[i + 2] = initialPositions[i + 2] * scale;
         }
         sphere.geometry.attributes.position.needsUpdate = true;
-        sphere.rotation.x += 0.001; sphere.rotation.y += 0.001;
+        sphere.rotation.x += speed;
+        sphere.rotation.y += speed;
     }
     function updateTunnel(speed) {
         tunnel.position.z = (tunnel.position.z - speed * 50) % 100;
         const positions = tunnel.geometry.attributes.position.array;
-        const sensitivity = document.getElementById('sensitivity').value / 5;
+        const currentSensitivity = sensitivity / 5; // FIX: Use state variable
         for (let i = 0; i < positions.length; i += 3) {
             const angle = Math.atan2(positions[i], positions[i+1]);
             const dataIndex = Math.floor(((angle + Math.PI) / (2 * Math.PI)) * bufferLength) % bufferLength;
-            const radius = 10 + (dataArray[dataIndex] / 255) * 10 * sensitivity;
+            const radius = 10 + (dataArray[dataIndex] / 255) * 10 * currentSensitivity;
             positions[i] = Math.cos(angle) * radius;
             positions[i+1] = Math.sin(angle) * radius;
         }
@@ -482,7 +486,20 @@
       prevBtn.addEventListener('click', playPrevTrack);
       document.getElementById('fileInput').addEventListener('change', (e) => handleFiles(e.target.files));
 
+      // FIX: Add event listeners for sliders to update state variables
+      const speedSlider = document.getElementById('speed');
+      const sensitivitySlider = document.getElementById('sensitivity');
+      speedSlider.addEventListener('input', (e) => {
+          animationSpeed = e.target.value;
+          e.target.setAttribute('aria-valuenow', e.target.value);
+      });
+      sensitivitySlider.addEventListener('input', (e) => {
+          sensitivity = e.target.value;
+          e.target.setAttribute('aria-valuenow', e.target.value);
+      });
+
       function setSidebarVisibility(visible) {
+        togglePlaylistBtn.setAttribute('aria-expanded', visible);
         if (visible) {
             playlistPanel.classList.remove('translate-x-full');
             mainContent.classList.add('pr-80');
@@ -525,9 +542,8 @@
       switchVisualization('particles');
       switchColorScheme('blue');
       
-      // *** FIX: Exclude #playlistPanel from the initial animation ***
       anime({ 
-        targets: '.container > *', // Animate main content only
+        targets: '.container > *',
         translateY: [20, 0], 
         opacity: [0, 1], 
         delay: anime.stagger(100), 
