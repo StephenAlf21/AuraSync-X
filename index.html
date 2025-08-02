@@ -272,7 +272,7 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.1.0';
+    const APP_VERSION = '1.1.1'; // Version updated to reflect fix
     const defaultTracks = [
       { name: "A Palestinian Protest Anthem", url: "assets/song1.mp3", artist: "zombies21" },
       { name: "Common Flame of Deutschland", url: "assets/song2.mp3", artist: "zombies21" },
@@ -318,6 +318,20 @@
       blue: [0x4facfe, 0x00f2fe], purple: [0x9d50bb, 0x6e48aa],
       fire: [0xff9a9e, 0xfad0c4], nature: [0x0ba360, 0x3cba92]
     };
+    
+    // --- BUG FIX: FUNCTION TO RESIZE SPECTRUM CANVAS ---
+    /**
+     * This function corrects the portrait UI bug by ensuring the spectrum canvas's
+     * internal drawing resolution matches its CSS-defined display size.
+     * It should be called on initial load and whenever the window is resized.
+     */
+    function resizeSpectrumCanvas() {
+      if (specCanvas) {
+        // Set the canvas's internal width and height to its actual rendered size
+        specCanvas.width  = specCanvas.clientWidth;
+        specCanvas.height = specCanvas.clientHeight;
+      }
+    }
 
     // --- INITIALIZATION FUNCTIONS ---
     function initThreeJS() {
@@ -334,15 +348,18 @@
       renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setSize(width, height);
       container.appendChild(renderer.domElement);
+      
+      // --- BUG FIX: RESIZE LISTENER ---
+      // The resize listener now handles both the Three.js camera/renderer AND the spectrum canvas.
       window.addEventListener('resize', () => {
         const newWidth = container.clientWidth; const newHeight = container.clientHeight;
         camera.aspect = newWidth / newHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(newWidth, newHeight);
-        if (specCanvas) {
-          specCanvas.height = container.clientHeight;
-        }
+        // Call the new function to resize the spectrum canvas correctly
+        resizeSpectrumCanvas();
       });
+
       initParticles(); initWaves(); initSphere(); initTunnel();
       scene.add(particles);
     }
@@ -794,7 +811,11 @@
 
       specCanvas = document.getElementById('spectrumCanvas');
       specCtx = specCanvas.getContext('2d');
-      specCanvas.height = document.getElementById('visualizer').clientHeight;
+      
+      // --- BUG FIX: INITIAL CANVAS RESIZE ---
+      // The old, incorrect height assignment is removed and replaced with a call
+      // to the new resize function to set both width and height correctly.
+      resizeSpectrumCanvas();
 
       decibelBar   = document.getElementById('decibelBar');
       decibelValue = document.getElementById('decibelValue');
