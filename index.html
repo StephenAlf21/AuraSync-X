@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+  if (location.protocol !== 'https:') {
+    // preserve host, path, query, hash
+    location.replace(
+      'https://' +
+      window.location.host +
+      window.location.pathname +
+      window.location.search +
+      window.location.hash
+    );
+  }
+</script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AuraSync X | Ultimate 3D Music Visualizer</title>
@@ -1133,3 +1145,4 @@
   </script>
 </body>
 </html>
+
