@@ -347,7 +347,7 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.5.1'; // Version updated for playlist fixes
+    const APP_VERSION = '1.5.2'; // Version updated for radio stream fix
     let currentLayer = 'local'; // default page
 
     const defaultTracks = [
@@ -488,6 +488,8 @@
       if (track.file) {
         audioElement.src = URL.createObjectURL(track.file);
       } else {
+        // This is crucial for the analyser to process remote audio streams
+        audioElement.crossOrigin = "anonymous"; 
         audioElement.src = track.url;
       }
 
@@ -522,16 +524,8 @@
           playNextTrack();
       });
 
-      if (isPlaying) {
-          const playPromise = audioElement.play();
-          if (playPromise !== undefined) {
-              playPromise.catch(error => {
-                  console.error("Autoplay was prevented:", error);
-                  showAlert("Autoplay was blocked by the browser. Please click the play button to start.", "Playback Notice");
-                  isPlaying = false;
-              });
-          }
-      }
+      // NOTE: The explicit audioElement.play() call has been moved to playTrack()
+      // to better handle browser autoplay policies.
     }
 
     // --- PLAYLIST & PLAYBACK LOGIC ---
@@ -584,10 +578,6 @@
     function playTrack(index) {
         if (index < 0 || index >= playlist.length) return;
 
-        if (audioContext && audioContext.state === 'suspended') {
-            audioContext.resume();
-        }
-
         const trackShouldPlay = isPlaying || currentTrackIndex === -1;
         currentTrackIndex = index;
         const track = playlist[index];
@@ -595,7 +585,29 @@
         document.getElementById('trackArtist').textContent = track.artist;
         
         isPlaying = trackShouldPlay;
-        initAudio(track);
+        
+        // Call initAudio first to create the new context and element
+        initAudio(track); 
+        
+        // Now, with the new context created, resume it if needed.
+        // This is still within the user-click event handler's scope.
+        if (audioContext && audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+
+        // And now, attempt to play.
+        if (isPlaying) {
+            const playPromise = audioElement.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.error("Autoplay was prevented for track:", track.name, error);
+                    isPlaying = false;
+                    playPauseBtn.innerHTML = playIconSVG;
+                    playPauseBtn.setAttribute('aria-label','Play');
+                    showAlert("Playback was blocked by the browser. Click the play button to start.", "Playback Notice");
+                });
+            }
+        }
         
         renderPlaylist();
         updateButtons();
