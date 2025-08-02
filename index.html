@@ -10,6 +10,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    
+    <!-- Tippy.js for Tooltips -->
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/material.css">
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
       body {
@@ -42,6 +49,17 @@
         background-color: rgba(99, 102, 241, 0.7);
         border-radius: 3px;
       }
+      /* Tippy.js theme customization */
+      .tippy-box[data-theme~='material'] {
+        font-family: 'Orbitron', monospace;
+        background-color: #2d3748; /* gray-800 */
+      }
+      .tippy-box[data-theme~='material'][data-placement^='top'] > .tippy-arrow::before {
+        border-top-color: #2d3748;
+      }
+      .tippy-box[data-theme~='material'][data-placement^='bottom'] > .tippy-arrow::before {
+        border-bottom-color: #2d3748;
+      }
     </style>
 </head>
 <body class="text-white min-h-screen flex flex-col lg:flex-row">
@@ -60,16 +78,16 @@
         </div>
         <div class="flex flex-wrap justify-center sm:justify-end items-center gap-2">
            <!-- Playlist toggle button now here -->
-           <button id="togglePlaylistBtn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Toggle Playlist" aria-expanded="false" aria-controls="playlistPanel">
+           <button id="togglePlaylistBtn" data-tippy-content="Toggle Playlist" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Toggle Playlist" aria-expanded="false" aria-controls="playlistPanel">
               <svg id="playlistToggleIcon" class="w-6 h-6 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-          </button>
-          <button id="accessibilityBtn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Accessibility settings">
+           </button>
+          <button id="accessibilityBtn" data-tippy-content="Accessibility" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Accessibility settings">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
           </button>
-          <button id="helpBtn" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Help">
+          <button id="helpBtn" data-tippy-content="Help" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Help">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -100,15 +118,15 @@
               <p class="text-sm text-gray-400" id="trackArtist">Add songs to the playlist to begin</p>
             </div>
             <div class="flex items-center space-x-2 sm:space-x-4 flex-1 ml-4">
-              <button id="prevBtn" class="p-2 rounded-full bg-gray-700 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Previous track" disabled>
+              <button id="prevBtn" data-tippy-content="Previous" class="p-2 rounded-full bg-gray-700 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Previous track" disabled>
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M8.445 14.832A1 1 0 0010 14.168V5.832a1 1 0 00-1.555-.832L3.11 9.168a1 1 0 000 1.664l5.335 4.001zM11 5v10a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664L12.555 4.168A1 1 0 0011 5z"></path></svg>
               </button>
-              <button id="playPauseBtn" class="p-3 rounded-full bg-indigo-600 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Play or pause" disabled>
+              <button id="playPauseBtn" data-tippy-content="Play / Pause" class="p-3 rounded-full bg-indigo-600 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Play or pause" disabled>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </button>
-               <button id="nextBtn" class="p-2 rounded-full bg-gray-700 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Next track" disabled>
+               <button id="nextBtn" data-tippy-content="Next" class="p-2 rounded-full bg-gray-700 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Next track" disabled>
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M11.555 5.168A1 1 0 0010 5.832v8.336a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664l-5.335-4.168zM4 5v10a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664L5.555 4.168A1 1 0 004 5z"></path></svg>
               </button>
               <span id="currentTime" class="text-sm w-12 text-right">0:00</span>
@@ -142,15 +160,15 @@
               <button class="color-scheme w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-emerald-400" data-scheme="nature" aria-pressed="false"></button>
             </div>
           </div>
-          <div class="mb-6">
+          <div class="mb-6" data-tippy-content="Adjusts visual reaction to music">
             <h3 class="font-semibold mb-2">Sensitivity</h3>
             <input type="range" id="sensitivity" min="1" max="10" value="5" class="w-full accent-indigo-500" aria-valuemin="1" aria-valuemax="10" aria-valuenow="5" />
           </div>
-          <div class="mb-6">
+          <div class="mb-6" data-tippy-content="Controls background animation speed">
             <h3 class="font-semibold mb-2">Animation Speed</h3>
             <input type="range" id="speed" min="1" max="10" value="5" class="w-full accent-indigo-500" aria-valuemin="1" aria-valuemax="10" aria-valuenow="5" />
           </div>
-          <div class="mb-6">
+          <div class="mb-6" data-tippy-content="Adjust Volume">
             <h3 class="font-semibold mb-2">Volume</h3>
             <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" class="w-full accent-indigo-500" aria-label="Volume" />
           </div>
@@ -179,7 +197,7 @@
       </div>
       <div class="p-4 border-t border-gray-700">
           <input type="file" id="fileInput" accept=".mp3" multiple />
-          <label for="fileInput" class="w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center justify-center cursor-pointer" aria-label="Add new track">
+          <label for="fileInput" data-tippy-content="Add MP3 files from your computer" class="w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center justify-center cursor-pointer" aria-label="Add new track">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
@@ -875,6 +893,13 @@
         opacity: [0, 1], 
         delay: anime.stagger(100), 
         easing: 'easeOutQuad' 
+      });
+      
+      // --- Initialize Tippy.js Tooltips ---
+      tippy('[data-tippy-content]', {
+        theme: 'material',
+        animation: 'shift-away-subtle',
+        delay: [150, 0],
       });
     });
   </script>
