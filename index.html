@@ -331,7 +331,7 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.4.1'; // Version updated to reflect bug fix
+    const APP_VERSION = '1.4.2'; // Version updated to reflect final autoplay fix
     const defaultTracks = [
       { name: "A Palestinian Protest Anthem", url: "assets/song1.mp3", artist: "zombies21" },
       { name: "Common Flame of Deutschland", url: "assets/song2.mp3", artist: "zombies21" },
@@ -342,7 +342,8 @@
       file: null, url: t.url, name: t.name, artist: t.artist, isDefault: true
     }));
 
-    let scene, camera, renderer, analyser, audioContext, source, dataArray, bufferLength, audioElement;
+    // --- REFACTORED AUDIO ENGINE VARIABLES ---
+    let scene, camera, renderer, audioContext, analyser, source, dataArray, bufferLength, audioElement;
     let particles, waves, sphere, tunnel;
     let currentVisualization = 'particles';
     let currentColorScheme = 'blue';
@@ -451,21 +452,22 @@
         tunnel.rotation.x = Math.PI / 2;
     }
     
+    // --- REFACTORED AUDIO INITIALIZATION ---
     function initAudio(track) {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
+      if (animationId) cancelAnimationFrame(animationId);
+      if (spectrumAnimationId) cancelAnimationFrame(spectrumAnimationId);
+      
+      // Disconnect the previous source if it exists, to prevent hearing multiple tracks
+      if (source) {
+        source.disconnect();
       }
-      if (spectrumAnimationId) {
-        cancelAnimationFrame(spectrumAnimationId);
-        spectrumAnimationId = null;
-      }
-      if (audioContext) audioContext.close();
       if (audioElement) { 
         audioElement.pause(); 
         audioElement.src = ''; 
       }
       audioElement = new Audio();
+      // Important for analyzing audio from radio streams
+      audioElement.crossOrigin = "anonymous";
       
       if (track.file) {
         audioElement.src = URL.createObjectURL(track.file);
@@ -486,12 +488,10 @@
           playPauseBtn.setAttribute('aria-label','Play');
       });
 
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      // Create a new source and connect it to the single, persistent analyser
       source = audioContext.createMediaElementSource(audioElement);
-      analyser = audioContext.createAnalyser();
       source.connect(analyser);
-      analyser.connect(audioContext.destination);
-      analyser.fftSize = 256;
+      
       bufferLength = analyser.frequencyBinCount;
       dataArray = new Uint8Array(bufferLength);
       timeData = new Float32Array(analyser.fftSize);
@@ -566,10 +566,9 @@
     function playTrack(index) {
         if (index < 0 || index >= playlist.length) return;
 
-        // --- FIX for Autoplay Policy ---
-        // Ensure the global AudioContext is resumed by a user gesture (this click).
-        // This is crucial for streams loaded after an async request.
-        if (audioContext && audioContext.state === 'suspended') {
+        // This is now the most important part.
+        // This click gesture will resume the single, persistent AudioContext if it's suspended.
+        if (audioContext.state === 'suspended') {
             audioContext.resume();
         }
 
@@ -580,7 +579,7 @@
         document.getElementById('trackArtist').textContent = track.artist;
         
         isPlaying = trackShouldPlay;
-        initAudio(track); // This function creates a new AudioContext and audioElement
+        initAudio(track);
         
         renderPlaylist();
         updateButtons();
@@ -597,7 +596,10 @@
     
     function togglePlayPause() {
       if (!audioElement) return;
-      if (audioContext.state === 'suspended') audioContext.resume();
+      // This is a user gesture, so it's a great place to resume the context.
+      if (audioContext.state === 'suspended') {
+          audioContext.resume();
+      }
 
       if (audioElement.paused) {
         audioElement.play();
@@ -893,6 +895,13 @@
       document.getElementById('appVersion').textContent = `v${APP_VERSION}`;
       document.getElementById('appCopyright').textContent = `© ${new Date().getFullYear()} AuraSync X. All rights reserved.`;
 
+      // --- SINGLE AUDIO CONTEXT INITIALIZATION ---
+      // Create the single, persistent AudioContext and Analyser node once.
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioContext.createAnalyser();
+      analyser.connect(audioContext.destination);
+      analyser.fftSize = 256;
+
       specCanvas = document.getElementById('spectrumCanvas');
       specCtx = specCanvas.getContext('2d');
       
@@ -912,14 +921,6 @@
       volumeSlider    = document.getElementById('volumeSlider');
       
       progressWrapper.addEventListener('click', seek);
-
-      const originalInitAudio = initAudio;
-      initAudio = function(track) {
-        originalInitAudio(track);
-        if (audioElement) {
-          audioElement.volume = volumeSlider.value;
-        }
-      };
 
       volumeSlider.addEventListener('input', e => {
         if (audioElement) {
