@@ -78,7 +78,6 @@
 <body class="text-white min-h-screen flex flex-col lg:flex-row">
   
   <!-- Main Content Area with padding transition -->
-  <!-- --- FIX: Use scroll-padding to avoid footer overlap --- -->
   <div id="mainContent" class="flex-1 overflow-y-auto transition-all duration-300 ease-in-out scroll-pb-20">
     <div class="container mx-auto px-2 sm:px-4 py-6">
       <header class="flex flex-col md:flex-row justify-between items-center mb-6">
@@ -116,9 +115,7 @@
         <section class="flex-1 flex flex-col rounded-xl overflow-hidden border border-gray-700 glow">
           <!-- Visualizer Area -->
           <div class="flex">
-            <!-- --- FIX: Use aspect ratio for visualizer height --- -->
             <div id="visualizer" class="flex-1 bg-black aspect-[16/9]"></div>
-            <!-- --- FIX: Use percentage-based width for spectrum canvas --- -->
             <canvas id="spectrumCanvas" class="hidden sm:block w-1/5 h-full bg-black"></canvas>
           </div>
           
@@ -156,7 +153,6 @@
           </div>
         </section>
 
-        <!-- --- FIX: Control panel floats beside visualizer on medium screens --- -->
         <aside class="w-full md:w-64 lg:w-80 bg-gray-800 bg-opacity-50 rounded-xl p-6 control-panel border border-gray-700">
           <h2 class="text-xl font-bold mb-4 text-indigo-400">Visualization Controls</h2>
           <div class="mb-6">
@@ -170,7 +166,6 @@
           </div>
           <div class="mb-6">
             <h3 class="font-semibold mb-2">Color Scheme</h3>
-             <!-- --- FIX: Larger touch targets for color scheme buttons --- -->
             <div class="flex space-x-2">
               <button class="color-scheme w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-teal-400" data-scheme="blue" aria-pressed="true"></button>
               <button class="color-scheme w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-pink-400" data-scheme="purple" aria-pressed="false"></button>
@@ -221,7 +216,6 @@
             </svg>
             Add Songs
           </label>
-          <!-- --- NEW: URL uploader --- -->
           <div class="mt-4 flex space-x-2">
             <input
               id="urlInput"
@@ -236,6 +230,23 @@
               aria-label="Add song by URL"
             >Add</button>
           </div>
+          <!-- --- NEW: Internet-radio search --- -->
+          <div class="mt-4 flex space-x-2">
+            <input
+              id="radioSearchInput"
+              type="text"
+              placeholder="Search radio (e.g., Cat Country)"
+              class="flex-1 px-3 py-2 rounded-lg bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              aria-label="Radio station name"
+            />
+            <button
+              id="radioSearchBtn"
+              class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors text-sm"
+              aria-label="Add internet radio station"
+            >
+              Search
+            </button>
+          </div>
       </div>
   </aside>
 
@@ -243,7 +254,7 @@
   <div id="alertModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="alertTitle">
     <div class="modal-card">
       <div class="flex justify-between items-center mb-4">
-        <h2 id="alertTitle" class="text-xl font-bold text-yellow-400">Invalid URL</h2>
+        <h2 id="alertTitle" class="text-xl font-bold text-yellow-400">Notice</h2>
         <button id="closeAlert" class="p-2 rounded-full hover:bg-gray-700 transition-colors" aria-label="Close">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -305,8 +316,8 @@
         </div>
         <div class="space-y-4 text-gray-200">
             <p>1. Click the list icon <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg> in the header to open the playlist.</p>
-            <p>2. Click "Add Songs" to load local files, or paste a direct link into the URL field and click "Add".</p>
-            <p>3. Click any song in the playlist to start the music and the visualization.</p>
+            <p>2. Click "Add Songs" for local files, paste a URL, or search for an internet radio station.</p>
+            <p>3. Click any item in the playlist to start the music and the visualization.</p>
             <p>4. Use the control panel to customize the visualization type, colors, and sensitivity.</p>
             <p>5. Use the player controls or keyboard shortcuts (Space, Arrows) to manage playback.</p>
         </div>
@@ -320,7 +331,7 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.3.0'; // Version updated to reflect new feature
+    const APP_VERSION = '1.4.0'; // Version updated to reflect new feature
     const defaultTracks = [
       { name: "A Palestinian Protest Anthem", url: "assets/song1.mp3", artist: "zombies21" },
       { name: "Common Flame of Deutschland", url: "assets/song2.mp3", artist: "zombies21" },
@@ -633,13 +644,15 @@
     }
     
     function setDuration() {
-      if (audioElement && audioElement.duration) {
+      if (audioElement && audioElement.duration && isFinite(audioElement.duration)) {
         durationEl.textContent = formatTime(audioElement.duration);
+      } else {
+        durationEl.textContent = 'Live'; // For streams
       }
     }
     
     function seek(e) {
-      if (!audioElement || !audioElement.duration) return;
+      if (!audioElement || !audioElement.duration || !isFinite(audioElement.duration)) return;
       const rect = progressWrapper.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
       const newTime = (clickX / rect.width) * audioElement.duration;
@@ -648,9 +661,9 @@
     }
 
     function updateProgressBar() {
-        if (!audioElement || !audioElement.duration) { 
-            progressBar.style.width = '0%'; 
-            currentTimeEl.textContent = '0:00';
+        if (!audioElement || !audioElement.duration || !isFinite(audioElement.duration)) { 
+            progressBar.style.width = '100%'; // Full bar for live streams
+            currentTimeEl.textContent = 'Live';
             return; 
         }
         const pct = (audioElement.currentTime / audioElement.duration) * 100;
@@ -849,8 +862,8 @@
         });
     }
     
-    // --- NEW: Custom Alert Function ---
-    function showAlert(message) {
+    function showAlert(message, title = 'Notice') {
+      document.getElementById('alertTitle').textContent = title;
       document.getElementById('alertMessage').textContent = message;
       openModal('alertModal');
     }
@@ -901,7 +914,6 @@
       prevBtn.addEventListener('click', playPrevTrack);
       fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
-      // --- NEW: Event listener for adding song by URL ---
       const urlInput  = document.getElementById('urlInput');
       const addUrlBtn = document.getElementById('addUrlBtn');
 
@@ -909,17 +921,15 @@
         const url = urlInput.value.trim();
         if (!url) return;
 
-        // simple validation: must end with .mp3 (or .ogg, .wav, etc)
         if (!/^https?:\/\/.+\.(mp3|ogg|wav)(\?.*)?$/i.test(url)) {
-          showAlert('Please enter a direct link to an audio file (mp3/ogg/wav).');
+          showAlert('Please enter a direct link to an audio file (mp3/ogg/wav).', 'Invalid URL');
           return;
         }
 
-        // derive a human-friendly title from the URL
         const filename = url.split('/').pop().split('?')[0];
         playlist.push({
-          file:   null,       // signals “remote” mode
-          url,                 // this is all audioElement.src needs
+          file:   null,
+          url,
           name:  decodeURIComponent(filename),    
           artist:'Remote URL',
           isDefault: false
@@ -927,8 +937,51 @@
 
         renderPlaylist();
         updateButtons();
-        urlInput.value = '';  // clear input
+        urlInput.value = '';
       });
+
+      /* ====== INTERNET-RADIO SUPPORT ====== */
+      async function fetchStationByName(name) {
+        // Use a more reliable, DNS-round-robin endpoint for Radio-Browser
+        const endpoint = `https://de1.api.radio-browser.info/json/stations/byname/${encodeURIComponent(name)}`;
+        try {
+          const response = await fetch(endpoint);
+          if (!response.ok) throw new Error(`API responded with ${response.status}`);
+          const stations  = await response.json();
+          // Radio-Browser can return several streams; pick the first that has a resolved, playable URL
+          return stations.find(s => s.url_resolved) || null;
+        } catch (err) {
+          console.error('Radio-Browser API error:', err);
+          showAlert('Could not connect to the radio station directory. Please try again later.', 'Network Error');
+          return null;
+        }
+      }
+
+      document.getElementById('radioSearchBtn').addEventListener('click', async () => {
+        const input = document.getElementById('radioSearchInput');
+        const query = input.value.trim();
+        if (!query) return;
+
+        const station = await fetchStationByName(query);
+        if (!station) {
+          showAlert(`No playable stream found for “${query}”. Please try a different name.`, 'Station Not Found');
+          return;
+        }
+
+        // Append to playlist
+        playlist.push({
+          file: null,
+          url:  station.url_resolved || station.url,
+          name: station.name || query,
+          artist: station.country || 'Internet Radio',
+          isDefault: false
+        });
+
+        renderPlaylist();
+        updateButtons();
+        input.value = '';
+      });
+      /* ====== end internet-radio support ====== */
 
       const speedSlider = document.getElementById('speed');
       const sensitivitySlider = document.getElementById('sensitivity');
