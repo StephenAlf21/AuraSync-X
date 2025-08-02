@@ -347,7 +347,7 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.5.2'; // Version updated for radio stream fix
+    const APP_VERSION = '1.5.3'; // Version updated for iOS/Safari fix
     let currentLayer = 'local'; // default page
 
     const defaultTracks = [
@@ -1021,10 +1021,18 @@
           return;
         }
 
+        // --- HLS FIX for iOS/Safari ---
+        let url = station.url_resolved || station.url;
+        // if it’s an HLS playlist, fall back to the raw MP3 mount
+        if (url.endsWith('.m3u8') && station.url) {
+          url = station.url;
+        }
+        // --- END HLS FIX ---
+
         // Append to playlist
         playlist.push({
           file: null,
-          url:  station.url_resolved || station.url,
+          url:  url, // Use the corrected URL
           name: station.name || query,
           artist: station.country || 'Internet Radio',
           isDefault: false,
