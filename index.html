@@ -331,7 +331,7 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.4.0'; // Version updated to reflect new feature
+    const APP_VERSION = '1.4.1'; // Version updated to reflect bug fix
     const defaultTracks = [
       { name: "A Palestinian Protest Anthem", url: "assets/song1.mp3", artist: "zombies21" },
       { name: "Common Flame of Deutschland", url: "assets/song2.mp3", artist: "zombies21" },
@@ -475,10 +475,16 @@
 
       audioElement.addEventListener('play', () => { 
         isPlaying = true; 
+        playPauseBtn.innerHTML = pauseIconSVG;
+        playPauseBtn.setAttribute('aria-label','Pause');
         animate(); 
         drawSpectrum();
       });
-      audioElement.addEventListener('pause', () => { isPlaying = false; });
+      audioElement.addEventListener('pause', () => { 
+          isPlaying = false; 
+          playPauseBtn.innerHTML = playIconSVG;
+          playPauseBtn.setAttribute('aria-label','Play');
+      });
 
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
       source = audioContext.createMediaElementSource(audioElement);
@@ -498,7 +504,16 @@
           playNextTrack();
       });
 
-      if (isPlaying) audioElement.play();
+      if (isPlaying) {
+          const playPromise = audioElement.play();
+          if (playPromise !== undefined) {
+              playPromise.catch(error => {
+                  console.error("Autoplay was prevented:", error);
+                  showAlert("Autoplay was blocked by the browser. Please click the play button to start.", "Playback Notice");
+                  isPlaying = false;
+              });
+          }
+      }
     }
 
     // --- PLAYLIST & PLAYBACK LOGIC ---
@@ -547,8 +562,17 @@
       updateButtons();
     }
 
+    // --- UPDATED PLAYTRACK FUNCTION WITH AUTOPLAY FIX ---
     function playTrack(index) {
         if (index < 0 || index >= playlist.length) return;
+
+        // --- FIX for Autoplay Policy ---
+        // Ensure the global AudioContext is resumed by a user gesture (this click).
+        // This is crucial for streams loaded after an async request.
+        if (audioContext && audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+
         const trackShouldPlay = isPlaying || currentTrackIndex === -1;
         currentTrackIndex = index;
         const track = playlist[index];
@@ -556,7 +580,7 @@
         document.getElementById('trackArtist').textContent = track.artist;
         
         isPlaying = trackShouldPlay;
-        initAudio(track);
+        initAudio(track); // This function creates a new AudioContext and audioElement
         
         renderPlaylist();
         updateButtons();
@@ -577,12 +601,8 @@
 
       if (audioElement.paused) {
         audioElement.play();
-        playPauseBtn.innerHTML = pauseIconSVG;
-        playPauseBtn.setAttribute('aria-label','Pause');
       } else {
         audioElement.pause();
-        playPauseBtn.innerHTML = playIconSVG;
-        playPauseBtn.setAttribute('aria-label','Play');
       }
     }
 
