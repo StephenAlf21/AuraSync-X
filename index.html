@@ -347,7 +347,7 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.5.3'; // Version updated for iOS/Safari fix
+    const APP_VERSION = '1.5.4'; // Version updated for robust iOS audio handling
     let currentLayer = 'local'; // default page
 
     const defaultTracks = [
@@ -360,7 +360,7 @@
       file: null, url: t.url, name: t.name, artist: t.artist, isDefault: true, type: t.type
     }));
 
-    let scene, camera, renderer, analyser, audioContext, source, dataArray, bufferLength, audioElement;
+    let scene, camera, renderer, audioElement;
     let particles, waves, sphere, tunnel;
     let currentVisualization = 'particles';
     let currentColorScheme = 'blue';
@@ -370,6 +370,10 @@
     let animationSpeed = 5;
     let sensitivity = 5;
     let timeData;
+
+    // --- NEW: Persistent Audio API State ---
+    let audioContext, analyser, source;
+    let bufferLength, dataArray;
 
     // --- DOM ELEMENTS ---
     const mainContent = document.getElementById('mainContent');
@@ -469,26 +473,39 @@
         tunnel.rotation.x = Math.PI / 2;
     }
     
+    // --- NEW: Function to unlock audio context on user gesture ---
+    function unlockAudio() {
+        if (audioContext && audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            analyser.connect(audioContext.destination);
+            analyser.fftSize = 256;
+            bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+            timeData = new Float32Array(analyser.fftSize);
+        }
+    }
+
+    // --- REVISED: initAudio now uses the persistent audio context ---
     function initAudio(track) {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-      }
-      if (spectrumAnimationId) {
-        cancelAnimationFrame(spectrumAnimationId);
-        spectrumAnimationId = null;
-      }
-      if (audioContext) audioContext.close();
+      if (animationId) cancelAnimationFrame(animationId);
+      if (spectrumAnimationId) cancelAnimationFrame(spectrumAnimationId);
+      
       if (audioElement) { 
         audioElement.pause(); 
         audioElement.src = ''; 
+        if (source) {
+            source.disconnect(); // Disconnect previous source
+        }
       }
       audioElement = new Audio();
       
       if (track.file) {
         audioElement.src = URL.createObjectURL(track.file);
       } else {
-        // This is crucial for the analyser to process remote audio streams
         audioElement.crossOrigin = "anonymous"; 
         audioElement.src = track.url;
       }
@@ -506,26 +523,16 @@
           playPauseBtn.setAttribute('aria-label','Play');
       });
 
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      // Create a new source for the new audio element and connect to the *global* analyser
       source = audioContext.createMediaElementSource(audioElement);
-      analyser = audioContext.createAnalyser();
       source.connect(analyser);
-      analyser.connect(audioContext.destination);
-      analyser.fftSize = 256;
-      bufferLength = analyser.frequencyBinCount;
-      dataArray = new Uint8Array(bufferLength);
-      timeData = new Float32Array(analyser.fftSize);
 
       audioElement.addEventListener('loadedmetadata', setDuration);
       audioElement.addEventListener('timeupdate', updateProgressBar);
-      
       audioElement.addEventListener('ended', () => {
           isPlaying = true;
           playNextTrack();
       });
-
-      // NOTE: The explicit audioElement.play() call has been moved to playTrack()
-      // to better handle browser autoplay policies.
     }
 
     // --- PLAYLIST & PLAYBACK LOGIC ---
@@ -575,8 +582,11 @@
       updateButtons();
     }
 
+    // --- REVISED: playTrack now unlocks audio first ---
     function playTrack(index) {
         if (index < 0 || index >= playlist.length) return;
+        
+        unlockAudio(); // Ensure audio context is ready
 
         const trackShouldPlay = isPlaying || currentTrackIndex === -1;
         currentTrackIndex = index;
@@ -586,16 +596,8 @@
         
         isPlaying = trackShouldPlay;
         
-        // Call initAudio first to create the new context and element
         initAudio(track); 
         
-        // Now, with the new context created, resume it if needed.
-        // This is still within the user-click event handler's scope.
-        if (audioContext && audioContext.state === 'suspended') {
-            audioContext.resume();
-        }
-
-        // And now, attempt to play.
         if (isPlaying) {
             const playPromise = audioElement.play();
             if (playPromise !== undefined) {
@@ -622,9 +624,11 @@
         playTrack((currentTrackIndex - 1 + playlist.length) % playlist.length);
     }
     
+    // --- REVISED: togglePlayPause now unlocks audio ---
     function togglePlayPause() {
       if (!audioElement) return;
-      if (audioContext.state === 'suspended') audioContext.resume();
+      
+      unlockAudio(); // Ensure audio context is ready
 
       if (audioElement.paused) {
         audioElement.play();
@@ -944,14 +948,6 @@
       volumeSlider    = document.getElementById('volumeSlider');
       
       progressWrapper.addEventListener('click', seek);
-
-      const originalInitAudio = initAudio;
-      initAudio = function(track) {
-        originalInitAudio(track);
-        if (audioElement) {
-          audioElement.volume = volumeSlider.value;
-        }
-      };
 
       volumeSlider.addEventListener('input', e => {
         if (audioElement) {
