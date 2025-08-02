@@ -205,6 +205,21 @@
               <svg class="w-6 h-6 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
           </button>
       </div>
+      <!-- Layer-selector (acts like pagination) -->
+      <div id="playlistTabs" class="flex justify-around gap-1 px-4 pt-2">
+        <button data-layer="local"
+                class="playlist-tab flex-1 py-1.5 text-xs sm:text-sm rounded-lg bg-indigo-600 font-semibold">
+          Local
+        </button>
+        <button data-layer="remote"
+                class="playlist-tab flex-1 py-1.5 text-xs sm:text-sm rounded-lg bg-gray-700 hover:bg-indigo-500">
+          URL
+        </button>
+        <button data-layer="radio"
+                class="playlist-tab flex-1 py-1.5 text-xs sm:text-sm rounded-lg bg-gray-700 hover:bg-indigo-500">
+          Radio
+        </button>
+      </div>
       <div id="playlistContainer" class="flex-1 overflow-y-auto p-4 space-y-2">
           <!-- Playlist items will be injected here -->
       </div>
@@ -316,10 +331,11 @@
         </div>
         <div class="space-y-4 text-gray-200">
             <p>1. Click the list icon <svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg> in the header to open the playlist.</p>
-            <p>2. Click "Add Songs" for local files, paste a URL, or search for an internet radio station.</p>
-            <p>3. Click any item in the playlist to start the music and the visualization.</p>
-            <p>4. Use the control panel to customize the visualization type, colors, and sensitivity.</p>
-            <p>5. Use the player controls or keyboard shortcuts (Space, Arrows) to manage playback.</p>
+            <p>2. Use the 'Local', 'URL', and 'Radio' tabs to switch between playlists.</p>
+            <p>3. Add songs using the buttons at the bottom of the playlist panel.</p>
+            <p>4. Click any item in the playlist to start the music and the visualization.</p>
+            <p>5. Use the control panel to customize the visualization type, colors, and sensitivity.</p>
+            <p>6. Use the player controls or keyboard shortcuts (Space, Arrows) to manage playback.</p>
         </div>
     </div>
   </div>
@@ -331,19 +347,20 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.4.2'; // Version updated to reflect final autoplay fix
+    const APP_VERSION = '1.5.1'; // Version updated for playlist fixes
+    let currentLayer = 'local'; // default page
+
     const defaultTracks = [
-      { name: "A Palestinian Protest Anthem", url: "assets/song1.mp3", artist: "zombies21" },
-      { name: "Common Flame of Deutschland", url: "assets/song2.mp3", artist: "zombies21" },
-      { name: "Arbeiter Canada v2", url: "assets/song3.mp3", artist: "zombies21" }
+      { name: "A Palestinian Protest Anthem", url: "assets/song1.mp3", artist: "zombies21", type: "local" },
+      { name: "Common Flame of Deutschland", url: "assets/song2.mp3", artist: "zombies21", type: "local" },
+      { name: "Arbeiter Canada v2", url: "assets/song3.mp3", artist: "zombies21", type: "local" }
     ];
 
     let playlist = defaultTracks.map(t => ({
-      file: null, url: t.url, name: t.name, artist: t.artist, isDefault: true
+      file: null, url: t.url, name: t.name, artist: t.artist, isDefault: true, type: t.type
     }));
 
-    // --- REFACTORED AUDIO ENGINE VARIABLES ---
-    let scene, camera, renderer, audioContext, analyser, source, dataArray, bufferLength, audioElement;
+    let scene, camera, renderer, analyser, audioContext, source, dataArray, bufferLength, audioElement;
     let particles, waves, sphere, tunnel;
     let currentVisualization = 'particles';
     let currentColorScheme = 'blue';
@@ -452,22 +469,21 @@
         tunnel.rotation.x = Math.PI / 2;
     }
     
-    // --- REFACTORED AUDIO INITIALIZATION ---
     function initAudio(track) {
-      if (animationId) cancelAnimationFrame(animationId);
-      if (spectrumAnimationId) cancelAnimationFrame(spectrumAnimationId);
-      
-      // Disconnect the previous source if it exists, to prevent hearing multiple tracks
-      if (source) {
-        source.disconnect();
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
       }
+      if (spectrumAnimationId) {
+        cancelAnimationFrame(spectrumAnimationId);
+        spectrumAnimationId = null;
+      }
+      if (audioContext) audioContext.close();
       if (audioElement) { 
         audioElement.pause(); 
         audioElement.src = ''; 
       }
       audioElement = new Audio();
-      // Important for analyzing audio from radio streams
-      audioElement.crossOrigin = "anonymous";
       
       if (track.file) {
         audioElement.src = URL.createObjectURL(track.file);
@@ -488,10 +504,12 @@
           playPauseBtn.setAttribute('aria-label','Play');
       });
 
-      // Create a new source and connect it to the single, persistent analyser
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
       source = audioContext.createMediaElementSource(audioElement);
+      analyser = audioContext.createAnalyser();
       source.connect(analyser);
-      
+      analyser.connect(audioContext.destination);
+      analyser.fftSize = 256;
       bufferLength = analyser.frequencyBinCount;
       dataArray = new Uint8Array(bufferLength);
       timeData = new Float32Array(analyser.fftSize);
@@ -524,7 +542,8 @@
               file, 
               name: file.name.replace('.mp3',''), 
               artist: 'Local File', 
-              isDefault: false 
+              isDefault: false,
+              type: 'local'
             });
           }
         });
@@ -562,13 +581,10 @@
       updateButtons();
     }
 
-    // --- UPDATED PLAYTRACK FUNCTION WITH AUTOPLAY FIX ---
     function playTrack(index) {
         if (index < 0 || index >= playlist.length) return;
 
-        // This is now the most important part.
-        // This click gesture will resume the single, persistent AudioContext if it's suspended.
-        if (audioContext.state === 'suspended') {
+        if (audioContext && audioContext.state === 'suspended') {
             audioContext.resume();
         }
 
@@ -596,10 +612,7 @@
     
     function togglePlayPause() {
       if (!audioElement) return;
-      // This is a user gesture, so it's a great place to resume the context.
-      if (audioContext.state === 'suspended') {
-          audioContext.resume();
-      }
+      if (audioContext.state === 'suspended') audioContext.resume();
 
       if (audioElement.paused) {
         audioElement.play();
@@ -611,12 +624,17 @@
     // --- UI & VISUALIZATION LOGIC ---
     function renderPlaylist() {
         playlistContainer.innerHTML = '';
-        if (!playlist.length) {
-            playlistContainer.innerHTML = `<p class="text-gray-400 text-center">No songs in playlist.</p>`;
+        
+        const visible = playlist.filter(t => t.type === currentLayer);
+
+        if (!visible.length) {
+            playlistContainer.innerHTML = `<p class="text-gray-400 text-center">No songs in this list.</p>`;
             return;
         }
-        playlist.forEach((track, idx) => {
-            const isActive = idx === currentTrackIndex;
+
+        visible.forEach((track) => {
+            const realIndex = playlist.indexOf(track);
+            const isActive = realIndex === currentTrackIndex;
             const item = document.createElement('div');
             item.className = `p-3 rounded-lg cursor-pointer flex items-center transition-colors
                               ${isActive ? 'bg-indigo-600' : 'bg-gray-700 hover:bg-gray-600'}`;
@@ -641,11 +659,11 @@
               </button>`;
             item.addEventListener('click', e => {
               if (e.target.closest('.remove-btn')) return;
-              playTrack(idx);
+              playTrack(realIndex);
             });
             item.querySelector('.remove-btn').addEventListener('click', e => {
               e.stopPropagation();
-              removeTrack(idx);
+              removeTrack(realIndex);
             });
             playlistContainer.appendChild(item);
         });
@@ -895,13 +913,6 @@
       document.getElementById('appVersion').textContent = `v${APP_VERSION}`;
       document.getElementById('appCopyright').textContent = `© ${new Date().getFullYear()} AuraSync X. All rights reserved.`;
 
-      // --- SINGLE AUDIO CONTEXT INITIALIZATION ---
-      // Create the single, persistent AudioContext and Analyser node once.
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      analyser = audioContext.createAnalyser();
-      analyser.connect(audioContext.destination);
-      analyser.fftSize = 256;
-
       specCanvas = document.getElementById('spectrumCanvas');
       specCtx = specCanvas.getContext('2d');
       
@@ -921,6 +932,14 @@
       volumeSlider    = document.getElementById('volumeSlider');
       
       progressWrapper.addEventListener('click', seek);
+
+      const originalInitAudio = initAudio;
+      initAudio = function(track) {
+        originalInitAudio(track);
+        if (audioElement) {
+          audioElement.volume = volumeSlider.value;
+        }
+      };
 
       volumeSlider.addEventListener('input', e => {
         if (audioElement) {
@@ -953,7 +972,8 @@
           url,
           name:  decodeURIComponent(filename),    
           artist:'Remote URL',
-          isDefault: false
+          isDefault: false,
+          type: 'remote'
         });
 
         renderPlaylist();
@@ -995,7 +1015,8 @@
           url:  station.url_resolved || station.url,
           name: station.name || query,
           artist: station.country || 'Internet Radio',
-          isDefault: false
+          isDefault: false,
+          type: 'radio'
         });
 
         renderPlaylist();
@@ -1035,6 +1056,24 @@
 
       closePlaylistBtn.addEventListener('click', () => {
           setSidebarVisibility(false);
+      });
+
+      // === PAGINATION TABS ===
+      document.querySelectorAll('.playlist-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentLayer = btn.dataset.layer; // switch “page”
+
+          // UI toggle
+          document.querySelectorAll('.playlist-tab').forEach(b => {
+            const isThis = b === btn;
+            b.classList.toggle('bg-indigo-600',    isThis);
+            b.classList.toggle('font-semibold',     isThis);
+            b.classList.toggle('bg-gray-700',      !isThis);
+            b.classList.toggle('hover:bg-indigo-500', !isThis);
+          });
+
+          renderPlaylist(); // re-draw list
+        });
       });
 
       // === MODAL EVENT LISTENERS ===
