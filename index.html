@@ -103,7 +103,8 @@
         </div>
         <div class="flex flex-wrap justify-center sm:justify-end items-center gap-2">
            <!-- Playlist toggle button now here -->
-           <button id="togglePlaylistBtn" data-tippy-content="Toggle Playlist" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Toggle Playlist" aria-expanded="false" aria-controls="playlistPanel">
+           <!-- FIX: Updated default labels to be more descriptive -->
+           <button id="togglePlaylistBtn" data-tippy-content="Open Playlist" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Open Playlist" aria-expanded="false" aria-controls="playlistPanel">
               <svg id="playlistToggleIcon" class="w-6 h-6 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
            </button>
           <button id="accessibilityBtn" data-tippy-content="Accessibility" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Accessibility settings">
@@ -367,7 +368,7 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.6.1'; // Version with secure search fix
+    const APP_VERSION = '1.6.2'; // Version with accessibility fixes
     let currentLayer = 'local'; // default page
 
     const defaultTracks = [
@@ -588,8 +589,8 @@
         updateButtons();
     }
     
+    // FIX: Removed unused 'wasPlaying' variable
     function removeTrack(index) {
-      const wasPlaying = isPlaying;
       const removedCurrent = index === currentTrackIndex;
       
       playlist.splice(index, 1);
@@ -1129,16 +1130,23 @@
           e.target.setAttribute('aria-valuenow', e.target.value);
       });
 
+      // FIX: Centralized function to manage sidebar state, including labels and tooltips.
       function setSidebarVisibility(visible) {
         togglePlaylistBtn.setAttribute('aria-expanded', visible);
+        const tooltip = togglePlaylistBtn._tippy; // Access the Tippy instance
+
         if (visible) {
             playlistPanel.classList.remove('translate-x-full');
             mainContent.classList.add('lg:pr-80');
             playlistToggleIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />`;
+            togglePlaylistBtn.setAttribute('aria-label', 'Close Playlist');
+            if (tooltip) tooltip.setContent('Close Playlist');
         } else {
             playlistPanel.classList.add('translate-x-full');
             mainContent.classList.remove('lg:pr-80');
             playlistToggleIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>`;
+            togglePlaylistBtn.setAttribute('aria-label', 'Open Playlist');
+            if (tooltip) tooltip.setContent('Open Playlist');
         }
       }
 
@@ -1147,8 +1155,10 @@
           setSidebarVisibility(isCurrentlyHidden);
       });
 
+      // FIX: Return focus to the toggle button when the sidebar is closed.
       closePlaylistBtn.addEventListener('click', () => {
           setSidebarVisibility(false);
+          togglePlaylistBtn.focus();
       });
 
       // === PAGINATION TABS ===
@@ -1209,4 +1219,3 @@
   </script>
 </body>
 </html>
-
