@@ -367,7 +367,7 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.6.0'; // Version with UI layout fix
+    const APP_VERSION = '1.6.1'; // Version with secure search fix
     let currentLayer = 'local'; // default page
 
     const defaultTracks = [
@@ -379,9 +379,29 @@
     // === UPDATED: Recommended Stations List with corrected HTTPS streams ===
     const recommendedStations = [
       {
+        name: "CBC Radio One (Halifax)",
+        url: "https://cbc-r1-hfx.akacast.akamaistream.net/7/255/451501/v1/rc-connect.akacast.akamaistream.net/CBC_R1_HFX_P",
+        country: "Canada"
+      },
+      {
+        name: "CBC Music",
+        url: "https://cbc-r2-tor.akacast.akamaistream.net/7/383/451502/v1/rc-connect.akacast.akamaistream.net/CBC_R2_TOR_P",
+        country: "Canada"
+      },
+      {
+        name: "Radio Swiss Jazz",
+        url: "https://stream.srg-ssr.ch/m/rsj/aacp_96",
+        country: "Switzerland"
+      },
+      {
         name: "BBC World Service",
         url: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service",
         country: "UK"
+      },
+      {
+        name: "SomaFM: Groove Salad",
+        url: "https://ice4.somafm.com/groovesalad-128-mp3",
+        country: "USA"
       },
       {
         name: "NPR News",
@@ -1060,13 +1080,26 @@
       });
 
       /* ====== INTERNET-RADIO SUPPORT ====== */
+      // === FIX: This function now prioritizes secure (HTTPS) streams ===
       async function fetchStationByName(name) {
         const endpoint = `https://de1.api.radio-browser.info/json/stations/byname/${encodeURIComponent(name)}`;
         try {
           const response = await fetch(endpoint);
           if (!response.ok) throw new Error(`API responded with ${response.status}`);
           const stations  = await response.json();
+          
+          // Prioritize stations that are explicitly flagged as secure and have a resolved URL.
+          const secureStation = stations.find(s => s.url_resolved && s.secure);
+          if (secureStation) return secureStation;
+
+          // Fallback for streams that might be HTTPS but aren't flagged (less common).
+          const httpsStation = stations.find(s => s.url_resolved && s.url_resolved.startsWith('https://'));
+          if (httpsStation) return httpsStation;
+
+          // As a last resort, return the first available stream, but this might cause a mixed content warning.
+          // For a stricter approach, you could return null here.
           return stations.find(s => s.url_resolved) || null;
+
         } catch (err) {
           console.error('Radio-Browser API error:', err);
           showAlert('Could not connect to the radio station directory. Please try again later.', 'Network Error');
@@ -1196,4 +1229,3 @@
   </script>
 </body>
 </html>
-
