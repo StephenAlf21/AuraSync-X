@@ -264,7 +264,7 @@
             <input
               id="radioSearchInput"
               type="text"
-              placeholder="Search radio (e.g., Cat Country)"
+              placeholder="Search radio (e.g., Q104 Halifax)"
               class="flex-1 px-3 py-2 rounded-lg bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               aria-label="Radio station name"
             />
@@ -368,7 +368,7 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.6.2'; // Version with accessibility fixes
+    const APP_VERSION = '1.6.3'; // Version with improved radio search
     let currentLayer = 'local'; // default page
 
     const defaultTracks = [
@@ -1061,24 +1061,38 @@
       });
 
       /* ====== INTERNET-RADIO SUPPORT ====== */
-      // === FIX: This function now prioritizes secure (HTTPS) streams ===
-      async function fetchStationByName(name) {
-        const endpoint = `https://de1.api.radio-browser.info/json/stations/byname/${encodeURIComponent(name)}`;
+      // === FIX: This function now uses a more specific search query to find local stations ===
+      async function fetchStation(name) {
+        const endpoint = 'https://de1.api.radio-browser.info/json/stations/search';
         try {
-          const response = await fetch(endpoint);
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: name,
+              country: 'Canada',
+              state: 'Nova Scotia',
+              limit: 15, // Get a few results to find the best one
+              hidebroken: true // Filter out stations known to be broken
+            })
+          });
+
           if (!response.ok) throw new Error(`API responded with ${response.status}`);
-          const stations  = await response.json();
+          let stations = await response.json();
           
+          if (!stations || stations.length === 0) return null;
+
           // Prioritize stations that are explicitly flagged as secure and have a resolved URL.
           const secureStation = stations.find(s => s.url_resolved && s.secure);
           if (secureStation) return secureStation;
 
-          // Fallback for streams that might be HTTPS but aren't flagged (less common).
+          // Fallback for streams that might be HTTPS but aren't flagged.
           const httpsStation = stations.find(s => s.url_resolved && s.url_resolved.startsWith('https://'));
           if (httpsStation) return httpsStation;
 
-          // As a last resort, return the first available stream, but this might cause a mixed content warning.
-          // For a stricter approach, you could return null here.
+          // As a last resort, return the first available stream.
           return stations.find(s => s.url_resolved) || null;
 
         } catch (err) {
@@ -1088,27 +1102,32 @@
         }
       }
 
-      document.getElementById('radioSearchBtn').addEventListener('click', async () => {
+      const radioSearchBtn = document.getElementById('radioSearchBtn');
+      radioSearchBtn.addEventListener('click', async () => {
         const input = document.getElementById('radioSearchInput');
         const query = input.value.trim();
         if (!query) return;
 
-        const station = await fetchStationByName(query);
-        if (!station) {
-          showAlert(`No playable stream found for “${query}”. Please try a different name.`, 'Station Not Found');
-          return;
-        }
+        // Provide user feedback during search
+        radioSearchBtn.disabled = true;
+        radioSearchBtn.textContent = 'Searching...';
 
-        let url = station.url_resolved || station.url;
-        if (url.endsWith('.m3u8') && station.url) {
-          url = station.url;
+        const station = await fetchStation(query);
+        
+        // Restore button state
+        radioSearchBtn.disabled = false;
+        radioSearchBtn.textContent = 'Search';
+
+        if (!station) {
+          showAlert(`No playable stream found for “${query}” in Nova Scotia.`, 'Station Not Found');
+          return;
         }
 
         playlist.push({
           file: null,
-          url:  url,
+          url:  station.url_resolved,
           name: station.name || query,
-          artist: station.country || 'Internet Radio',
+          artist: station.state || station.country || 'Internet Radio',
           isDefault: false,
           type: 'radio'
         });
@@ -1116,6 +1135,8 @@
         renderPlaylist();
         updateButtons();
         input.value = '';
+        // Switch to radio tab to show the new station
+        document.querySelector('.playlist-tab[data-layer="radio"]').click();
       });
       /* ====== end internet-radio support ====== */
 
