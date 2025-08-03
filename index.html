@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+  if (location.protocol !== 'https:') {
+    // preserve host, path, query, hash
+    location.replace(
+      'https://' +
+      window.location.host +
+      window.location.pathname +
+      window.location.search +
+      window.location.hash
+    );
+  }
+</script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AuraSync X | Ultimate 3D Music Visualizer</title>
@@ -354,7 +366,7 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.5.6'; // Version updated for playback fixes
+    const APP_VERSION = '1.5.8'; // Version with corrected CBC stream URLs
     let currentLayer = 'local'; // default page
 
     const defaultTracks = [
@@ -363,22 +375,12 @@
       { name: "Arbeiter Canada v2", url: "assets/song3.mp3", artist: "zombies21", type: "local" }
     ];
 
-    // === UPDATED: Recommended Stations List with working HTTPS links ===
+    // === UPDATED: Recommended Stations List with corrected HTTPS streams ===
     const recommendedStations = [
-      {
-        name: "Radio Swiss Jazz",
-        url: "https://stream.srg-ssr.ch/m/rsj/aacp_96",
-        country: "Switzerland"
-      },
       {
         name: "BBC World Service",
         url: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service",
         country: "UK"
-      },
-      {
-        name: "SomaFM: Groove Salad",
-        url: "https://ice4.somafm.com/groovesalad-128-mp3",
-        country: "USA"
       },
       {
         name: "NPR News",
