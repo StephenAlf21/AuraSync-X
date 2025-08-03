@@ -1,18 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-  if (location.protocol !== 'https:') {
-    // preserve host, path, query, hash
-    location.replace(
-      'https://' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search +
-      window.location.hash
-    );
-  }
-</script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AuraSync X | Ultimate 3D Music Visualizer</title>
@@ -257,7 +245,7 @@
               aria-label="Add song by URL"
             >Add</button>
           </div>
-          <!-- --- NEW: Internet-radio search --- -->
+          <!-- --- Internet-radio search --- -->
           <div class="mt-4 flex space-x-2">
             <input
               id="radioSearchInput"
@@ -273,6 +261,13 @@
             >
               Search
             </button>
+          </div>
+          <!-- === NEW: Recommended Radio Stations === -->
+          <div id="recommendedStations" class="mt-4">
+            <h4 class="text-sm text-indigo-400 mb-2 font-semibold">Open Access Radio Stations</h4>
+            <ul class="space-y-1">
+              <!-- JS will populate this -->
+            </ul>
           </div>
       </div>
   </aside>
@@ -359,13 +354,37 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.5.4'; // Version updated for robust iOS audio handling
+    const APP_VERSION = '1.5.6'; // Version updated for playback fixes
     let currentLayer = 'local'; // default page
 
     const defaultTracks = [
       { name: "A Palestinian Protest Anthem", url: "assets/song1.mp3", artist: "zombies21", type: "local" },
       { name: "Common Flame of Deutschland", url: "assets/song2.mp3", artist: "zombies21", type: "local" },
       { name: "Arbeiter Canada v2", url: "assets/song3.mp3", artist: "zombies21", type: "local" }
+    ];
+
+    // === UPDATED: Recommended Stations List with working HTTPS links ===
+    const recommendedStations = [
+      {
+        name: "Radio Swiss Jazz",
+        url: "https://stream.srg-ssr.ch/m/rsj/aacp_96",
+        country: "Switzerland"
+      },
+      {
+        name: "BBC World Service",
+        url: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service",
+        country: "UK"
+      },
+      {
+        name: "SomaFM: Groove Salad",
+        url: "https://ice4.somafm.com/groovesalad-128-mp3",
+        country: "USA"
+      },
+      {
+        name: "NPR News",
+        url: "https://npr-ice.streamguys1.com/live.mp3",
+        country: "USA"
+      }
     ];
 
     let playlist = defaultTracks.map(t => ({
@@ -383,7 +402,7 @@
     let sensitivity = 5;
     let timeData;
 
-    // --- NEW: Persistent Audio API State ---
+    // --- Persistent Audio API State ---
     let audioContext, analyser, source;
     let bufferLength, dataArray;
 
@@ -485,7 +504,7 @@
         tunnel.rotation.x = Math.PI / 2;
     }
     
-    // --- NEW: Function to unlock audio context on user gesture ---
+    // --- Function to unlock audio context on user gesture ---
     function unlockAudio() {
         if (audioContext && audioContext.state === 'suspended') {
             audioContext.resume();
@@ -542,7 +561,6 @@
       audioElement.addEventListener('loadedmetadata', setDuration);
       audioElement.addEventListener('timeupdate', updateProgressBar);
       audioElement.addEventListener('ended', () => {
-          isPlaying = true;
           playNextTrack();
       });
     }
@@ -576,15 +594,18 @@
       if (removedCurrent) {
         if (audioElement) audioElement.pause();
         if (playlist.length > 0) {
-            currentTrackIndex = -1; 
+            // Play the next available track
             playTrack(index % playlist.length);
-            if (!wasPlaying) {
-              togglePlayPause();
-            }
         } else {
+            // No tracks left
             currentTrackIndex = -1;
             document.getElementById('trackTitle').textContent = 'No Track Loaded';
             document.getElementById('trackArtist').textContent = 'Add songs to the playlist to begin';
+            // Ensure player state is fully reset
+            isPlaying = false;
+            playPauseBtn.innerHTML = playIconSVG;
+            playPauseBtn.setAttribute('aria-label','Play');
+            updateProgressBar();
         }
       } else if (index < currentTrackIndex) {
           currentTrackIndex--;
@@ -594,33 +615,32 @@
       updateButtons();
     }
 
-    // --- REVISED: playTrack now unlocks audio first ---
+    // === REVISED: playTrack function with better error handling ===
     function playTrack(index) {
         if (index < 0 || index >= playlist.length) return;
         
-        unlockAudio(); // Ensure audio context is ready
+        unlockAudio(); // Ensure audio context is ready on any attempt to play
 
-        const trackShouldPlay = isPlaying || currentTrackIndex === -1;
         currentTrackIndex = index;
         const track = playlist[index];
         document.getElementById('trackTitle').textContent = track.name;
         document.getElementById('trackArtist').textContent = track.artist;
         
-        isPlaying = trackShouldPlay;
+        initAudio(track); // Sets up the new audio source and listeners
         
-        initAudio(track); 
-        
-        if (isPlaying) {
-            const playPromise = audioElement.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.error("Autoplay was prevented for track:", track.name, error);
-                    isPlaying = false;
-                    playPauseBtn.innerHTML = playIconSVG;
-                    playPauseBtn.setAttribute('aria-label','Play');
-                    showAlert("Playback was blocked by the browser. Click the play button to start.", "Playback Notice");
-                });
-            }
+        const playPromise = audioElement.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.error("Playback error for track:", track.name, error);
+                // The 'pause' event listener in initAudio will handle the UI update.
+                // We just need to show an alert for user-facing errors.
+                if (error.name === 'NotSupportedError') {
+                    showAlert(`Could not play "${track.name}". The stream might be offline or in an unsupported format.`, 'Playback Error');
+                } else if (error.name !== 'AbortError') {
+                    // This handles the case where autoplay is blocked initially.
+                    showAlert("Playback was blocked. Click the main play button to start.", "Playback Notice");
+                }
+            });
         }
         
         renderPlaylist();
@@ -636,7 +656,6 @@
         playTrack((currentTrackIndex - 1 + playlist.length) % playlist.length);
     }
     
-    // --- REVISED: togglePlayPause now unlocks audio ---
     function togglePlayPause() {
       if (!audioElement) return;
       
@@ -697,6 +716,36 @@
         });
     }
 
+    function renderRecommendedStations() {
+      const container = document.querySelector("#recommendedStations ul");
+      container.innerHTML = "";
+      recommendedStations.forEach(station => {
+        const li = document.createElement("li");
+        li.className = "flex items-center justify-between bg-gray-700 p-2 rounded hover:bg-indigo-600 cursor-pointer transition-colors";
+        li.innerHTML = `
+          <span>
+            <span class="font-semibold">${station.name}</span>
+            <span class="text-xs text-gray-400 ml-2">${station.country}</span>
+          </span>
+          <button class="add-radio-btn px-2 py-1 rounded bg-indigo-500 hover:bg-indigo-400 text-xs font-semibold">Add</button>
+        `;
+        li.querySelector(".add-radio-btn").addEventListener("click", (e) => {
+          playlist.push({
+            file: null,
+            url: station.url,
+            name: station.name,
+            artist: station.country,
+            isDefault: false,
+            type: "radio"
+          });
+          renderPlaylist();
+          updateButtons();
+          document.querySelector('.playlist-tab[data-layer="radio"]').click();
+        });
+        container.appendChild(li);
+      });
+    }
+
     function updateButtons() {
         const hasTracks = !!playlist.length;
         playPauseBtn.disabled = !hasTracks;
@@ -706,16 +755,15 @@
 
     // === HELPER FUNCTIONS FOR PLAYER CONTROLS ===
     function formatTime(sec) {
+      if (!isFinite(sec)) return 'Live';
       const m = Math.floor(sec / 60);
       const s = Math.floor(sec % 60).toString().padStart(2, '0');
       return `${m}:${s}`;
     }
     
     function setDuration() {
-      if (audioElement && audioElement.duration && isFinite(audioElement.duration)) {
+      if (audioElement) {
         durationEl.textContent = formatTime(audioElement.duration);
-      } else {
-        durationEl.textContent = 'Live'; // For streams
       }
     }
     
@@ -729,8 +777,14 @@
     }
 
     function updateProgressBar() {
-        if (!audioElement || !audioElement.duration || !isFinite(audioElement.duration)) { 
-            progressBar.style.width = '100%'; // Full bar for live streams
+        if (!audioElement) {
+            progressBar.style.width = '0%';
+            currentTimeEl.textContent = '0:00';
+            durationEl.textContent = '0:00';
+            return;
+        }
+        if (!isFinite(audioElement.duration)) { 
+            progressBar.style.width = '100%';
             currentTimeEl.textContent = 'Live';
             return; 
         }
@@ -951,6 +1005,7 @@
       resizeSpectrumCanvas();
       
       renderPlaylist();
+      renderRecommendedStations(); 
       updateButtons();
 
       currentTimeEl   = document.getElementById('currentTime');
@@ -1003,13 +1058,11 @@
 
       /* ====== INTERNET-RADIO SUPPORT ====== */
       async function fetchStationByName(name) {
-        // Use a more reliable, DNS-round-robin endpoint for Radio-Browser
         const endpoint = `https://de1.api.radio-browser.info/json/stations/byname/${encodeURIComponent(name)}`;
         try {
           const response = await fetch(endpoint);
           if (!response.ok) throw new Error(`API responded with ${response.status}`);
           const stations  = await response.json();
-          // Radio-Browser can return several streams; pick the first that has a resolved, playable URL
           return stations.find(s => s.url_resolved) || null;
         } catch (err) {
           console.error('Radio-Browser API error:', err);
@@ -1029,18 +1082,14 @@
           return;
         }
 
-        // --- HLS FIX for iOS/Safari ---
         let url = station.url_resolved || station.url;
-        // if it’s an HLS playlist, fall back to the raw MP3 mount
         if (url.endsWith('.m3u8') && station.url) {
           url = station.url;
         }
-        // --- END HLS FIX ---
 
-        // Append to playlist
         playlist.push({
           file: null,
-          url:  url, // Use the corrected URL
+          url:  url,
           name: station.name || query,
           artist: station.country || 'Internet Radio',
           isDefault: false,
@@ -1089,9 +1138,8 @@
       // === PAGINATION TABS ===
       document.querySelectorAll('.playlist-tab').forEach(btn => {
         btn.addEventListener('click', () => {
-          currentLayer = btn.dataset.layer; // switch “page”
+          currentLayer = btn.dataset.layer; 
 
-          // UI toggle
           document.querySelectorAll('.playlist-tab').forEach(b => {
             const isThis = b === btn;
             b.classList.toggle('bg-indigo-600',    isThis);
@@ -1100,7 +1148,7 @@
             b.classList.toggle('hover:bg-indigo-500', !isThis);
           });
 
-          renderPlaylist(); // re-draw list
+          renderPlaylist();
         });
       });
 
@@ -1145,4 +1193,3 @@
   </script>
 </body>
 </html>
-
