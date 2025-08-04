@@ -4,18 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Main Menu</title>
-  <!-- Tailwind for quick styling -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
 
   <div id="mainMenu" class="space-y-4 text-center">
     <h1 class="text-4xl font-bold">Choose an App</h1>
-    <button onclick="loadApp('Test2.html')"
+    <button onclick="loadApp('MusicPlayer.html')"
             class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-lg">
       3D Music Visualizer
     </button>
-    <button onclick="loadApp('index.html')"
+    <button onclick="loadApp('VideoPlayer.html')"
             class="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg">
       MP4 Video Player
     </button>
@@ -29,9 +28,7 @@
 
   <script>
     function loadApp(path) {
-      // Hide the menu
       document.getElementById('mainMenu').classList.add('hidden');
-      // Show and point the iframe at the chosen app
       const iframe = document.getElementById('appFrame');
       iframe.src = path;
       iframe.classList.remove('hidden');
