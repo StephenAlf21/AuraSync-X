@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Main Menu</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FAVICONS -->
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="alternate icon" href="favicon.png" />
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
 
-  <!-- Main menu -->
-  <div id="mainMenu" class="flex flex-col items-center justify-center min-h-screen space-y-4">
+  <div id="mainMenu" class="space-y-4 text-center">
     <h1 class="text-4xl font-bold">Choose an App</h1>
     <button onclick="loadApp('MusicPlayer.html')"
             class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-lg">
@@ -23,47 +23,18 @@
     </button>
   </div>
 
-  <!-- Nav bar shown once an app is loaded -->
-  <div id="navBar"
-       class="hidden fixed top-0 left-0 w-full bg-gray-800 p-4 flex justify-center gap-4 z-50">
-    <button onclick="loadApp('MusicPlayer.html')"
-            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg">
-      Music Visualizer
-    </button>
-    <button onclick="loadApp('VideoPlayer.html')"
-            class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg">
-      Video Player
-    </button>
-    <button onclick="showMenu()"
-            class="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg">
-      Menu
-    </button>
-  </div>
-
-  <!-- App container -->
   <iframe id="appFrame"
           src=""
-          class="hidden absolute inset-0 border-0"
+          class="hidden absolute inset-0 w-full h-full border-0"
           allowfullscreen>
   </iframe>
 
   <script>
-    // Load one of the apps into the iframe and show the nav bar
     function loadApp(path) {
       document.getElementById('mainMenu').classList.add('hidden');
-      document.getElementById('navBar').classList.remove('hidden');
       const iframe = document.getElementById('appFrame');
       iframe.src = path;
       iframe.classList.remove('hidden');
-    }
-
-    // Hide iframe/nav and go back to the main menu
-    function showMenu() {
-      const iframe = document.getElementById('appFrame');
-      iframe.classList.add('hidden');
-      iframe.src = '';
-      document.getElementById('navBar').classList.add('hidden');
-      document.getElementById('mainMenu').classList.remove('hidden');
     }
   </script>
 
