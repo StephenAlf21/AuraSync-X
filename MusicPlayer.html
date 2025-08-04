@@ -26,9 +26,10 @@
 </head>
 <body class="text-white min-h-screen bg-gray-900">
   
-  <!-- Main content area now scrolls vertically if content overflows -->
-  <div id="mainContent" class="overflow-y-auto transition-all duration-300 ease-in-out h-screen">
-    <div class="container mx-auto px-2 sm:px-4 py-6">
+  <!-- 1) Make this full-screen flex-column: -->
+  <div id="mainContent" class="h-screen flex flex-col overflow-hidden">
+    <!-- 2) Container becomes flex-col and flex-1: -->
+    <div class="container mx-auto px-2 sm:px-4 py-6 flex flex-col flex-1">
       <header class="flex flex-col md:flex-row justify-between items-center mb-6">
         <div class="flex items-center mb-4 md:mb-0">
           <div class="bg-indigo-600 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
@@ -67,9 +68,10 @@
         </div>
       </header>
 
-      <!-- Main layout container -->
-      <main class="flex flex-col lg:flex-row gap-6">
-        <!-- Visualizer section -->
+      <!-- 3) Main flex-row on lg, growing, and stretching items: -->
+      <main class="flex flex-col lg:flex-row lg:items-stretch gap-6 flex-1 overflow-hidden">
+        
+        <!-- visualizer section -->
         <section class="lg:flex-1 flex flex-col rounded-xl overflow-hidden border border-gray-700 glow">
           <!-- Visualizer and spectrum container -->
           <div class="flex flex-1 min-h-0">
@@ -111,7 +113,8 @@
             </div>
           </div>
         </section>
-
+        
+        <!-- control panel -->
         <aside class="w-full lg:w-80 bg-gray-800 bg-opacity-50 rounded-xl p-6 control-panel border border-gray-700">
           <h2 class="text-xl font-bold mb-4 text-indigo-400">Visualization Controls</h2>
           <div class="mb-6">
@@ -152,6 +155,7 @@
             <span id="decibelValue" class="text-sm text-gray-300 mt-1 block">–∞ dB</span>
           </div>
         </aside>
+        
       </main>
     </div>
   </div>
@@ -290,7 +294,7 @@
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.6.5'; // Version with restored default tracks
+    const APP_VERSION = '1.6.8'; // Version with full-height flex layout
     let currentLayer = 'local';
 
     // --- FIX: Restored defaultTracks array ---
@@ -334,7 +338,7 @@
     const nextBtn = document.getElementById('nextBtn');
     const prevBtn = document.getElementById('prevBtn');
     const fileInput = document.getElementById('fileInput');
-    let currentTimeEl, durationEl, progressWrapper, progressBar, volumeSlider;
+    let currentTimeEl, durationEl, progressWrapper, progressBar, volumeSlider, speedSlider, sensitivitySlider;
     let specCanvas, specCtx, decibelBar, decibelValue;
 
     const playIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
@@ -441,6 +445,11 @@
         if (source) { source.disconnect(); }
       }
       audioElement = new Audio();
+
+      // BUG FIX: Apply volume from slider every time a new track is initialized
+      if (volumeSlider) {
+        audioElement.volume = Number(volumeSlider.value);
+      }
       
       if (track.file) {
         audioElement.src = URL.createObjectURL(track.file);
@@ -813,9 +822,20 @@
       progressWrapper = document.getElementById('progressWrapper');
       progressBar = document.getElementById('progressBar');
       volumeSlider = document.getElementById('volumeSlider');
+      // BUG FIX: Get slider elements
+      speedSlider = document.getElementById('speed');
+      sensitivitySlider = document.getElementById('sensitivity');
       
       progressWrapper.addEventListener('click', seek);
       volumeSlider.addEventListener('input', e => { if (audioElement) { audioElement.volume = e.target.value; } });
+      
+      // BUG FIX: Wire up visualization control sliders
+      speedSlider.addEventListener('input', e => {
+        animationSpeed = Number(e.target.value);
+      });
+      sensitivitySlider.addEventListener('input', e => {
+        sensitivity = Number(e.target.value);
+      });
 
       document.querySelectorAll('.viz-type').forEach(btn => btn.addEventListener('click', () => switchVisualization(btn.dataset.viz)));
       document.querySelectorAll('.color-scheme').forEach(btn => btn.addEventListener('click', () => switchColorScheme(btn.dataset.scheme)));
