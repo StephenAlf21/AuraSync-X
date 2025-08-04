@@ -2,21 +2,14 @@
 <html lang="en">
 <head>
     <script>
-  if (location.protocol !== 'https:') {
-    // preserve host, path, query, hash
-    location.replace(
-      'https://' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search +
-      window.location.hash
-    );
-  }
-</script>
+      if (location.protocol !== 'https:') {
+        location.replace('https://' + window.location.host + window.location.pathname + window.location.search + window.location.hash);
+      }
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AuraSync X | Ultimate 3D Music Visualizer</title>
-    <!-- Favicon Links -->
+    <!-- Favicon Links Restored -->
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="shortcut icon" href="favicon.png" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -44,27 +37,19 @@
       .high-contrast {
         filter: contrast(1.5);
       }
-      /* Hide default file input */
-      #fileInput {
-        display: none;
-      }
-      /* Hide focus outlines but keep them for keyboard users */
+      #fileInput { display: none; }
       button:focus-visible, input:focus-visible {
         outline: 2px solid #6366f1;
         outline-offset: 2px;
       }
-      /* Scrollbar for playlist */
-      #playlistContainer::-webkit-scrollbar {
-        width: 6px;
-      }
+      #playlistContainer::-webkit-scrollbar { width: 6px; }
       #playlistContainer::-webkit-scrollbar-thumb {
         background-color: rgba(99, 102, 241, 0.7);
         border-radius: 3px;
       }
-      /* Tippy.js theme customization */
       .tippy-box[data-theme~='material'] {
         font-family: 'Orbitron', monospace;
-        background-color: #2d3748; /* gray-800 */
+        background-color: #2d3748;
       }
       .tippy-box[data-theme~='material'][data-placement^='top'] > .tippy-arrow::before {
         border-top-color: #2d3748;
@@ -72,24 +57,19 @@
       .tippy-box[data-theme~='material'][data-placement^='bottom'] > .tippy-arrow::before {
         border-bottom-color: #2d3748;
       }
-      /* --- FIX: Prevent tooltip overflow on small screens --- */
-      .tippy-box {
-        max-width: 90vw;
-      }
-      /* Basic styles for the new alert modal */
+      .tippy-box { max-width: 90vw; }
       .modal-card {
-        background-color: #2d3748; /* gray-800 */
-        border-radius: 0.75rem; /* rounded-xl */
-        padding: 1.5rem; /* p-6 */
+        background-color: #2d3748;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
         width: 90%;
         max-width: 500px;
-        border: 1px solid #4a5568; /* border-gray-700 */
+        border: 1px solid #4a5568;
       }
     </style>
 </head>
 <body class="text-white min-h-screen flex flex-col lg:flex-row">
   
-  <!-- Main Content Area with padding transition -->
   <div id="mainContent" class="flex-1 overflow-y-auto transition-all duration-300 ease-in-out scroll-pb-20">
     <div class="container mx-auto px-2 sm:px-4 py-6">
       <header class="flex flex-col md:flex-row justify-between items-center mb-6">
@@ -102,8 +82,6 @@
           <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">AuraSync X</h1>
         </div>
         <div class="flex flex-wrap justify-center sm:justify-end items-center gap-2">
-           <!-- Playlist toggle button now here -->
-           <!-- FIX: Updated default labels to be more descriptive -->
            <button id="togglePlaylistBtn" data-tippy-content="Open Playlist" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Open Playlist" aria-expanded="false" aria-controls="playlistPanel">
               <svg id="playlistToggleIcon" class="w-6 h-6 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
            </button>
@@ -118,22 +96,17 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </button>
-          <!-- Version Number -->
           <span id="appVersion" class="ml-3 text-gray-400 text-sm"></span>
         </div>
       </header>
 
       <main class="flex flex-col lg:flex-row gap-6">
-        <!-- === UPDATED VISUALIZER & CONTROLS WRAPPER === -->
         <section class="flex-1 flex flex-col rounded-xl overflow-hidden border border-gray-700 glow">
-          <!-- Visualizer Area -->
           <div class="flex">
             <div id="visualizer" class="flex-1 bg-black aspect-[16/9]"></div>
-            <!-- === FIX: Removed h-full to allow flexbox to control height reliably === -->
             <canvas id="spectrumCanvas" class="hidden sm:block w-1/5 bg-black"></canvas>
           </div>
           
-          <!-- Player Controls Area -->
           <div class="bg-gray-800 bg-opacity-80 p-4 flex items-center border-t border-gray-700">
             <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16 flex items-center justify-center" aria-hidden="true">
                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
@@ -211,7 +184,6 @@
     </div>
   </div>
 
-  <!-- Playlist Panel (Sidebar) -->
   <aside id="playlistPanel" class="fixed top-0 right-0 h-full w-full sm:w-80 bg-gray-800 transform transition-transform duration-300 ease-in-out translate-x-full flex flex-col border-l border-gray-700 z-40 pb-12">
       <div class="flex items-center justify-between p-4 border-b border-gray-700">
           <h2 class="text-xl font-bold text-indigo-400">Playlist</h2>
@@ -219,24 +191,12 @@
               <svg class="w-6 h-6 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
           </button>
       </div>
-      <!-- Layer-selector (acts like pagination) -->
       <div id="playlistTabs" class="flex justify-around gap-1 px-4 pt-2">
-        <button data-layer="local"
-                class="playlist-tab flex-1 py-1.5 text-xs sm:text-sm rounded-lg bg-indigo-600 font-semibold">
-          Local
-        </button>
-        <button data-layer="remote"
-                class="playlist-tab flex-1 py-1.5 text-xs sm:text-sm rounded-lg bg-gray-700 hover:bg-indigo-500">
-          URL
-        </button>
-        <button data-layer="radio"
-                class="playlist-tab flex-1 py-1.5 text-xs sm:text-sm rounded-lg bg-gray-700 hover:bg-indigo-500">
-          Radio
-        </button>
+        <button data-layer="local" class="playlist-tab flex-1 py-1.5 text-xs sm:text-sm rounded-lg bg-indigo-600 font-semibold">Local</button>
+        <button data-layer="remote" class="playlist-tab flex-1 py-1.5 text-xs sm:text-sm rounded-lg bg-gray-700 hover:bg-indigo-500">URL</button>
+        <button data-layer="radio" class="playlist-tab flex-1 py-1.5 text-xs sm:text-sm rounded-lg bg-gray-700 hover:bg-indigo-500">Radio</button>
       </div>
-      <div id="playlistContainer" class="flex-1 overflow-y-auto p-4 space-y-2">
-          <!-- Playlist items will be injected here -->
-      </div>
+      <div id="playlistContainer" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
       <div class="p-4 border-t border-gray-700">
           <input type="file" id="fileInput" accept=".mp3" multiple />
           <label for="fileInput" data-tippy-content="Add MP3 files from your computer" class="w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center justify-center cursor-pointer" aria-label="Add new track">
@@ -246,70 +206,38 @@
             Add Songs
           </label>
           <div class="mt-4 flex space-x-2">
-            <input
-              id="urlInput"
-              type="url"
-              placeholder="https://example.com/song.mp3"
-              class="flex-1 px-3 py-2 rounded-lg bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              aria-label="Song URL"
-            />
-            <button
-              id="addUrlBtn"
-              class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors text-sm"
-              aria-label="Add song by URL"
-            >Add</button>
+            <input id="urlInput" type="url" placeholder="https://example.com/song.mp3" class="flex-1 px-3 py-2 rounded-lg bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Song URL"/>
+            <button id="addUrlBtn" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors text-sm" aria-label="Add song by URL">Add</button>
           </div>
-          <!-- --- Internet-radio search --- -->
           <div class="mt-4 flex space-x-2">
-            <input
-              id="radioSearchInput"
-              type="text"
-              placeholder="Search radio (e.g., Q104 Halifax)"
-              class="flex-1 px-3 py-2 rounded-lg bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              aria-label="Radio station name"
-            />
-            <button
-              id="radioSearchBtn"
-              class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors text-sm"
-              aria-label="Add internet radio station"
-            >
-              Search
-            </button>
+            <input id="radioSearchInput" type="text" placeholder="Search radio (e.g., Q104 Halifax)" class="flex-1 px-3 py-2 rounded-lg bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Radio station name"/>
+            <button id="radioSearchBtn" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors text-sm" aria-label="Add internet radio station">Search</button>
           </div>
-          <!-- === NEW: Recommended Radio Stations === -->
           <div id="recommendedStations" class="mt-4">
             <h4 class="text-sm text-indigo-400 mb-2 font-semibold">Open Access Radio Stations</h4>
-            <ul class="space-y-1">
-              <!-- JS will populate this -->
-            </ul>
+            <ul class="space-y-1"></ul>
           </div>
       </div>
   </aside>
 
-  <!-- === ALERT MODAL (for URL validation etc.) === -->
   <div id="alertModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="alertTitle">
     <div class="modal-card">
       <div class="flex justify-between items-center mb-4">
         <h2 id="alertTitle" class="text-xl font-bold text-yellow-400">Notice</h2>
         <button id="closeAlert" class="p-2 rounded-full hover:bg-gray-700 transition-colors" aria-label="Close">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
       </div>
       <p id="alertMessage" class="text-gray-200">Please enter a direct link to an audio file (e.g., .mp3, .ogg, .wav).</p>
     </div>
   </div>
 
-  <!-- === ACCESSIBILITY MODAL === -->
   <div id="accessibilityModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="accessibilityTitle">
     <div class="modal-card">
       <div class="flex justify-between items-center mb-6">
         <h2 id="accessibilityTitle" class="text-2xl font-bold text-indigo-400">Accessibility Settings</h2>
         <button id="closeAccessibility" class="p-2 rounded-full hover:bg-gray-700 transition-colors" aria-label="Close">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
       </div>
       <div class="space-y-6">
@@ -339,15 +267,12 @@
     </div>
   </div>
 
-  <!-- === HELP MODAL === -->
   <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
     <div class="modal-card">
         <div class="flex justify-between items-center mb-6">
             <h2 id="helpTitle" class="text-2xl font-bold text-indigo-400">How to Use AuraSync X</h2>
             <button id="closeHelp" class="p-2 rounded-full hover:bg-gray-700 transition-colors" aria-label="Close">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
         </div>
         <div class="space-y-4 text-gray-200">
@@ -361,36 +286,28 @@
     </div>
   </div>
 
-  <!-- Copyright Footer -->
   <footer class="fixed bottom-0 left-0 w-full bg-gray-900 bg-opacity-75 text-center py-2 z-50">
     <span id="appCopyright" class="text-gray-400 text-xs"></span>
   </footer>
 
   <script>
     // --- GLOBAL STATE & VARIABLES ---
-    const APP_VERSION = '1.6.3'; // Version with improved radio search
-    let currentLayer = 'local'; // default page
+    const APP_VERSION = '1.6.5'; // Version with restored default tracks
+    let currentLayer = 'local';
 
+    // --- FIX: Restored defaultTracks array ---
     const defaultTracks = [
       { name: "A Palestinian Protest Anthem", url: "assets/song1.mp3", artist: "zombies21", type: "local" },
       { name: "Common Flame of Deutschland", url: "assets/song2.mp3", artist: "zombies21", type: "local" },
       { name: "Arbeiter Canada v2", url: "assets/song3.mp3", artist: "zombies21", type: "local" }
     ];
 
-    // === UPDATED: Recommended Stations List with corrected HTTPS streams ===
     const recommendedStations = [
-      {
-        name: "BBC World Service",
-        url: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service",
-        country: "UK"
-      },
-      {
-        name: "NPR News",
-        url: "https://npr-ice.streamguys1.com/live.mp3",
-        country: "USA"
-      }
+      { name: "BBC World Service", url: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service", country: "UK" },
+      { name: "NPR News", url: "https://npr-ice.streamguys1.com/live.mp3", country: "USA" }
     ];
 
+    // --- FIX: Initialize playlist with the default tracks ---
     let playlist = defaultTracks.map(t => ({
       file: null, url: t.url, name: t.name, artist: t.artist, isDefault: true, type: t.type
     }));
@@ -406,11 +323,9 @@
     let sensitivity = 5;
     let timeData;
 
-    // --- Persistent Audio API State ---
     let audioContext, analyser, source;
     let bufferLength, dataArray;
 
-    // --- DOM ELEMENTS ---
     const mainContent = document.getElementById('mainContent');
     const playlistPanel = document.getElementById('playlistPanel');
     const playlistContainer = document.getElementById('playlistContainer');
@@ -424,18 +339,14 @@
     let currentTimeEl, durationEl, progressWrapper, progressBar, volumeSlider;
     let specCanvas, specCtx, decibelBar, decibelValue;
 
-
-    // --- ICONS ---
     const playIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
     const pauseIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
 
-    // --- COLOR SCHEMES ---
     const colorSchemes = {
       blue: [0x4facfe, 0x00f2fe], purple: [0x9d50bb, 0x6e48aa],
       fire: [0xff9a9e, 0xfad0c4], nature: [0x0ba360, 0x3cba92]
     };
     
-    // --- CANVAS RESIZE FUNCTION ---
     function resizeSpectrumCanvas() {
       if (specCanvas) {
         const dpr = window.devicePixelRatio || 1;
@@ -445,13 +356,10 @@
       }
     }
 
-    // --- INITIALIZATION FUNCTIONS ---
     function initThreeJS() {
       const container = document.getElementById('visualizer');
       if (!container) return;
-      while (container.firstChild) {
-        container.removeChild(container.firstChild);
-      }
+      while (container.firstChild) { container.removeChild(container.firstChild); }
       const width = container.clientWidth; const height = container.clientHeight;
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0x000000);
@@ -508,11 +416,8 @@
         tunnel.rotation.x = Math.PI / 2;
     }
     
-    // --- Function to unlock audio context on user gesture ---
     function unlockAudio() {
-        if (audioContext && audioContext.state === 'suspended') {
-            audioContext.resume();
-        }
+        if (audioContext && audioContext.state === 'suspended') { audioContext.resume(); }
         if (!audioContext) {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             analyser = audioContext.createAnalyser();
@@ -524,7 +429,6 @@
         }
     }
 
-    // --- REVISED: initAudio now uses the persistent audio context ---
     function initAudio(track) {
       if (animationId) cancelAnimationFrame(animationId);
       if (spectrumAnimationId) cancelAnimationFrame(spectrumAnimationId);
@@ -532,9 +436,7 @@
       if (audioElement) { 
         audioElement.pause(); 
         audioElement.src = ''; 
-        if (source) {
-            source.disconnect(); // Disconnect previous source
-        }
+        if (source) { source.disconnect(); }
       }
       audioElement = new Audio();
       
@@ -558,18 +460,14 @@
           playPauseBtn.setAttribute('aria-label','Play');
       });
 
-      // Create a new source for the new audio element and connect to the *global* analyser
       source = audioContext.createMediaElementSource(audioElement);
       source.connect(analyser);
 
       audioElement.addEventListener('loadedmetadata', setDuration);
       audioElement.addEventListener('timeupdate', updateProgressBar);
-      audioElement.addEventListener('ended', () => {
-          playNextTrack();
-      });
+      audioElement.addEventListener('ended', playNextTrack);
     }
 
-    // --- PLAYLIST & PLAYBACK LOGIC ---
     function handleFiles(files) {
         Array.from(files).forEach(file => {
           if (file.type === 'audio/mpeg') {
@@ -589,23 +487,18 @@
         updateButtons();
     }
     
-    // FIX: Removed unused 'wasPlaying' variable
     function removeTrack(index) {
       const removedCurrent = index === currentTrackIndex;
-      
       playlist.splice(index, 1);
 
       if (removedCurrent) {
         if (audioElement) audioElement.pause();
         if (playlist.length > 0) {
-            // Play the next available track
             playTrack(index % playlist.length);
         } else {
-            // No tracks left
             currentTrackIndex = -1;
             document.getElementById('trackTitle').textContent = 'No Track Loaded';
             document.getElementById('trackArtist').textContent = 'Add songs to the playlist to begin';
-            // Ensure player state is fully reset
             isPlaying = false;
             playPauseBtn.innerHTML = playIconSVG;
             playPauseBtn.setAttribute('aria-label','Play');
@@ -614,39 +507,29 @@
       } else if (index < currentTrackIndex) {
           currentTrackIndex--;
       }
-
       renderPlaylist();
       updateButtons();
     }
 
-    // === REVISED: playTrack function with better error handling ===
     function playTrack(index) {
         if (index < 0 || index >= playlist.length) return;
-        
-        unlockAudio(); // Ensure audio context is ready on any attempt to play
-
+        unlockAudio(); 
         currentTrackIndex = index;
         const track = playlist[index];
         document.getElementById('trackTitle').textContent = track.name;
         document.getElementById('trackArtist').textContent = track.artist;
-        
-        initAudio(track); // Sets up the new audio source and listeners
-        
+        initAudio(track);
         const playPromise = audioElement.play();
         if (playPromise !== undefined) {
             playPromise.catch(error => {
                 console.error("Playback error for track:", track.name, error);
-                // The 'pause' event listener in initAudio will handle the UI update.
-                // We just need to show an alert for user-facing errors.
                 if (error.name === 'NotSupportedError') {
                     showAlert(`Could not play "${track.name}". The stream might be offline or in an unsupported format.`, 'Playback Error');
                 } else if (error.name !== 'AbortError') {
-                    // This handles the case where autoplay is blocked initially.
                     showAlert("Playback was blocked. Click the main play button to start.", "Playback Notice");
                 }
             });
         }
-        
         renderPlaylist();
         updateButtons();
     }
@@ -662,52 +545,29 @@
     
     function togglePlayPause() {
       if (!audioElement) return;
-      
-      unlockAudio(); // Ensure audio context is ready
-
-      if (audioElement.paused) {
-        audioElement.play();
-      } else {
-        audioElement.pause();
-      }
+      unlockAudio(); 
+      if (audioElement.paused) { audioElement.play(); } else { audioElement.pause(); }
     }
 
-    // --- UI & VISUALIZATION LOGIC ---
     function renderPlaylist() {
         playlistContainer.innerHTML = '';
-        
         const visible = playlist.filter(t => t.type === currentLayer);
-
         if (!visible.length) {
             playlistContainer.innerHTML = `<p class="text-gray-400 text-center">No songs in this list.</p>`;
             return;
         }
-
         visible.forEach((track) => {
             const realIndex = playlist.indexOf(track);
             const isActive = realIndex === currentTrackIndex;
             const item = document.createElement('div');
-            item.className = `p-3 rounded-lg cursor-pointer flex items-center transition-colors
-                              ${isActive ? 'bg-indigo-600' : 'bg-gray-700 hover:bg-gray-600'}`;
+            item.className = `p-3 rounded-lg cursor-pointer flex items-center transition-colors ${isActive ? 'bg-indigo-600' : 'bg-gray-700 hover:bg-gray-600'}`;
             item.innerHTML = `
-              <svg class="w-5 h-5 mr-3 ${isActive ? 'text-white' : 'text-indigo-400'}"
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2
-                         1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2
-                         1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
-              </svg>
+              <svg class="w-5 h-5 mr-3 ${isActive ? 'text-white' : 'text-indigo-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
               <div class="flex-1 min-w-0">
                 <div class="font-bold truncate">${track.name}</div>
                 <div class="text-sm text-gray-400 truncate">${track.artist}</div>
               </div>
-              <button class="remove-btn ml-2 p-1 rounded-full hover:bg-red-500 hover:text-white transition-colors"
-                      aria-label="Remove track">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-              </button>`;
+              <button class="remove-btn ml-2 p-1 rounded-full hover:bg-red-500 hover:text-white transition-colors" aria-label="Remove track"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>`;
             item.addEventListener('click', e => {
               if (e.target.closest('.remove-btn')) return;
               playTrack(realIndex);
@@ -726,22 +586,9 @@
       recommendedStations.forEach(station => {
         const li = document.createElement("li");
         li.className = "flex items-center justify-between bg-gray-700 p-2 rounded hover:bg-indigo-600 cursor-pointer transition-colors";
-        li.innerHTML = `
-          <span>
-            <span class="font-semibold">${station.name}</span>
-            <span class="text-xs text-gray-400 ml-2">${station.country}</span>
-          </span>
-          <button class="add-radio-btn px-2 py-1 rounded bg-indigo-500 hover:bg-indigo-400 text-xs font-semibold">Add</button>
-        `;
+        li.innerHTML = `<span><span class="font-semibold">${station.name}</span><span class="text-xs text-gray-400 ml-2">${station.country}</span></span><button class="add-radio-btn px-2 py-1 rounded bg-indigo-500 hover:bg-indigo-400 text-xs font-semibold">Add</button>`;
         li.querySelector(".add-radio-btn").addEventListener("click", (e) => {
-          playlist.push({
-            file: null,
-            url: station.url,
-            name: station.name,
-            artist: station.country,
-            isDefault: false,
-            type: "radio"
-          });
+          playlist.push({ file: null, url: station.url, name: station.name, artist: station.country, isDefault: false, type: "radio" });
           renderPlaylist();
           updateButtons();
           document.querySelector('.playlist-tab[data-layer="radio"]').click();
@@ -757,7 +604,6 @@
         prevBtn.disabled = !hasTracks;
     }
 
-    // === HELPER FUNCTIONS FOR PLAYER CONTROLS ===
     function formatTime(sec) {
       if (!isFinite(sec)) return 'Live';
       const m = Math.floor(sec / 60);
@@ -765,32 +611,26 @@
       return `${m}:${s}`;
     }
     
-    function setDuration() {
-      if (audioElement) {
-        durationEl.textContent = formatTime(audioElement.duration);
-      }
-    }
+    function setDuration() { if (audioElement) { durationEl.textContent = formatTime(audioElement.duration); } }
     
     function seek(e) {
       if (!audioElement || !audioElement.duration || !isFinite(audioElement.duration)) return;
       const rect = progressWrapper.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
-      const newTime = (clickX / rect.width) * audioElement.duration;
-      audioElement.currentTime = newTime;
+      audioElement.currentTime = (clickX / rect.width) * audioElement.duration;
       updateProgressBar();
     }
 
     function updateProgressBar() {
-        if (!audioElement) {
+        if (!audioElement || !isFinite(audioElement.duration)) {
             progressBar.style.width = '0%';
             currentTimeEl.textContent = '0:00';
             durationEl.textContent = '0:00';
+            if (audioElement && !isFinite(audioElement.duration)) {
+              progressBar.style.width = '100%';
+              currentTimeEl.textContent = 'Live';
+            }
             return;
-        }
-        if (!isFinite(audioElement.duration)) { 
-            progressBar.style.width = '100%';
-            currentTimeEl.textContent = 'Live';
-            return; 
         }
         const pct = (audioElement.currentTime / audioElement.duration) * 100;
         progressBar.style.width = pct + '%';
@@ -801,10 +641,8 @@
       if (!isPlaying) return;
       animationId = requestAnimationFrame(animate);
       if (!analyser) return;
-      
       analyser.getByteFrequencyData(dataArray);
       updateDecibelMeter();
-
       let sum = 0;
       for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
       const avgFrequency = sum / bufferLength;
@@ -824,14 +662,11 @@
     function drawSpectrum() {
       if (!isPlaying) return;
       spectrumAnimationId = requestAnimationFrame(drawSpectrum);
-      
       const unscaledWidth = specCanvas.clientWidth;
       const unscaledHeight = specCanvas.clientHeight;
-
       specCtx.clearRect(0, 0, unscaledWidth, unscaledHeight);
       specCtx.fillStyle = '#000';
       specCtx.fillRect(0, 0, unscaledWidth, unscaledHeight);
-
       const barWidth = unscaledWidth / bufferLength;
       let x = 0;
       for (let i = 0; i < bufferLength; i++) {
@@ -850,10 +685,8 @@
       for (const amplitude of timeData) { sumSquares += amplitude * amplitude; }
       const rms = Math.sqrt(sumSquares / timeData.length);
       const db = rms > 0 ? 20 * Math.log10(rms) : -100;
-      const displayDb = Math.max(db, -100).toFixed(1);
-      decibelValue.textContent = `${displayDb} dB`;
-      const pct = Math.min(rms * 100, 100);
-      decibelBar.style.width = `${pct}%`;
+      decibelValue.textContent = `${Math.max(db, -100).toFixed(1)} dB`;
+      decibelBar.style.width = `${Math.min(rms * 100, 100)}%`;
     }
 
     function updateParticles(avgFrequency, speed) {
@@ -934,58 +767,23 @@
         if (!audioElement) return;
         const newVolume = Math.min(1, Math.max(0, audioElement.volume + delta));
         audioElement.volume = newVolume;
-        if (volumeSlider) {
-          volumeSlider.value = newVolume;
-        }
+        if (volumeSlider) { volumeSlider.value = newVolume; }
     }
 
-    // --- MODAL ANIMATION HELPERS ---
     function openModal(modalId) {
       const modal = document.getElementById(modalId);
       const card  = modal.querySelector('.modal-card');
-
       modal.classList.remove('hidden');
       modal.style.opacity = 0;
       card.style.opacity  = 0;
       card.style.transform = 'translateY(50px)';
-
-      anime.timeline()
-        .add({
-          targets: modal,
-          opacity: [0,1],
-          duration: 200,
-          easing: 'linear'
-        })
-        .add({
-          targets: card,
-          translateY: [50,0],
-          opacity: [0,1],
-          duration: 300,
-          easing: 'easeOutQuad'
-        }, '-=150');
+      anime.timeline().add({ targets: modal, opacity: [0,1], duration: 200, easing: 'linear' }).add({ targets: card, translateY: [50,0], opacity: [0,1], duration: 300, easing: 'easeOutQuad' }, '-=150');
     }
 
     function closeModal(modalId) {
       const modal = document.getElementById(modalId);
       const card  = modal.querySelector('.modal-card');
-
-      anime.timeline()
-        .add({
-          targets: card,
-          translateY: [0,50],
-          opacity: [1,0],
-          duration: 200,
-          easing: 'easeInQuad'
-        })
-        .add({
-          targets: modal,
-          opacity: [1,0],
-          duration: 150,
-          easing: 'linear'
-        }, '-=150')
-        .finished.then(() => {
-          modal.classList.add('hidden');
-        });
+      anime.timeline().add({ targets: card, translateY: [0,50], opacity: [1,0], duration: 200, easing: 'easeInQuad' }).add({ targets: modal, opacity: [1,0], duration: 150, easing: 'linear' }, '-=150').finished.then(() => { modal.classList.add('hidden'); });
     }
     
     function showAlert(message, title = 'Notice') {
@@ -994,37 +792,29 @@
       openModal('alertModal');
     }
 
-    // --- EVENT LISTENERS ---
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('appVersion').textContent = `v${APP_VERSION}`;
       document.getElementById('appCopyright').textContent = `© ${new Date().getFullYear()} AuraSync X. All rights reserved.`;
 
       specCanvas = document.getElementById('spectrumCanvas');
       specCtx = specCanvas.getContext('2d');
-      
-      decibelBar   = document.getElementById('decibelBar');
+      decibelBar = document.getElementById('decibelBar');
       decibelValue = document.getElementById('decibelValue');
 
       initThreeJS();
       resizeSpectrumCanvas();
-      
       renderPlaylist();
       renderRecommendedStations(); 
       updateButtons();
 
-      currentTimeEl   = document.getElementById('currentTime');
-      durationEl      = document.getElementById('durationTime');
+      currentTimeEl = document.getElementById('currentTime');
+      durationEl = document.getElementById('durationTime');
       progressWrapper = document.getElementById('progressWrapper');
-      progressBar     = document.getElementById('progressBar');
-      volumeSlider    = document.getElementById('volumeSlider');
+      progressBar = document.getElementById('progressBar');
+      volumeSlider = document.getElementById('volumeSlider');
       
       progressWrapper.addEventListener('click', seek);
-
-      volumeSlider.addEventListener('input', e => {
-        if (audioElement) {
-          audioElement.volume = e.target.value;
-        }
-      });
+      volumeSlider.addEventListener('input', e => { if (audioElement) { audioElement.volume = e.target.value; } });
 
       document.querySelectorAll('.viz-type').forEach(btn => btn.addEventListener('click', () => switchVisualization(btn.dataset.viz)));
       document.querySelectorAll('.color-scheme').forEach(btn => btn.addEventListener('click', () => switchColorScheme(btn.dataset.scheme)));
@@ -1035,66 +825,32 @@
 
       const urlInput  = document.getElementById('urlInput');
       const addUrlBtn = document.getElementById('addUrlBtn');
-
       addUrlBtn.addEventListener('click', () => {
         const url = urlInput.value.trim();
         if (!url) return;
-
         if (!/^https?:\/\/.+\.(mp3|ogg|wav)(\?.*)?$/i.test(url)) {
           showAlert('Please enter a direct link to an audio file (mp3/ogg/wav).', 'Invalid URL');
           return;
         }
-
         const filename = url.split('/').pop().split('?')[0];
-        playlist.push({
-          file:   null,
-          url,
-          name:  decodeURIComponent(filename),    
-          artist:'Remote URL',
-          isDefault: false,
-          type: 'remote'
-        });
-
+        playlist.push({ file: null, url, name: decodeURIComponent(filename), artist:'Remote URL', isDefault: false, type: 'remote' });
         renderPlaylist();
         updateButtons();
         urlInput.value = '';
       });
 
-      /* ====== INTERNET-RADIO SUPPORT ====== */
-      // === FIX: This function now uses a more specific search query to find local stations ===
       async function fetchStation(name) {
         const endpoint = 'https://de1.api.radio-browser.info/json/stations/search';
         try {
           const response = await fetch(endpoint, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              name: name,
-              country: 'Canada',
-              state: 'Nova Scotia',
-              limit: 15, // Get a few results to find the best one
-              hidebroken: true // Filter out stations known to be broken
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name, country: 'Canada', state: 'Nova Scotia', limit: 15, hidebroken: true })
           });
-
           if (!response.ok) throw new Error(`API responded with ${response.status}`);
           let stations = await response.json();
-          
           if (!stations || stations.length === 0) return null;
-
-          // Prioritize stations that are explicitly flagged as secure and have a resolved URL.
-          const secureStation = stations.find(s => s.url_resolved && s.secure);
-          if (secureStation) return secureStation;
-
-          // Fallback for streams that might be HTTPS but aren't flagged.
-          const httpsStation = stations.find(s => s.url_resolved && s.url_resolved.startsWith('https://'));
-          if (httpsStation) return httpsStation;
-
-          // As a last resort, return the first available stream.
-          return stations.find(s => s.url_resolved) || null;
-
+          return stations.find(s => s.url_resolved && s.url_resolved.startsWith('https://')) || stations.find(s => s.url_resolved) || null;
         } catch (err) {
           console.error('Radio-Browser API error:', err);
           showAlert('Could not connect to the radio station directory. Please try again later.', 'Network Error');
@@ -1107,55 +863,25 @@
         const input = document.getElementById('radioSearchInput');
         const query = input.value.trim();
         if (!query) return;
-
-        // Provide user feedback during search
         radioSearchBtn.disabled = true;
         radioSearchBtn.textContent = 'Searching...';
-
         const station = await fetchStation(query);
-        
-        // Restore button state
         radioSearchBtn.disabled = false;
         radioSearchBtn.textContent = 'Search';
-
         if (!station) {
           showAlert(`No playable stream found for “${query}” in Nova Scotia.`, 'Station Not Found');
           return;
         }
-
-        playlist.push({
-          file: null,
-          url:  station.url_resolved,
-          name: station.name || query,
-          artist: station.state || station.country || 'Internet Radio',
-          isDefault: false,
-          type: 'radio'
-        });
-
+        playlist.push({ file: null, url: station.url_resolved, name: station.name || query, artist: station.state || station.country || 'Internet Radio', isDefault: false, type: 'radio' });
         renderPlaylist();
         updateButtons();
         input.value = '';
-        // Switch to radio tab to show the new station
         document.querySelector('.playlist-tab[data-layer="radio"]').click();
       });
-      /* ====== end internet-radio support ====== */
 
-      const speedSlider = document.getElementById('speed');
-      const sensitivitySlider = document.getElementById('sensitivity');
-      speedSlider.addEventListener('input', (e) => {
-          animationSpeed = e.target.value;
-          e.target.setAttribute('aria-valuenow', e.target.value);
-      });
-      sensitivitySlider.addEventListener('input', (e) => {
-          sensitivity = e.target.value;
-          e.target.setAttribute('aria-valuenow', e.target.value);
-      });
-
-      // FIX: Centralized function to manage sidebar state, including labels and tooltips.
       function setSidebarVisibility(visible) {
         togglePlaylistBtn.setAttribute('aria-expanded', visible);
-        const tooltip = togglePlaylistBtn._tippy; // Access the Tippy instance
-
+        const tooltip = togglePlaylistBtn._tippy;
         if (visible) {
             playlistPanel.classList.remove('translate-x-full');
             mainContent.classList.add('lg:pr-80');
@@ -1176,30 +902,25 @@
           setSidebarVisibility(isCurrentlyHidden);
       });
 
-      // FIX: Return focus to the toggle button when the sidebar is closed.
       closePlaylistBtn.addEventListener('click', () => {
           setSidebarVisibility(false);
           togglePlaylistBtn.focus();
       });
 
-      // === PAGINATION TABS ===
       document.querySelectorAll('.playlist-tab').forEach(btn => {
         btn.addEventListener('click', () => {
           currentLayer = btn.dataset.layer; 
-
           document.querySelectorAll('.playlist-tab').forEach(b => {
             const isThis = b === btn;
-            b.classList.toggle('bg-indigo-600',    isThis);
-            b.classList.toggle('font-semibold',     isThis);
-            b.classList.toggle('bg-gray-700',      !isThis);
+            b.classList.toggle('bg-indigo-600', isThis);
+            b.classList.toggle('font-semibold', isThis);
+            b.classList.toggle('bg-gray-700', !isThis);
             b.classList.toggle('hover:bg-indigo-500', !isThis);
           });
-
           renderPlaylist();
         });
       });
 
-      // === MODAL EVENT LISTENERS ===
       document.getElementById('accessibilityBtn').addEventListener('click', () => openModal('accessibilityModal'));
       document.getElementById('closeAccessibility').addEventListener('click', () => closeModal('accessibilityModal'));
       document.getElementById('helpBtn').addEventListener('click', () => openModal('helpModal'));
@@ -1230,7 +951,6 @@
         easing: 'easeOutQuad' 
       });
       
-      // --- Initialize Tippy.js Tooltips ---
       tippy('[data-tippy-content]', {
         theme: 'material',
         animation: 'shift-away-subtle',
