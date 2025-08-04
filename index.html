@@ -23,18 +23,15 @@
     </button>
   </div>
 
-  <iframe id="appFrame"
-          src=""
-          class="hidden absolute inset-0 w-full h-full border-0"
-          allowfullscreen>
-  </iframe>
+  <!-- The iframe is no longer needed with this approach and has been removed. -->
 
   <script>
+    // --- FIX IMPLEMENTED ---
+    // This function now directly navigates the browser to the selected app's page.
+    // This is a simpler and more reliable method than using an iframe.
+    // The browser will load the new page, and its <title> will be displayed automatically.
     function loadApp(path) {
-      document.getElementById('mainMenu').classList.add('hidden');
-      const iframe = document.getElementById('appFrame');
-      iframe.src = path;
-      iframe.classList.remove('hidden');
+      window.location.href = path;
     }
   </script>
 
