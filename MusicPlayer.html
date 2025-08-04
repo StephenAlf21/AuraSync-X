@@ -72,9 +72,9 @@
         <!-- Visualizer section -->
         <section class="lg:flex-1 flex flex-col rounded-xl overflow-hidden border border-gray-700 glow">
           <!-- Visualizer and spectrum container -->
-          <div class="flex">
-            <!-- Visualizer with aspect ratio to control its height -->
-            <div id="visualizer" class="flex-1 bg-black aspect-[16/9]"></div>
+          <div class="flex flex-1 min-h-0">
+            <!-- Visualizer with aspect ratio removed to fill space -->
+            <div id="visualizer" class="flex-1 bg-black"></div>
             <!-- Spectrum canvas -->
             <canvas id="spectrumCanvas" class="hidden sm:block w-1/5 bg-black"></canvas>
           </div>
