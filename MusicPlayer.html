@@ -72,13 +72,12 @@
         <!-- Visualizer section -->
         <section class="lg:flex-1 flex flex-col rounded-xl overflow-hidden border border-gray-700 glow">
           <!-- Visualizer and spectrum container -->
-          <div class="flex">
-            <!-- Visualizer with aspect ratio to control its height -->
-            <div id="visualizer" class="flex-1 bg-black aspect-[16/9]"></div>
+          <div class="flex flex-1 min-h-0">
+            <!-- Visualizer with aspect ratio removed to fill space -->
+            <div id="visualizer" class="flex-1 bg-black"></div>
             <!-- Spectrum canvas -->
             <canvas id="spectrumCanvas" class="hidden sm:block w-1/5 bg-black"></canvas>
           </div>
-          
           <!-- Player controls, fixed at the bottom of the section -->
           <div class="bg-gray-800 bg-opacity-80 p-4 flex items-center border-t border-gray-700">
             <div class="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16 flex items-center justify-center" aria-hidden="true">
@@ -442,7 +441,7 @@
         if (source) { source.disconnect(); }
       }
       audioElement = new Audio();
-      
+
       // BUG FIX: Apply volume from slider every time a new track is initialized
       if (volumeSlider) {
         audioElement.volume = Number(volumeSlider.value);
