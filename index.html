@@ -1,39 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Main Menu</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FAVICONS -->
-  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <link rel="alternate icon" href="favicon.png" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraSync X - Your Personal Media Hub</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Shared Styles (for fonts and glow effect) -->
+    <link rel="stylesheet" href="shared-style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon.png" />
+
+    <style>
+        /* * Animated Gradient Background 
+         * This creates a subtle, slow-moving gradient that adds a dynamic feel
+         * to the page, matching the vibe of the 3D music visualizer.
+         */
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            /* Fallback solid color */
+            background-color: #111827; 
+            /* The gradient itself, using colors that complement the app's theme */
+            background: linear-gradient(-45deg, #111827, #1f2937, #374151, #4f46e5);
+            /* This makes the gradient large so the movement is slow and subtle */
+            background-size: 400% 400%;
+            /* Apply the animation */
+            animation: gradient-animation 18s ease infinite;
+        }
+
+        /* Additional transition for a smoother hover effect on cards */
+        .app-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .app-card:hover {
+            transform: translateY(-8px);
+        }
+    </style>
 </head>
-<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
+<body class="text-white flex flex-col items-center justify-center min-h-screen p-4 font-[Orbitron]">
 
-  <div id="mainMenu" class="space-y-4 text-center">
-    <h1 class="text-4xl font-bold">Choose an App</h1>
-    <button onclick="loadApp('MusicPlayer.html')"
-            class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-lg">
-      3D Music Visualizer
-    </button>
-    <button onclick="loadApp('VideoPlayer.html')"
-            class="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg">
-      MP4 Video Player
-    </button>
-  </div>
+    <!-- Main container for all content -->
+    <div class="w-full max-w-4xl mx-auto text-center">
 
-  <!-- The iframe is no longer needed with this approach and has been removed. -->
+        <!-- 
+          * Hero Section
+          * A welcoming and branded introduction to the application suite.
+          * The headline is bigger and more descriptive, and the subheading
+          * clearly explains the purpose of the apps.
+        -->
+        <header class="my-16">
+            <img src="favicon.svg" class="w-20 h-20 mx-auto mb-6" alt="AuraSync X Logo" />
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-black bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text text-transparent mb-4 drop-shadow-lg">
+                Welcome to AuraSync X
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto">
+                Visualize your music with a stunning 3D particle engine, or kick back with our sleek video player. Your personal media hub awaits.
+            </p>
+        </header>
 
-  <script>
-    // --- FIX IMPLEMENTED ---
-    // This function now directly navigates the browser to the selected app's page.
-    // This is a simpler and more reliable method than using an iframe.
-    // The browser will load the new page, and its <title> will be displayed automatically.
-    function loadApp(path) {
-      window.location.href = path;
-    }
-  </script>
+        <!-- 
+          * App Selection Cards
+          * The cards now have a more prominent glow effect and a subtle lift on hover.
+        -->
+        <main class="grid gap-8 md:gap-12 grid-cols-1 md:grid-cols-2">
+            <!-- Music Player Card -->
+            <div onclick="loadApp('MusicPlayer.html')" class="app-card cursor-pointer p-8 rounded-2xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-indigo-500 transition shadow-xl glow flex flex-col items-center">
+                <svg class="w-16 h-16 mb-4 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V7.5A2.25 2.25 0 0013.5 6h-3a2.25 2.25 0 00-2.25 2.25v1.5m1.5 6.75l-2.25-2.25a2.25 2.25 0 00-3.182 0l-2.25 2.25a2.25 2.25 0 000 3.182l2.25 2.25a2.25 2.25 0 003.182 0l2.25-2.25a2.25 2.25 0 000-3.182z" />
+                </svg>
+                <h2 class="text-2xl font-bold text-white">3D Music Visualizer</h2>
+                <p class="text-gray-400 mt-2">Upload songs, stream radio, and customize stunning real-time visuals.</p>
+            </div>
 
+            <!-- Video Player Card -->
+            <div onclick="loadApp('VideoPlayer.html')" class="app-card cursor-pointer p-8 rounded-2xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-blue-500 transition shadow-xl glow flex flex-col items-center">
+                 <svg class="w-16 h-16 mb-4 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
+                </svg>
+                <h2 class="text-2xl font-bold text-white">MP4 Video Player</h2>
+                <p class="text-gray-400 mt-2">Play local or remote videos with a clean interface and playlist support.</p>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-16 mb-8 text-gray-500 text-sm">
+            &copy; 2025 AuraSync X &mdash; zombies21
+        </footer>
+    </div>
+
+    <script>
+        /**
+         * Navigates to the selected application page.
+         * @param {string} url - The URL of the app to load.
+         */
+        function loadApp(url) {
+            window.location.href = url;
+        }
+    </script>
 </body>
 </html>
