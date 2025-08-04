@@ -174,6 +174,20 @@
             </div>
 
             <hr class="border-gray-600 my-6">
+            
+            <!-- Donation Button (PayPal example, replace with your link) -->
+            <div class="my-4 text-center">
+              <h3 class="text-lg font-semibold text-white mb-4">Support This Project</h3>
+              <p class="text-sm text-gray-400 mb-4">If you enjoy this app, please consider a small donation to help keep it running!</p>
+              <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" 
+                 target="_blank"
+                 class="inline-flex items-center gap-3 px-6 py-3 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-black font-semibold shadow-lg transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8.326 4.002c.907-2.654 2.96-2.652 3.865 0l.533 1.562c.14.41.516.69.946.69h1.64c2.756.002 3.756 1.998 1.998 3.757l-1.32 1.32c-.328.328-.482.79-.404 1.24l.45 2.58c.905 2.654-1.15 3.974-3.198 2.5l-1.92-1.37c-.37-.265-.85-.265-1.22 0l-1.92 1.37c-2.048 1.474-4.103.154-3.198-2.5l.45-2.58c.078-.45-.076-.912-.404-1.24l-1.32-1.32C.71 6.252 1.71 4.256 4.466 4.254h1.64c.43 0 .806-.28.946-.69l.534-1.562z"/></svg>
+                Donate with PayPal
+              </a>
+            </div>
+
+            <hr class="border-gray-600 my-6">
 
             <div class="text-center">
                 <h3 class="text-lg font-semibold text-white mb-4">Connect with the Developer</h3>
@@ -197,15 +211,29 @@
         </div>
     </div>
 
-    <script>
-        /**
-         * Navigates to the selected application page.
-         * @param {string} url - The URL of the app to load.
-         */
-        function loadApp(url) {
-            window.location.href = url;
-        }
+    <!-- Paywall Modal -->
+    <div id="paywallModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
+      <div class="modal-card text-center">
+        <h2 class="text-2xl font-bold mb-4 text-indigo-400">Support AuraSync X</h2>
+        <p class="mb-4 text-gray-300">
+          To help us keep this project alive, consider making a small donation! You can continue for free, but every bit helps cover costs.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mb-6">
+          <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" 
+             target="_blank"
+             class="px-6 py-3 bg-yellow-400 text-black rounded-lg font-semibold shadow hover:bg-yellow-300 transition">
+            Donate
+          </a>
+          <button id="continueFree" class="px-6 py-3 bg-gray-700 text-white rounded-lg font-semibold shadow hover:bg-gray-600 transition">
+            Continue for Free
+          </button>
+        </div>
+        <p class="text-xs text-gray-400">You can always donate later via the Settings & About panel.</p>
+      </div>
+    </div>
 
+
+    <script>
         // --- Settings Modal Logic ---
         const settingsBtn = document.getElementById('settingsBtn');
         const settingsModal = document.getElementById('settingsModal');
@@ -234,6 +262,35 @@
                 closeSettingsModal();
             }
         });
+
+        // --- Paywall Logic ---
+        let paywallShown = false;
+        
+        function showPaywall(targetUrl) {
+            const paywallModal = document.getElementById('paywallModal');
+            paywallModal.classList.remove('hidden');
+            // Save URL for redirect after "Continue for Free"
+            paywallModal.dataset.targetUrl = targetUrl;
+        }
+        
+        document.getElementById('continueFree').onclick = function() {
+            const paywallModal = document.getElementById('paywallModal');
+            const targetUrl = paywallModal.dataset.targetUrl;
+            paywallModal.classList.add('hidden');
+            window.location.href = targetUrl;
+        };
+        
+        /**
+         * Override loadApp to show paywall first
+         */
+        function loadApp(url) {
+            if (!paywallShown) {
+                showPaywall(url);
+                paywallShown = true;
+            } else {
+                window.location.href = url;
+            }
+        }
     </script>
 </body>
 </html>
