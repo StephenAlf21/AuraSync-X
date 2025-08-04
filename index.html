@@ -16,6 +16,11 @@
     <link rel="alternate icon" href="favicon.png" />
 
     <style>
+        /* Add smooth scrolling behavior for anchor links */
+        html {
+            scroll-behavior: smooth;
+        }
+
         /* * Animated Gradient Background 
          * This creates a subtle, slow-moving gradient that adds a dynamic feel
          * to the page, matching the vibe of the 3D music visualizer.
@@ -57,18 +62,16 @@
         }
     </style>
 </head>
-<body class="text-white flex flex-col items-center justify-center min-h-screen p-4 font-[Orbitron]">
+<body class="text-white flex flex-col items-center min-h-screen p-4 font-[Orbitron]">
 
     <!-- Main container for all content -->
-    <div class="w-full max-w-4xl mx-auto text-center flex flex-col flex-grow justify-center">
+    <div class="w-full max-w-5xl mx-auto text-center">
 
         <!-- 
           * Hero Section
-          * A welcoming and branded introduction to the application suite.
-          * The headline is bigger and more descriptive, and the subheading
-          * clearly explains the purpose of the apps.
+          * Now includes a primary "Get Started" button and a secondary link to see features.
         -->
-        <header class="my-16">
+        <header class="my-16 md:my-24 min-h-[60vh] flex flex-col justify-center">
             <img src="favicon.svg" class="w-20 h-20 mx-auto mb-6" alt="AuraSync X Logo" />
             <h1 class="text-4xl sm:text-5xl md:text-6xl font-black bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text text-transparent mb-4 drop-shadow-lg">
                 Welcome to AuraSync X
@@ -76,32 +79,72 @@
             <p class="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto">
                 Visualize your music with a stunning 3D particle engine, or kick back with our sleek video player. Your personal media hub awaits.
             </p>
+            <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#apps" class="w-full sm:w-auto text-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-500 transition-colors px-8 py-3 rounded-lg shadow-lg">
+                    Open Apps
+                </a>
+                <a href="#features" class="text-gray-400 hover:text-white transition-colors">
+                    See Features &darr;
+                </a>
+            </div>
         </header>
 
         <!-- 
-          * App Selection Cards
-          * The cards now have a more prominent glow effect and a subtle lift on hover.
+          * App Selection Cards Section
+          * ID added to allow for smooth scrolling from the CTA button.
         -->
-        <main class="grid gap-8 md:gap-12 grid-cols-1 md:grid-cols-2">
-            <!-- Music Player Card -->
-            <div onclick="loadApp('MusicPlayer.html')" class="app-card cursor-pointer p-8 rounded-2xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-indigo-500 transition shadow-xl glow flex flex-col items-center">
-                <svg class="w-16 h-16 mb-4 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V7.5A2.25 2.25 0 0013.5 6h-3a2.25 2.25 0 00-2.25 2.25v1.5m1.5 6.75l-2.25-2.25a2.25 2.25 0 00-3.182 0l-2.25 2.25a2.25 2.25 0 000 3.182l2.25 2.25a2.25 2.25 0 003.182 0l2.25-2.25a2.25 2.25 0 000-3.182z" />
-                </svg>
-                <h2 class="text-2xl font-bold text-white">3D Music Visualizer</h2>
-                <p class="text-gray-400 mt-2">Upload songs, stream radio, and customize stunning real-time visuals.</p>
-            </div>
+        <main id="apps" class="my-16 md:my-24">
+            <h2 class="text-3xl font-bold mb-12">Choose Your Experience</h2>
+            <div class="grid gap-8 md:gap-12 grid-cols-1 md:grid-cols-2">
+                <!-- Music Player Card -->
+                <div onclick="loadApp('MusicPlayer.html')" class="app-card cursor-pointer p-8 rounded-2xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-indigo-500 transition shadow-xl glow flex flex-col items-center">
+                    <svg class="w-16 h-16 mb-4 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V7.5A2.25 2.25 0 0013.5 6h-3a2.25 2.25 0 00-2.25 2.25v1.5m1.5 6.75l-2.25-2.25a2.25 2.25 0 00-3.182 0l-2.25 2.25a2.25 2.25 0 000 3.182l2.25 2.25a2.25 2.25 0 003.182 0l2.25-2.25a2.25 2.25 0 000-3.182z" />
+                    </svg>
+                    <h2 class="text-2xl font-bold text-white">3D Music Visualizer</h2>
+                    <p class="text-gray-400 mt-2">Upload songs, stream radio, and customize stunning real-time visuals.</p>
+                </div>
 
-            <!-- Video Player Card -->
-            <div onclick="loadApp('VideoPlayer.html')" class="app-card cursor-pointer p-8 rounded-2xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-blue-500 transition shadow-xl glow flex flex-col items-center">
-                 <svg class="w-16 h-16 mb-4 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
-                </svg>
-                <h2 class="text-2xl font-bold text-white">MP4 Video Player</h2>
-                <p class="text-gray-400 mt-2">Play local or remote videos with a clean interface and playlist support.</p>
+                <!-- Video Player Card -->
+                <div onclick="loadApp('VideoPlayer.html')" class="app-card cursor-pointer p-8 rounded-2xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-blue-500 transition shadow-xl glow flex flex-col items-center">
+                     <svg class="w-16 h-16 mb-4 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
+                    </svg>
+                    <h2 class="text-2xl font-bold text-white">MP4 Video Player</h2>
+                    <p class="text-gray-400 mt-2">Play local or remote videos with a clean interface and playlist support.</p>
+                </div>
             </div>
         </main>
+        
+        <!-- 
+          * Features & Benefits Section
+          * This new section highlights the key value propositions of the app suite.
+        -->
+        <section id="features" class="my-16 md:my-24">
+            <h2 class="text-3xl font-bold mb-12">Why AuraSync X?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1: Immersive Visuals -->
+                <div class="bg-gray-800/30 p-6 rounded-lg">
+                    <svg class="w-12 h-12 mx-auto mb-4 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 12l4.179 2.25M6.429 9.75L12 12.75l5.571-3M6.429 9.75L12 6.75l5.571 3m0 0l4.179 2.25L12 18.75l-4.179-2.25m11.142 0l4.179 2.25L17.571 12l-5.571 3.001" /></svg>
+                    <h3 class="text-xl font-semibold mb-2">Immersive Visuals</h3>
+                    <p class="text-gray-400">Experience a real-time, GPU-accelerated 3D particle and wave engine.</p>
+                </div>
+                <!-- Feature 2: Seamless Playback -->
+                <div class="bg-gray-800/30 p-6 rounded-lg">
+                    <svg class="w-12 h-12 mx-auto mb-4 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" /></svg>
+                    <h3 class="text-xl font-semibold mb-2">Seamless Playback</h3>
+                    <p class="text-gray-400">Supports local files (MP3, MP4) and remote audio/video streams.</p>
+                </div>
+                <!-- Feature 3: Full Customization -->
+                <div class="bg-gray-800/30 p-6 rounded-lg">
+                    <svg class="w-12 h-12 mx-auto mb-4 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.998 15.998 0 013.388-1.62" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                    <h3 class="text-xl font-semibold mb-2">Full Customization</h3>
+                    <p class="text-gray-400">Choose from multiple visualization types and color schemes on the fly.</p>
+                </div>
+            </div>
+        </section>
+
     </div>
 
     <!-- Footer -->
