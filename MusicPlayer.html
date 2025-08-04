@@ -289,10 +289,6 @@
     </div>
   </div>
 
-  <footer class="fixed bottom-0 left-0 w-full bg-gray-900 bg-opacity-75 text-center py-2 z-50">
-    <span id="appCopyright" class="text-gray-400 text-xs"></span>
-  </footer>
-
   <script>
     // --- GLOBAL STATE & VARIABLES ---
     const APP_VERSION = '1.6.5'; // Version with restored default tracks
@@ -801,8 +797,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('appVersion').textContent = `v${APP_VERSION}`;
-      document.getElementById('appCopyright').textContent = `© ${new Date().getFullYear()} AuraSync X. All rights reserved.`;
-
+      
       specCanvas = document.getElementById('spectrumCanvas');
       specCtx = specCanvas.getContext('2d');
       decibelBar = document.getElementById('decibelBar');
