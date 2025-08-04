@@ -13,50 +13,8 @@
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/material.css">
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
-
-    <style>
-      /* Using a modern, clean font */
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
-      body {
-        font-family: 'Inter', sans-serif;
-        background-color: #111827; /* gray-900 */
-      }
-      /* Custom glow effect for the video player */
-      .glow {
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); /* blue-500 */
-      }
-      /* Custom styles for the playlist scrollbar */
-      #playlistContainer::-webkit-scrollbar {
-        width: 8px;
-      }
-      #playlistContainer::-webkit-scrollbar-thumb {
-        background-color: rgba(59, 130, 246, 0.7);
-        border-radius: 4px;
-      }
-      /* Custom styles for the modal dialogs */
-      .modal-card {
-        background-color: #1f2937; /* gray-800 */
-        border-radius: 0.75rem; /* rounded-xl */
-        padding: 1.5rem; /* p-6 */
-        width: 90%;
-        max-width: 500px;
-        border: 1px solid #374151; /* border-gray-700 */
-      }
-      /* Hide the default file input */
-      #fileInput {
-        display: none;
-      }
-      /* Custom focus styles for better accessibility */
-      button:focus-visible, input:focus-visible {
-        outline: 2px solid #3b82f6; /* blue-500 */
-        outline-offset: 2px;
-      }
-      /* Ensure video element is responsive */
-      video {
-        max-width: 100%;
-        height: auto;
-      }
-    </style>
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="shared-style.css">
 </head>
 <body class="text-white min-h-screen flex flex-col lg:flex-row">
 
@@ -65,12 +23,12 @@
     <div class="container mx-auto px-4 py-6">
       <header class="flex flex-col md:flex-row justify-between items-center mb-6">
         <div class="flex items-center mb-4 md:mb-0">
-          <div class="bg-blue-600 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+          <div class="bg-indigo-600 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
           </div>
-          <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">MP4 Video Player</h1>
+          <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">MP4 Video Player</h1>
         </div>
         <div class="flex items-center gap-2">
            <button id="togglePlaylistBtn" data-tippy-content="Toggle Playlist" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Toggle Playlist" aria-expanded="false" aria-controls="playlistPanel">
@@ -109,27 +67,27 @@
               <p class="text-sm text-gray-400" id="trackArtist">Add videos to the playlist to begin</p>
             </div>
             <div class="flex items-center space-x-2 sm:space-x-4 flex-1 ml-4">
-              <button id="prevBtn" data-tippy-content="Previous" class="p-2 rounded-full bg-gray-700 hover:bg-blue-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Previous track" disabled>
+              <button id="prevBtn" data-tippy-content="Previous" class="p-2 rounded-full bg-gray-700 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Previous track" disabled>
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M8.445 14.832A1 1 0 0010 14.168V5.832a1 1 0 00-1.555-.832L3.11 9.168a1 1 0 000 1.664l5.335 4.001zM11 5v10a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664L12.555 4.168A1 1 0 0011 5z"></path></svg>
               </button>
-              <button id="playPauseBtn" data-tippy-content="Play / Pause" class="p-3 rounded-full bg-blue-600 hover:bg-blue-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Play or pause" disabled>
+              <button id="playPauseBtn" data-tippy-content="Play / Pause" class="p-3 rounded-full bg-indigo-600 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Play or pause" disabled>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </button>
-               <button id="nextBtn" data-tippy-content="Next" class="p-2 rounded-full bg-gray-700 hover:bg-blue-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Next track" disabled>
+               <button id="nextBtn" data-tippy-content="Next" class="p-2 rounded-full bg-gray-700 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Next track" disabled>
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M11.555 5.168A1 1 0 0010 5.832v8.336a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664l-5.335-4.168zM4 5v10a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664L5.555 4.168A1 1 0 004 5z"></path></svg>
               </button>
               <span id="currentTime" class="text-sm w-12 text-right">0:00</span>
               <div id="progressWrapper" class="flex-1 cursor-pointer" aria-label="Track progress">
                 <div class="h-1.5 bg-gray-700 rounded-full overflow-hidden">
-                  <div id="progressBar" class="h-full bg-blue-500 w-0 transition-all duration-100 ease-linear"></div>
+                  <div id="progressBar" class="h-full bg-indigo-500 w-0 transition-all duration-100 ease-linear"></div>
                 </div>
               </div>
               <span id="durationTime" class="text-sm w-12 text-left">0:00</span>
                <div class="flex items-center space-x-2" data-tippy-content="Volume">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
-                <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" class="w-24 accent-blue-500" aria-label="Volume" />
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" class="w-24 accent-indigo-500" aria-label="Volume" />
               </div>
             </div>
           </div>
@@ -141,7 +99,7 @@
   <!-- Playlist Panel (Sidebar) -->
   <aside id="playlistPanel" class="fixed top-0 right-0 h-full w-full sm:w-80 bg-gray-800 transform transition-transform duration-300 ease-in-out translate-x-full flex flex-col border-l border-gray-700 z-40">
       <div class="flex items-center justify-between p-4 border-b border-gray-700">
-          <h2 class="text-xl font-bold text-blue-400">Playlist</h2>
+          <h2 class="text-xl font-bold text-indigo-400">Playlist</h2>
           <button id="closePlaylistBtn" class="p-2 rounded-lg hover:bg-gray-700" aria-label="Close Playlist">
               <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
           </button>
@@ -151,7 +109,7 @@
       </div>
       <div class="p-4 border-t border-gray-700 space-y-4">
           <input type="file" id="fileInput" accept=".mp4" multiple />
-          <label for="fileInput" data-tippy-content="Add MP4 files from your computer" class="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 transition-colors flex items-center justify-center cursor-pointer font-semibold" aria-label="Add new video">
+          <label for="fileInput" data-tippy-content="Add MP4 files from your computer" class="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center justify-center cursor-pointer font-semibold" aria-label="Add new video">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
@@ -162,12 +120,12 @@
               id="urlInput"
               type="url"
               placeholder="https://example.com/video.mp4"
-              class="flex-1 px-3 py-2 rounded-lg bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="flex-1 px-3 py-2 rounded-lg bg-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               aria-label="Video URL"
             />
             <button
               id="addUrlBtn"
-              class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 transition-colors text-sm font-semibold"
+              class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors text-sm font-semibold"
               aria-label="Add video by URL"
             >Add</button>
           </div>
@@ -193,7 +151,7 @@
   <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
     <div class="modal-card">
         <div class="flex justify-between items-center mb-6">
-            <h2 id="helpTitle" class="text-2xl font-bold text-blue-400">How to Use Player</h2>
+            <h2 id="helpTitle" class="text-2xl font-bold text-indigo-400">How to Use Player</h2>
             <button id="closeHelp" class="p-2 rounded-full hover:bg-gray-700 transition-colors" aria-label="Close">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -215,7 +173,7 @@
        role="dialog" aria-modal="true" aria-labelledby="backTitle">
     <div class="modal-card">
       <div class="flex justify-between items-center mb-4">
-        <h2 id="backTitle" class="text-xl font-bold text-blue-400">Return to Main Menu?</h2>
+        <h2 id="backTitle" class="text-xl font-bold text-indigo-400">Return to Main Menu?</h2>
         <button id="backCancel"
                 class="p-2 rounded-full hover:bg-gray-700 transition-colors"
                 aria-label="Cancel">
@@ -363,9 +321,9 @@
         playlist.forEach((track, index) => {
             const isActive = index === currentTrackIndex;
             const item = document.createElement('div');
-            item.className = `p-3 rounded-lg cursor-pointer flex items-center transition-colors ${isActive ? 'bg-blue-600' : 'bg-gray-700 hover:bg-gray-600'}`;
+            item.className = `p-3 rounded-lg cursor-pointer flex items-center transition-colors ${isActive ? 'bg-indigo-600' : 'bg-gray-700 hover:bg-gray-600'}`;
             item.innerHTML = `
-              <svg class="w-5 h-5 mr-3 ${isActive ? 'text-white' : 'text-blue-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+              <svg class="w-5 h-5 mr-3 ${isActive ? 'text-white' : 'text-indigo-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
               <div class="flex-1 min-w-0">
                 <div class="font-bold truncate">${track.name}</div>
                 <div class="text-sm text-gray-400 truncate">${track.artist}</div>
