@@ -30,13 +30,32 @@
 
   <script>
     function loadApp(path) {
+      // Hide the main menu
       document.getElementById('mainMenu').classList.add('hidden');
+      
       const iframe = document.getElementById('appFrame');
+      
+      // Set the source for the iframe
       iframe.src = path;
+
+      // --- FIX IMPLEMENTED ---
+      // This 'onload' event fires after the content of the iframe has completely loaded.
+      iframe.onload = () => {
+        // We access the document inside the iframe and get its title.
+        // Then, we set the main window's title to match it.
+        // This ensures the browser tab always shows the title of the currently active app.
+        // This works because all files (index.html, MusicPlayer.html, etc.) are from the same origin.
+        try {
+          document.title = iframe.contentDocument.title;
+        } catch (e) {
+          console.error("Failed to update title from iframe. This can happen due to cross-origin restrictions.", e);
+        }
+      };
+      
+      // Show the iframe
       iframe.classList.remove('hidden');
     }
   </script>
 
 </body>
 </html>
-
