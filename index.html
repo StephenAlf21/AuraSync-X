@@ -22,38 +22,15 @@
     </button>
   </div>
 
-  <iframe id="appFrame"
-          src=""
-          class="hidden absolute inset-0 w-full h-full border-0"
-          allowfullscreen>
-  </iframe>
+  <!-- The iframe is no longer needed with this approach and has been removed. -->
 
   <script>
+    // --- FIX IMPLEMENTED ---
+    // This function now directly navigates the browser to the selected app's page.
+    // This is a simpler and more reliable method than using an iframe.
+    // The browser will load the new page, and its <title> will be displayed automatically.
     function loadApp(path) {
-      // Hide the main menu
-      document.getElementById('mainMenu').classList.add('hidden');
-      
-      const iframe = document.getElementById('appFrame');
-      
-      // Set the source for the iframe
-      iframe.src = path;
-
-      // --- FIX IMPLEMENTED ---
-      // This 'onload' event fires after the content of the iframe has completely loaded.
-      iframe.onload = () => {
-        // We access the document inside the iframe and get its title.
-        // Then, we set the main window's title to match it.
-        // This ensures the browser tab always shows the title of the currently active app.
-        // This works because all files (index.html, MusicPlayer.html, etc.) are from the same origin.
-        try {
-          document.title = iframe.contentDocument.title;
-        } catch (e) {
-          console.error("Failed to update title from iframe. This can happen due to cross-origin restrictions.", e);
-        }
-      };
-      
-      // Show the iframe
-      iframe.classList.remove('hidden');
+      window.location.href = path;
     }
   </script>
 
