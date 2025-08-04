@@ -21,52 +21,8 @@
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/material.css">
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
-
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
-      body {
-        font-family: 'Orbitron', monospace;
-        background-color: #1a202c;
-      }
-      .glow {
-        box-shadow: 0 0 15px rgba(99, 102, 241, 0.7);
-      }
-      .control-panel {
-        backdrop-filter: blur(10px);
-      }
-      .high-contrast {
-        filter: contrast(1.5);
-      }
-      #fileInput { display: none; }
-      button:focus-visible, input:focus-visible {
-        outline: 2px solid #6366f1;
-        outline-offset: 2px;
-      }
-      #playlistContainer::-webkit-scrollbar { width: 6px; }
-      #playlistContainer::-webkit-scrollbar-thumb {
-        background-color: rgba(99, 102, 241, 0.7);
-        border-radius: 3px;
-      }
-      .tippy-box[data-theme~='material'] {
-        font-family: 'Orbitron', monospace;
-        background-color: #2d3748;
-      }
-      .tippy-box[data-theme~='material'][data-placement^='top'] > .tippy-arrow::before {
-        border-top-color: #2d3748;
-      }
-      .tippy-box[data-theme~='material'][data-placement^='bottom'] > .tippy-arrow::before {
-        border-bottom-color: #2d3748;
-      }
-      .tippy-box { max-width: 90vw; }
-      .modal-card {
-        background-color: #2d3748;
-        border-radius: 0.75rem;
-        padding: 1.5rem;
-        width: 90%;
-        max-width: 500px;
-        border: 1px solid #4a5568;
-      }
-    </style>
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="shared-style.css">
 </head>
 <body class="text-white min-h-screen flex flex-col lg:flex-row">
   
