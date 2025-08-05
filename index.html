@@ -21,6 +21,12 @@
             scroll-behavior: smooth;
         }
 
+        /* Set custom text selection color */
+        ::selection {
+            background-color: #ef4444; /* red-500 */
+            color: #ffffff;
+        }
+
         /* Animated Gradient Background */
         @keyframes gradient-animation {
             0% { background-position: 0% 50%; }
@@ -387,8 +393,8 @@
 
         function closePaywallAndContinue() {
             const targetUrl = paywallModal.dataset.targetUrl;
-            paywallModalCard.classList.remove('animate-fade-in-up');
-            paywallModalCard.classList.add('animate-fade-out-down');
+            paywallModalCard.classList.remove('animate-in-up');
+            paywallModalCard.classList.add('animate-out-down');
             
             paywallModalCard.addEventListener('animationend', () => {
                 paywallModal.classList.add('hidden');
