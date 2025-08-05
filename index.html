@@ -8,6 +8,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- p5.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+
     <!-- Shared Styles (for fonts and glow effect) -->
     <link rel="stylesheet" href="shared-style.css">
     
@@ -21,18 +24,18 @@
             scroll-behavior: smooth;
         }
 
-        /* Animated Gradient Background */
-        @keyframes gradient-animation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         body {
             background-color: #111827; 
-            background: linear-gradient(-45deg, #111827, #1f2937, #374151, #4f46e5);
-            background-size: 400% 400%;
-            animation: gradient-animation 18s ease infinite;
+        }
+
+        /* p5.js canvas container */
+        #p5-canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Place it behind all other content */
         }
 
         /* Card hover transition */
@@ -52,7 +55,6 @@
             max-width: 500px;
             border: 1px solid #374151; /* gray-700 */
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            /* Added for animation */
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
@@ -77,8 +79,11 @@
 </head>
 <body class="text-white flex flex-col items-center min-h-screen p-4 font-[Orbitron]">
 
+    <!-- p5.js canvas will be placed here -->
+    <div id="p5-canvas-container"></div>
+
     <!-- Top Navbar (Primary) -->
-    <nav class="w-full z-50 fixed top-0 left-0 bg-gradient-to-r from-indigo-900/90 to-purple-900/80 backdrop-blur-md shadow-lg border-b border-indigo-800/30">
+    <nav class="w-full z-50 fixed top-0 left-0 bg-gray-900/70 backdrop-blur-md shadow-lg border-b border-indigo-800/30">
       <div class="max-w-6xl mx-auto px-4 sm:px-8 flex items-center justify-between h-16">
         <!-- Logo/Brand -->
         <a href="index.html" class="flex items-center gap-2">
@@ -112,7 +117,7 @@
         </button>
       </div>
       <!-- Mobile Menu (hidden by default) -->
-      <div id="mobileMenu" class="md:hidden bg-gradient-to-r from-indigo-950/95 to-purple-900/90 border-t border-indigo-800/30 px-4 pb-4 pt-2 hidden">
+      <div id="mobileMenu" class="md:hidden bg-gray-900/90 border-t border-indigo-800/30 px-4 pb-4 pt-2 hidden">
         <a href="#apps" class="block py-2 text-indigo-200 hover:text-white transition">Apps</a>
         <a href="features.html" class="block py-2 text-indigo-200 hover:text-white transition">Features</a>
         <a href="#features" class="block py-2 text-indigo-200 hover:text-white transition">Why?</a>
@@ -162,13 +167,13 @@
             <h2 class="text-3xl font-bold mb-12">Choose Your Experience</h2>
             <div class="grid gap-8 md:gap-12 grid-cols-1 md:grid-cols-2">
                 <!-- Music Player Card -->
-                <div onclick="loadApp('MusicPlayer.html')" class="app-card cursor-pointer p-8 rounded-2xl bg-gradient-to-br from-purple-600/70 to-indigo-700/70 backdrop-blur-sm border border-purple-500/50 hover:from-purple-500/80 hover:to-indigo-600/80 transition shadow-xl glow flex flex-col items-center">
+                <div onclick="loadApp('MusicPlayer.html')" class="app-card cursor-pointer p-8 rounded-2xl bg-purple-600/20 backdrop-blur-sm border border-purple-500/50 hover:bg-purple-500/30 transition shadow-xl glow flex flex-col items-center">
                     <svg class="w-16 h-16 mb-4 text-purple-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V7.5A2.25 2.25 0 0013.5 6h-3a2.25 2.25 0 00-2.25 2.25v1.5m1.5 6.75l-2.25-2.25a2.25 2.25 0 00-3.182 0l-2.25 2.25a2.25 2.25 0 000 3.182l2.25 2.25a2.25 2.25 0 003.182 0l2.25-2.25a2.25 2.25 0 000-3.182z" /></svg>
                     <h2 class="text-2xl font-bold text-white">3D Music Visualizer</h2>
                     <p class="text-gray-200 mt-2">Upload songs, stream radio, and customize stunning real-time visuals.</p>
                 </div>
                 <!-- Video Player Card -->
-                <div onclick="loadApp('VideoPlayer.html')" class="app-card cursor-pointer p-8 rounded-2xl bg-gradient-to-br from-blue-600/70 to-cyan-700/70 backdrop-blur-sm border border-blue-500/50 hover:from-blue-500/80 hover:to-cyan-600/80 transition shadow-xl glow flex flex-col items-center">
+                <div onclick="loadApp('VideoPlayer.html')" class="app-card cursor-pointer p-8 rounded-2xl bg-blue-600/20 backdrop-blur-sm border border-blue-500/50 hover:bg-blue-500/30 transition shadow-xl glow flex flex-col items-center">
                      <svg class="w-16 h-16 mb-4 text-cyan-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" /></svg>
                     <h2 class="text-2xl font-bold text-white">MP4 Video Player</h2>
                     <p class="text-gray-200 mt-2">Play local or remote videos with a clean interface and playlist support.</p>
@@ -289,6 +294,65 @@
 
 
     <script>
+        // --- p5.js Sketch for Animated Background ---
+        let particles = [];
+
+        function setup() {
+            let canvas = createCanvas(windowWidth, windowHeight);
+            canvas.parent('p5-canvas-container'); // Attach canvas to the container div
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function draw() {
+            background('#111827');
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].createParticle();
+                particles[i].moveParticle();
+                particles[i].joinParticles(particles.slice(i));
+            }
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+
+        // Particle class
+        class Particle {
+            constructor() {
+                this.x = random(0, width);
+                this.y = random(0, height);
+                this.r = random(1, 4);
+                this.xSpeed = random(-0.5, 0.5);
+                this.ySpeed = random(-0.5, 0.5);
+            }
+
+            createParticle() {
+                noStroke();
+                fill('rgba(167, 139, 250, 0.5)'); // A nice purple color
+                circle(this.x, this.y, this.r);
+            }
+
+            moveParticle() {
+                if (this.x < 0 || this.x > width) this.xSpeed *= -1;
+                if (this.y < 0 || this.y > height) this.ySpeed *= -1;
+                this.x += this.xSpeed;
+                this.y += this.ySpeed;
+            }
+
+            joinParticles(otherParticles) {
+                otherParticles.forEach(p => {
+                    let d = dist(this.x, this.y, p.x, p.y);
+                    if (d < 85) {
+                        stroke('rgba(167, 139, 250, 0.2)');
+                        line(this.x, this.y, p.x, p.y);
+                    }
+                });
+            }
+        }
+
+
         // --- Modal References ---
         const settingsModal = document.getElementById('settingsModal');
         const settingsModalCard = settingsModal.querySelector('.modal-card');
