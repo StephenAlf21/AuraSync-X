@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy - AuraSync X</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap">
     <!-- Favicon -->
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -15,6 +16,29 @@
         body {
             background-color: #111827;
             font-family: 'Orbitron', sans-serif;
+        }
+        /* p5.js canvas container */
+        #p5-canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Place it behind all other content */
+        }
+        /* Glassmorphism content card */
+        .content-card {
+            background: rgba(31, 41, 55, 0.6); /* gray-800 @ 60% opacity */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 1rem; /* 16px */
+            border: 1px solid rgba(79, 70, 229, 0.2); /* indigo-600 @ 20% opacity */
+            padding: 1.5rem;
+        }
+        @media (min-width: 640px) {
+            .content-card {
+                padding: 3rem; /* More padding on larger screens */
+            }
         }
         .prose-invert a {
             color: #818cf8;
@@ -73,9 +97,12 @@
     </style>
      <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 </head>
-<body class="text-white bg-gray-900">
+<body class="text-white bg-gray-900 p-4 sm:p-6">
 
-    <div class="max-w-4xl mx-auto px-6 py-12">
+    <!-- p5.js canvas will be placed here -->
+    <div id="p5-canvas-container"></div>
+
+    <div class="max-w-4xl mx-auto my-8 content-card">
         <header class="text-center mb-12">
             <a href="index.html" class="inline-block mb-8 text-indigo-400 hover:text-indigo-300 transition font-sans">&larr; Back to Home</a>
             <h1 class="text-4xl font-black bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text text-transparent">AuraSync X — Privacy Policy</h1>
@@ -229,5 +256,64 @@
         </main>
     </div>
 
+    <script>
+        // --- p5.js Sketch for Animated Background ---
+        let particles = [];
+
+        function setup() {
+            let canvas = createCanvas(windowWidth, windowHeight);
+            canvas.parent('p5-canvas-container'); // Attach canvas to the container div
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function draw() {
+            background('#111827');
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].createParticle();
+                particles[i].moveParticle();
+                particles[i].joinParticles(particles.slice(i));
+            }
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+
+        // Particle class
+        class Particle {
+            constructor() {
+                this.x = random(0, width);
+                this.y = random(0, height);
+                this.r = random(1, 4);
+                this.xSpeed = random(-0.5, 0.5);
+                this.ySpeed = random(-0.5, 0.5);
+            }
+
+            createParticle() {
+                noStroke();
+                fill('rgba(167, 139, 250, 0.5)'); // A nice purple color
+                circle(this.x, this.y, this.r);
+            }
+
+            moveParticle() {
+                if (this.x < 0 || this.x > width) this.xSpeed *= -1;
+                if (this.y < 0 || this.y > height) this.ySpeed *= -1;
+                this.x += this.xSpeed;
+                this.y += this.ySpeed;
+            }
+
+            joinParticles(otherParticles) {
+                otherParticles.forEach(p => {
+                    let d = dist(this.x, this.y, p.x, p.y);
+                    if (d < 85) {
+                        stroke('rgba(167, 139, 250, 0.2)');
+                        line(this.x, this.y, p.x, p.y);
+                    }
+                });
+            }
+        }
+    </script>
 </body>
 </html>
