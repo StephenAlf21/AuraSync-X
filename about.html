@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - AuraSync X</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon.png" />
+    <link rel="stylesheet" href="shared-style.css">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <style>
+        body {
+            background-color: #111827;
+            font-family: 'Orbitron', sans-serif;
+        }
+        #p5-canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .content-card {
+            background: rgba(31, 41, 55, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            padding: 1.5rem;
+        }
+        @media (min-width: 640px) {
+            .content-card {
+                padding: 3rem;
+            }
+        }
+        .prose-custom h2 {
+            color: #e5e7eb;
+            font-weight: 700;
+            margin-top: 2em;
+            margin-bottom: 1em;
+            font-size: 1.875rem;
+            border-bottom: 2px solid #4f46e5;
+            padding-bottom: 0.5rem;
+        }
+        .prose-custom p {
+            font-family: 'Inter', sans-serif;
+            color: #9ca3af;
+            line-height: 1.75;
+        }
+    </style>
+</head>
+<body class="text-white bg-gray-900 p-4 sm:p-6">
+
+    <div id="p5-canvas-container"></div>
+
+    <div class="max-w-4xl mx-auto my-8 content-card">
+        <header class="text-center mb-12">
+            <a href="index.html" class="inline-block mb-8 text-indigo-400 hover:text-indigo-300 transition font-sans">&larr; Back to Home</a>
+            <h1 class="text-4xl sm:text-5xl font-black bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text text-transparent">
+                About AuraSync X
+            </h1>
+            <p class="text-lg text-gray-400 mt-4 font-sans">The story, the tech, and the future of your favorite media hub.</p>
+        </header>
+
+        <main class="prose-custom max-w-none">
+            <section id="story">
+                <h2>Our Story</h2>
+                <p>AuraSync X began as a passion project by Stephen Alfred, a developer based in Nova Scotia, Canada. Inspired by the classic visualizers of the early 2000s and a love for modern web technology, the goal was to create a beautiful, private, and powerful media player that runs entirely in the browser. What started as a simple particle visualizer grew into a comprehensive suite, all while holding true to the core principle: your data is your own.</p>
+            </section>
+
+            <section id="tech-stack" class="mt-16">
+                <h2>Technology Stack</h2>
+                <p>This project stands on the shoulders of giants. It's built with a focus on modern, open-source technologies that allow for a fast and responsive user experience.</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center mt-8 font-sans">
+                    <div class="bg-gray-800/50 p-4 rounded-lg"><img src="https://placehold.co/64x64/7e22ce/ffffff?text=p5" class="mx-auto mb-2 h-12 w-12" alt="p5.js Logo">p5.js</div>
+                    <div class="bg-gray-800/50 p-4 rounded-lg"><img src="https://placehold.co/64x64/38bdf8/ffffff?text=TW" class="mx-auto mb-2 h-12 w-12" alt="Tailwind CSS Logo">Tailwind CSS</div>
+                    <div class="bg-gray-800/50 p-4 rounded-lg"><img src="https://placehold.co/64x64/facc15/000000?text=JS" class="mx-auto mb-2 h-12 w-12" alt="JavaScript Logo">JavaScript</div>
+                    <div class="bg-gray-800/50 p-4 rounded-lg"><img src="https://placehold.co/64x64/f97316/ffffff?text=HTML5" class="mx-auto mb-2 h-12 w-12" alt="HTML5 Logo">HTML5</div>
+                </div>
+            </section>
+            
+            <section id="developer" class="mt-16">
+                <h2>The Developer</h2>
+                 <div class="flex flex-col sm:flex-row items-center gap-6 bg-gray-800/30 p-6 rounded-lg font-sans">
+                    <img src="https://placehold.co/128x128/1f2937/a78bfa?text=SA" alt="Portrait of Stephen Alfred" class="w-32 h-32 rounded-full border-4 border-indigo-500">
+                    <div>
+                        <h3 class="text-2xl font-bold text-white -mt-4">Stephen Alfred (zombies21)</h3>
+                        <p class="text-indigo-300">Creator & Lead Developer</p>
+                        <p class="text-gray-400 mt-2">A history and politics enthusiast from Nova Scotia, I believe in leveraging technology to create open and accessible tools for everyone. When not coding, I enjoy biking and exploring the rich history of my home province. This project is a testament to the idea that powerful applications can be built with privacy and user freedom as the top priorities.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="roadmap" class="mt-16">
+                <h2>Project Roadmap</h2>
+                <p>The journey is far from over. Here are some of the features and improvements planned for the future:</p>
+                <ul class="list-disc pl-5 font-sans text-gray-400 space-y-2">
+                    <li>More advanced visualization options and greater customization.</li>
+                    <li>Support for additional audio and video formats.</li>
+                    <li>Improved playlist import/export functionality.</li>
+                    <li>Light theme for enhanced accessibility.</li>
+                    <li>Community-sourced radio station lists.</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        let particles = [];
+        function setup() {
+            let canvas = createCanvas(windowWidth, windowHeight);
+            canvas.parent('p5-canvas-container');
+            for (let i = 0; i < 150; i++) {
+                particles.push(new Particle());
+            }
+        }
+        function draw() {
+            background('#111827');
+            particles.forEach(p => {
+                p.createParticle();
+                p.moveParticle();
+                p.joinParticles(particles.slice(particles.indexOf(p)));
+            });
+        }
+        function windowResized() { resizeCanvas(windowWidth, windowHeight); }
+        class Particle {
+            constructor() {
+                this.x = random(0, width);
+                this.y = random(0, height);
+                this.r = random(1, 4);
+                this.xSpeed = random(-0.5, 0.5);
+                this.ySpeed = random(-0.5, 0.5);
+            }
+            createParticle() {
+                noStroke();
+                fill('rgba(139, 92, 246, 0.5)');
+                circle(this.x, this.y, this.r);
+            }
+            moveParticle() {
+                if (this.x < 0 || this.x > width) this.xSpeed *= -1;
+                if (this.y < 0 || this.y > height) this.ySpeed *= -1;
+                this.x += this.xSpeed;
+                this.y += this.ySpeed;
+            }
+            joinParticles(otherParticles) {
+                otherParticles.forEach(p => {
+                    let d = dist(this.x, this.y, p.x, p.y);
+                    if (d < 90) {
+                        stroke('rgba(139, 92, 246, 0.15)');
+                        line(this.x, this.y, p.x, p.y);
+                    }
+                });
+            }
+        }
+    </script>
+
+</body>
+</html>

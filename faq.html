@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - AuraSync X</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon.png" />
+    <link rel="stylesheet" href="shared-style.css">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <style>
+        body { background-color: #111827; font-family: 'Orbitron', sans-serif; }
+        #p5-canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .content-card {
+            background: rgba(31, 41, 55, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            padding: 1.5rem;
+        }
+        @media (min-width: 640px) { .content-card { padding: 3rem; } }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        .faq-item.open .faq-answer {
+            max-height: 500px; /* Adjust as needed */
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        .faq-question svg { transition: transform 0.3s ease; }
+        .faq-item.open .faq-question svg { transform: rotate(180deg); }
+    </style>
+</head>
+<body class="text-white bg-gray-900 p-4 sm:p-6">
+
+    <div id="p5-canvas-container"></div>
+
+    <div class="max-w-4xl mx-auto my-8 content-card">
+        <header class="text-center mb-12">
+            <a href="index.html" class="inline-block mb-8 text-indigo-400 hover:text-indigo-300 transition font-sans">&larr; Back to Home</a>
+            <h1 class="text-4xl sm:text-5xl font-black bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text text-transparent">
+                Frequently Asked Questions
+            </h1>
+            <p class="text-lg text-gray-400 mt-4 font-sans">Your common questions, answered.</p>
+        </header>
+
+        <main class="max-w-3xl mx-auto space-y-4 font-sans">
+            <!-- FAQ Item 1 -->
+            <div class="faq-item bg-gray-800/50 rounded-lg">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4">
+                    <span class="font-semibold text-white">What browsers are supported?</span>
+                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer text-gray-400">
+                    <p>AuraSync X is built on modern web technologies and works best on the latest versions of desktop browsers like Google Chrome, Mozilla Firefox, and Microsoft Edge. While it may function on other browsers, we recommend these for the best performance, especially for the 3D visualizer.</p>
+                </div>
+            </div>
+            <!-- FAQ Item 2 -->
+            <div class="faq-item bg-gray-800/50 rounded-lg">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4">
+                    <span class="font-semibold text-white">Is AuraSync X free to use?</span>
+                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer text-gray-400">
+                    <p>Yes, AuraSync X is completely free to use. It is a passion project, and the goal is to provide a high-quality tool to the community. If you enjoy the app, please consider a small <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" target="_blank" class="text-indigo-400 hover:underline">donation</a> to help cover server and development costs.</p>
+                </div>
+            </div>
+            <!-- FAQ Item 3 -->
+            <div class="faq-item bg-gray-800/50 rounded-lg">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4">
+                    <span class="font-semibold text-white">What file formats are supported?</span>
+                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer text-gray-400">
+                    <p>The 3D Music Visualizer primarily supports <strong>.MP3</strong> files for local uploads. The MP4 Video Player supports <strong>.MP4</strong> files. Both applications also support direct streaming from URLs, provided they link to a compatible audio or video stream.</p>
+                </div>
+            </div>
+            <!-- FAQ Item 4 -->
+            <div class="faq-item bg-gray-800/50 rounded-lg">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4">
+                    <span class="font-semibold text-white">Is my data safe? Are my files uploaded anywhere?</span>
+                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer text-gray-400">
+                    <p>Your privacy is our top priority. AuraSync X is a fully client-side application. This means <strong>no files or personal data are ever uploaded to our servers</strong>. All processing happens locally in your browser. For more details, please read our full <a href="privacy.html" class="text-indigo-400 hover:underline">Privacy Policy</a>.</p>
+                </div>
+            </div>
+            <!-- FAQ Item 5 -->
+            <div class="faq-item bg-gray-800/50 rounded-lg">
+                <button class="faq-question w-full flex justify-between items-center text-left p-4">
+                    <span class="font-semibold text-white">How can I report a bug or suggest a feature?</span>
+                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div class="faq-answer text-gray-400">
+                    <p>The best way to report issues or make suggestions is through our <a href="https://github.com/StephenAlf21/AuraSync-X/issues" target="_blank" class="text-indigo-400 hover:underline">GitHub Issues page</a>. This allows us to track feedback publicly and transparently. You can also reach out via the methods on our <a href="contact.html" class="text-indigo-400 hover:underline">Contact page</a>.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // p5.js script
+        let particles = [];
+        function setup() {
+            let canvas = createCanvas(windowWidth, windowHeight);
+            canvas.parent('p5-canvas-container');
+            for (let i = 0; i < 150; i++) { particles.push(new Particle()); }
+        }
+        function draw() {
+            background('#111827');
+            particles.forEach(p => {
+                p.createParticle();
+                p.moveParticle();
+                p.joinParticles(particles.slice(particles.indexOf(p)));
+            });
+        }
+        function windowResized() { resizeCanvas(windowWidth, windowHeight); }
+        class Particle {
+            constructor() {
+                this.x = random(0, width); this.y = random(0, height);
+                this.r = random(1, 4);
+                this.xSpeed = random(-0.5, 0.5); this.ySpeed = random(-0.5, 0.5);
+            }
+            createParticle() {
+                noStroke();
+                fill('rgba(139, 92, 246, 0.5)');
+                circle(this.x, this.y, this.r);
+            }
+            moveParticle() {
+                if (this.x < 0 || this.x > width) this.xSpeed *= -1;
+                if (this.y < 0 || this.y > height) this.ySpeed *= -1;
+                this.x += this.xSpeed; this.y += this.ySpeed;
+            }
+            joinParticles(otherParticles) {
+                otherParticles.forEach(p => {
+                    let d = dist(this.x, this.y, p.x, p.y);
+                    if (d < 90) {
+                        stroke('rgba(139, 92, 246, 0.15)');
+                        line(this.x, this.y, p.x, p.y);
+                    }
+                });
+            }
+        }
+
+        // FAQ Accordion script
+        document.addEventListener('DOMContentLoaded', () => {
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    const currentlyOpen = document.querySelector('.faq-item.open');
+                    if (currentlyOpen && currentlyOpen !== item) {
+                        currentlyOpen.classList.remove('open');
+                    }
+                    item.classList.toggle('open');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
