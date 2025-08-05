@@ -1,6 +1,12 @@
 /* shared-style.css -- common styles for both players */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
+/* Set custom text selection color */
+::selection {
+    background-color: #ef4444; /* red-500 */
+    color: #ffffff;
+}
+
 body {
   font-family: 'Orbitron', monospace;
   background-color: #1a202c;          /* Dark slate */
