@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Careers & Press - AuraSync X</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon.png" />
+    <link rel="stylesheet" href="shared-style.css">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <style>
+        body { background-color: #111827; font-family: 'Orbitron', sans-serif; }
+        #p5-canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .content-card {
+            background: rgba(31, 41, 55, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            padding: 1.5rem;
+        }
+        @media (min-width: 640px) { .content-card { padding: 3rem; } }
+        .prose-custom h2 {
+            color: #e5e7eb;
+            font-weight: 700;
+            margin-top: 2em;
+            margin-bottom: 1em;
+            font-size: 1.875rem;
+            border-bottom: 2px solid #4f46e5;
+            padding-bottom: 0.5rem;
+        }
+        .prose-custom p { font-family: 'Inter', sans-serif; color: #9ca3af; line-height: 1.75; }
+        .prose-custom a { color: #818cf8; text-decoration: underline; }
+        .prose-custom a:hover { color: #a78bfa; }
+    </style>
+</head>
+<body class="text-white bg-gray-900 p-4 sm:p-6">
+
+    <div id="p5-canvas-container"></div>
+
+    <div class="max-w-4xl mx-auto my-8 content-card">
+        <header class="text-center mb-12">
+            <a href="index.html" class="inline-block mb-8 text-indigo-400 hover:text-indigo-300 transition font-sans">&larr; Back to Home</a>
+            <h1 class="text-4xl sm:text-5xl font-black bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text text-transparent">
+                Join Our Mission
+            </h1>
+            <p class="text-lg text-gray-400 mt-4 font-sans">Opportunities to work with, write about, or partner with AuraSync X.</p>
+        </header>
+
+        <main class="prose-custom max-w-none">
+            <section id="careers">
+                <h2>Careers</h2>
+                <p>We believe in building a small, passionate team dedicated to creating open and powerful web software. While we are not actively hiring at the moment, we are always interested in hearing from talented developers, designers, and visionaries who align with our mission. If you believe you'd be a great fit for our team, please send your portfolio and a brief introduction to <a href="mailto:careers@aurasyncx.example">careers@aurasyncx.example</a>.</p>
+            </section>
+
+            <section id="press" class="mt-16">
+                <h2>Press & Media</h2>
+                <p>Are you a journalist, blogger, or content creator interested in featuring AuraSync X? We're happy to provide you with the information you need. Below you can download our official media kit, which includes logos, screenshots, and a project fact sheet.</p>
+                <div class="mt-6 text-center">
+                    <a href="/downloads/aurasyncx-media-kit.zip" class="inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-lg transition-colors no-underline">
+                        Download Media Kit (.zip)
+                    </a>
+                </div>
+                 <p class="mt-4">For interviews, quotes, or other specific media inquiries, please contact us directly at <a href="mailto:press@aurasyncx.example">press@aurasyncx.example</a>.</p>
+            </section>
+            
+            <section id="partners" class="mt-16">
+                <h2>Partnerships</h2>
+                <p>We are open to partnerships and integrations that bring value to our users and align with our privacy-first principles. If you represent a company, an open-source project, or a community and have an idea for a collaboration, we'd love to hear from you. Potential partnership areas include:</p>
+                 <ul class="list-disc pl-5 font-sans text-gray-400 space-y-2">
+                    <li>Integrating AuraSync X technology into other platforms.</li>
+                    <li>Sponsoring new features or development cycles.</li>
+                    <li>Co-hosting community events or contests.</li>
+                </ul>
+                <p>Please direct all partnership inquiries to <a href="mailto:partners@aurasyncx.example">partners@aurasyncx.example</a>.</p>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        let particles = [];
+        function setup() {
+            let canvas = createCanvas(windowWidth, windowHeight);
+            canvas.parent('p5-canvas-container');
+            for (let i = 0; i < 150; i++) { particles.push(new Particle()); }
+        }
+        function draw() {
+            background('#111827');
+            particles.forEach(p => {
+                p.createParticle();
+                p.moveParticle();
+                p.joinParticles(particles.slice(particles.indexOf(p)));
+            });
+        }
+        function windowResized() { resizeCanvas(windowWidth, windowHeight); }
+        class Particle {
+            constructor() {
+                this.x = random(0, width); this.y = random(0, height);
+                this.r = random(1, 4);
+                this.xSpeed = random(-0.5, 0.5); this.ySpeed = random(-0.5, 0.5);
+            }
+            createParticle() {
+                noStroke();
+                fill('rgba(139, 92, 246, 0.5)');
+                circle(this.x, this.y, this.r);
+            }
+            moveParticle() {
+                if (this.x < 0 || this.x > width) this.xSpeed *= -1;
+                if (this.y < 0 || this.y > height) this.ySpeed *= -1;
+                this.x += this.xSpeed; this.y += this.ySpeed;
+            }
+            joinParticles(otherParticles) {
+                otherParticles.forEach(p => {
+                    let d = dist(this.x, this.y, p.x, p.y);
+                    if (d < 90) {
+                        stroke('rgba(139, 92, 246, 0.15)');
+                        line(this.x, this.y, p.x, p.y);
+                    }
+                });
+            }
+        }
+    </script>
+
+</body>
+</html>
