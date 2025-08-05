@@ -912,41 +912,27 @@
         document.querySelector('.playlist-tab[data-layer="radio"]').click();
       });
 
-            document.addEventListener('keydown', e => {
-        // Ignore key presses if the user is typing in an input field
-        if (e.target.tagName === 'INPUT' || e.target.isContentEditable) return;
-
-        switch (e.key) {
-          case ' ': // Spacebar for Play/Pause
-            e.preventDefault(); 
-            togglePlayPause(); 
-            break;
-          case 'ArrowRight': // Right arrow for Next Track
-            e.preventDefault(); 
-            playNextTrack(); 
-            break;
-          case 'ArrowLeft': // Left arrow for Previous Track
-            e.preventDefault(); 
-            playPrevTrack(); 
-            break;
-          case '+': // Plus key for Volume Up
-          case '=': // Equals key (often shares key with +) for Volume Up
-            e.preventDefault(); 
-            adjustVolume(0.1); 
-            break;
-          case '-': // Minus key for Volume Down
-            e.preventDefault(); 
-            adjustVolume(-0.1); 
-            break;
-          case 'p': // 'p' key to toggle the playlist
-          case 'P': // Also handle uppercase 'P'
-            e.preventDefault();
-            const isCurrentlyHidden = playlistPanel.classList.contains('translate-x-full');
-            setSidebarVisibility(isCurrentlyHidden);
-            break;
+      function setSidebarVisibility(visible) {
+        togglePlaylistBtn.setAttribute('aria-expanded', visible);
+        const tooltip = togglePlaylistBtn._tippy;
+        if (visible) {
+            playlistPanel.classList.remove('translate-x-full');
+            // This logic for adjusting main content is trickier with the new flex layout
+            // We'll rely on the flexbox to handle resizing for now.
+            playlistToggleIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />`;
+            togglePlaylistBtn.setAttribute('aria-label', 'Close Playlist');
+            if (tooltip) tooltip.setContent('Close Playlist');
+        } else {
+            playlistPanel.classList.add('translate-x-full');
+            playlistToggleIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>`;
+            togglePlaylistBtn.setAttribute('aria-label', 'Open Playlist');
+            if (tooltip) tooltip.setContent('Open Playlist');
         }
-      });
+      }
 
+      togglePlaylistBtn.addEventListener('click', () => {
+          const isCurrentlyHidden = playlistPanel.classList.contains('translate-x-full');
+          setSidebarVisibility(isCurrentlyHidden);
       });
 
       closePlaylistBtn.addEventListener('click', () => {
@@ -1025,4 +1011,3 @@
   </script>
 </body>
 </html>
-
