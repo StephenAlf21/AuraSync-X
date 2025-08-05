@@ -94,7 +94,18 @@
         <div class="hidden md:flex items-center gap-8 text-sm font-semibold">
           <a href="#apps" class="text-indigo-200 hover:text-white transition">Apps</a>
           <a href="features.html" class="text-indigo-200 hover:text-white transition">Features</a>
-          <a href="#features" class="text-indigo-200 hover:text-white transition">Why?</a>
+          <!-- Community Dropdown -->
+          <div class="relative" id="communityDropdownContainer">
+              <button id="communityDropdownBtn" class="flex items-center gap-1 text-indigo-200 hover:text-white transition focus:outline-none">
+                  <span>Community</span>
+                  <svg class="w-4 h-4 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+              </button>
+              <div id="communityDropdownMenu" class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-50 hidden border border-indigo-800/50">
+                  <a href="about.html" class="block px-4 py-2 text-sm text-indigo-200 hover:bg-gray-700 hover:text-white transition-colors">About</a>
+                  <a href="contact.html" class="block px-4 py-2 text-sm text-indigo-200 hover:bg-gray-700 hover:text-white transition-colors">Contact</a>
+                  <a href="faq.html" class="block px-4 py-2 text-sm text-indigo-200 hover:bg-gray-700 hover:text-white transition-colors">FAQ</a>
+              </div>
+          </div>
           <!-- Legal Dropdown -->
           <div class="relative" id="legalDropdownContainer">
               <button id="legalDropdownBtn" class="flex items-center gap-1 text-indigo-200 hover:text-white transition focus:outline-none">
@@ -106,7 +117,6 @@
                   <a href="privacy.html" class="block px-4 py-2 text-sm text-indigo-200 hover:bg-gray-700 hover:text-white transition-colors">Privacy</a>
               </div>
           </div>
-          <button id="navbarSettingsBtn" class="text-indigo-200 hover:text-white transition focus:outline-none">About & Settings</button>
           <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" target="_blank" class="bg-yellow-400 text-black px-3 py-1 rounded font-bold hover:bg-yellow-300 transition">Donate</a>
         </div>
         <!-- Mobile Menu Button -->
@@ -120,7 +130,18 @@
       <div id="mobileMenu" class="md:hidden bg-gray-900/90 border-t border-indigo-800/30 px-4 pb-4 pt-2 hidden">
         <a href="#apps" class="block py-2 text-indigo-200 hover:text-white transition">Apps</a>
         <a href="features.html" class="block py-2 text-indigo-200 hover:text-white transition">Features</a>
-        <a href="#features" class="block py-2 text-indigo-200 hover:text-white transition">Why?</a>
+        <!-- Mobile Community Accordion -->
+        <div>
+            <button id="mobileCommunityBtn" class="w-full text-left flex justify-between items-center py-2 text-indigo-200 hover:text-white transition">
+                <span>Community</span>
+                <svg id="mobileCommunityIcon" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+            <div id="mobileCommunityMenu" class="pl-4 hidden border-l-2 border-indigo-700/50">
+                <a href="about.html" class="block py-2 text-indigo-200 hover:text-white transition">About</a>
+                <a href="contact.html" class="block py-2 text-indigo-200 hover:text-white transition">Contact</a>
+                <a href="faq.html" class="block py-2 text-indigo-200 hover:text-white transition">FAQ</a>
+            </div>
+        </div>
         <!-- Mobile Legal Accordion -->
         <div>
             <button id="mobileLegalBtn" class="w-full text-left flex justify-between items-center py-2 text-indigo-200 hover:text-white transition">
@@ -132,7 +153,6 @@
                 <a href="privacy.html" class="block py-2 text-indigo-200 hover:text-white transition">Privacy</a>
             </div>
         </div>
-        <button id="mobileSettingsBtn" class="block w-full text-left py-2 text-indigo-200 hover:text-white transition">About & Settings</button>
         <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" target="_blank" class="block py-2 text-yellow-400 hover:bg-yellow-500/10 rounded">Donate</a>
       </div>
     </nav>
@@ -212,8 +232,9 @@
                     <h4 class="font-semibold text-white tracking-wider uppercase mb-4">Quick Links</h4>
                     <ul class="space-y-2 text-sm">
                         <li><a href="features.html" class="hover:text-white transition-colors">Features</a></li>
-                        <li><button id="settingsBtn" class="text-left w-full hover:text-white transition-colors">About & Settings</button></li>
-                        <li><a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" target="_blank" class="hover:text-white transition-colors">Donate</a></li>
+                        <li><a href="about.html" class="hover:text-white transition-colors">About</a></li>
+                        <li><a href="contact.html" class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="faq.html" class="hover:text-white transition-colors">FAQ</a></li>
                     </ul>
                 </div>
 
@@ -255,23 +276,6 @@
     </footer>
 
 
-    <!-- Settings/About Modal -->
-    <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-        <div class="modal-card text-left">
-            <div class="flex justify-between items-center mb-6">
-                <h2 id="settingsTitle" class="text-2xl font-bold text-indigo-400">About AuraSync X</h2>
-                <button id="closeSettings" class="p-2 rounded-full hover:bg-gray-700 transition-colors" aria-label="Close">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-            </div>
-            <div class="space-y-4 text-gray-300"><p><strong class="text-white">Version:</strong> 1.6.5</p><p><strong class="text-white">License:</strong> MIT License</p><p class="text-sm">A personal media suite for immersive music and video experiences, built with modern web technologies.</p></div>
-            <hr class="border-gray-600 my-6">
-            <div class="my-4 text-center"><h3 class="text-lg font-semibold text-white mb-4">Support This Project</h3><p class="text-sm text-gray-400 mb-4">If you enjoy this app, please consider a small donation to help keep it running!</p><a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" target="_blank" class="inline-flex items-center gap-3 px-6 py-3 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-black font-semibold shadow-lg transition"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8.326 4.002c.907-2.654 2.96-2.652 3.865 0l.533 1.562c.14.41.516.69.946.69h1.64c2.756.002 3.756 1.998 1.998 3.757l-1.32 1.32c-.328.328-.482.79-.404 1.24l.45 2.58c.905 2.654-1.15 3.974-3.198 2.5l-1.92-1.37c-.37-.265-.85-.265-1.22 0l-1.92 1.37c-2.048 1.474-4.103.154-3.198-2.5l.45-2.58c.078-.45-.076-.912-.404-1.24l-1.32-1.32C.71 6.252 1.71 4.256 4.466 4.254h1.64c.43 0 .806-.28.946-.69l.534-1.562z"/></svg> Donate with PayPal</a></div>
-            <hr class="border-gray-600 my-6">
-            <div class="text-center"><h3 class="text-lg font-semibold text-white mb-4">Connect with the Developer</h3><div class="flex justify-center items-center space-x-4"><a href="https://www.facebook.com/gaming/PaddleBall3D" target="_blank" class="text-gray-400 hover:text-white transition" aria-label="Facebook"><svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v2.385z"/></svg></a><a href="https://www.youtube.com/@zombes1892" target="_blank" class="text-gray-400 hover:text-white transition" aria-label="YouTube"><svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg></a><a href="https://x.com/Zombes18" target="_blank" class="text-gray-400 hover:text-white transition" aria-label="X (formerly Twitter)"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a><a href="https://github.com/StephenAlf21" target="_blank" class="text-gray-400 hover:text-white transition" aria-label="GitHub"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a></div></div>
-        </div>
-    </div>
-
     <!-- Paywall Modal -->
     <div id="paywallModal" class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center z-50 hidden">
       <div class="modal-card text-center">
@@ -281,7 +285,7 @@
           <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" target="_blank" class="px-6 py-3 bg-yellow-400 text-black rounded-lg font-semibold shadow hover:bg-yellow-300 transition">Donate</a>
           <button id="continueFree" class="px-6 py-3 bg-gray-700 text-white rounded-lg font-semibold shadow hover:bg-gray-600 transition">Continue for Free</button>
         </div>
-        <p class="text-xs text-gray-400">You can always donate later via the Settings & About panel.</p>
+        <p class="text-xs text-gray-400">You can always donate later via the "Donate" button in the navigation.</p>
       </div>
     </div>
 
@@ -352,44 +356,45 @@
             }
         }
 
+        // --- Dropdown/Accordion Logic ---
+        function setupDropdown(containerId, buttonId, menuId, iconId) {
+            const container = document.getElementById(containerId);
+            const button = document.getElementById(buttonId);
+            const menu = document.getElementById(menuId);
+            const icon = iconId ? document.getElementById(iconId) : button.querySelector('svg');
 
-        // --- Modal References ---
-        const settingsModal = document.getElementById('settingsModal');
-        const settingsModalCard = settingsModal.querySelector('.modal-card');
-        const settingsBtn = document.getElementById('settingsBtn'); // Footer button
-        const closeSettingsBtn = document.getElementById('closeSettings');
+            if (!button || !menu) return;
 
-        const paywallModal = document.getElementById('paywallModal');
-        const paywallModalCard = paywallModal.querySelector('.modal-card');
-        const continueFreeBtn = document.getElementById('continueFree');
+            button.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const isHidden = menu.classList.toggle('hidden');
+                if (icon) {
+                    icon.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
+                }
+            });
 
-        /**
-         * Opens the settings modal with a fade+slide animation.
-         */
-        function openSettingsModal() {
-            settingsModal.classList.remove('hidden');
-            settingsModalCard.classList.remove('animate-fade-out-down');
-            settingsModalCard.classList.add('animate-fade-in-up');
-        }
-
-        /**
-         * Closes the settings modal with a fade+slide animation.
-         */
-        function closeSettingsModal() {
-            settingsModalCard.classList.remove('animate-fade-in-up');
-            settingsModalCard.classList.add('animate-fade-out-down');
-            // Hide the element after the animation completes
-            settingsModalCard.addEventListener('animationend', () => {
-                settingsModal.classList.add('hidden');
-            }, { once: true });
+            if (container) {
+                 window.addEventListener('click', (event) => {
+                    if (!container.contains(event.target)) {
+                        menu.classList.add('hidden');
+                        if (icon) icon.style.transform = 'rotate(0deg)';
+                    }
+                });
+            }
         }
         
-        // Event listener for the original footer button
-        settingsBtn.addEventListener('click', openSettingsModal);
-        closeSettingsBtn.addEventListener('click', closeSettingsModal);
-        settingsModal.addEventListener('click', (event) => {
-            if (event.target === settingsModal) closeSettingsModal();
-        });
+        function setupAccordion(buttonId, menuId, iconId) {
+            const button = document.getElementById(buttonId);
+            const menu = document.getElementById(menuId);
+            const icon = document.getElementById(iconId);
+
+            if (!button || !menu || !icon) return;
+
+            button.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            });
+        }
 
         // --- Navbar Mobile Menu Logic ---
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -398,48 +403,10 @@
             mobileMenu.classList.toggle('hidden');
         });
 
-        // --- Navbar About & Settings Button (Desktop & Mobile) ---
-        const navbarSettingsBtn = document.getElementById('navbarSettingsBtn');
-        const mobileSettingsBtn = document.getElementById('mobileSettingsBtn');
-        if (navbarSettingsBtn) navbarSettingsBtn.addEventListener('click', openSettingsModal);
-        if (mobileSettingsBtn) mobileSettingsBtn.addEventListener('click', () => {
-             // also close the mobile menu when opening the modal
-            mobileMenu.classList.add('hidden');
-            openSettingsModal();
-        });
-
-        // --- Legal Dropdown (Desktop) ---
-        const legalDropdownContainer = document.getElementById('legalDropdownContainer');
-        const legalDropdownBtn = document.getElementById('legalDropdownBtn');
-        const legalDropdownMenu = document.getElementById('legalDropdownMenu');
-        const legalDropdownIcon = legalDropdownBtn.querySelector('svg');
-
-        legalDropdownBtn.addEventListener('click', (event) => {
-            event.stopPropagation(); // Prevent window click listener from closing it immediately
-            const isHidden = legalDropdownMenu.classList.toggle('hidden');
-            legalDropdownIcon.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
-        });
-
-        // Close dropdown if clicking outside
-        window.addEventListener('click', (event) => {
-            if (!legalDropdownContainer.contains(event.target)) {
-                legalDropdownMenu.classList.add('hidden');
-                legalDropdownIcon.style.transform = 'rotate(0deg)';
-            }
-        });
-
-        // --- Legal Accordion (Mobile) ---
-        const mobileLegalBtn = document.getElementById('mobileLegalBtn');
-        const mobileLegalMenu = document.getElementById('mobileLegalMenu');
-        const mobileLegalIcon = document.getElementById('mobileLegalIcon');
-
-        mobileLegalBtn.addEventListener('click', () => {
-            mobileLegalMenu.classList.toggle('hidden');
-            mobileLegalIcon.classList.toggle('rotate-90');
-        });
-
-
         // --- Paywall Logic ---
+        const paywallModal = document.getElementById('paywallModal');
+        const paywallModalCard = paywallModal.querySelector('.modal-card');
+        const continueFreeBtn = document.getElementById('continueFree');
         let paywallShown = false;
         
         function showPaywall(targetUrl) {
@@ -475,7 +442,6 @@
         const backToTopBtn = document.getElementById('backToTopBtn');
 
         window.addEventListener('scroll', () => {
-            // Show button if user has scrolled down ~40% of the viewport height
             if (window.scrollY > window.innerHeight * 0.4) {
                 backToTopBtn.classList.remove('opacity-0', 'pointer-events-none');
                 backToTopBtn.classList.add('opacity-100');
@@ -506,6 +472,17 @@
                 emailInput.disabled = false;
                 submitButton.disabled = false;
             }, 3000);
+        });
+
+        // --- Initialize All Dropdowns & Accordions on DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Desktop Dropdowns
+            setupDropdown('communityDropdownContainer', 'communityDropdownBtn', 'communityDropdownMenu');
+            setupDropdown('legalDropdownContainer', 'legalDropdownBtn', 'legalDropdownMenu');
+
+            // Mobile Accordions
+            setupAccordion('mobileCommunityBtn', 'mobileCommunityMenu', 'mobileCommunityIcon');
+            setupAccordion('mobileLegalBtn', 'mobileLegalMenu', 'mobileLegalIcon');
         });
 
     </script>
