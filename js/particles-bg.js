@@ -52,7 +52,9 @@
     };
 
     p.draw = function () {
-      p.background('#111827');
+      // Match the landing page: draw particles on a transparent
+      // canvas so the shared dark body color shows through.
+      p.clear();
       for (var i = 0; i < particles.length; i++) {
         var part = particles[i];
         part.createParticle();
@@ -66,4 +68,3 @@
     };
   });
 })();
-

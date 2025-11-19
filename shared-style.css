@@ -223,6 +223,14 @@ button:focus-visible, input:focus-visible {
   overflow-x: hidden;
 }
 
+/* Ensure all pages default to the same dark base, even if the
+   landing-body class is omitted on <body>. */
+body {
+  background-color: #05050a;
+  color: #e2e8f0;
+  overflow-x: hidden;
+}
+
 /* Dropdown transition helpers for nav menus */
 .dropdown-enter {
   opacity: 0;

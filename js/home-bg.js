@@ -23,13 +23,6 @@ function draw() {
     p.display();
     p.joinParticles(particles.slice(i));
   }
-
-  // Subtle cursor interaction glow
-  if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
-    noStroke();
-    fill(99, 102, 241, 20); // Indigo glow
-    circle(mouseX, mouseY, 150);
-  }
 }
 
 function windowResized() {
@@ -76,4 +69,3 @@ class Particle {
     });
   }
 }
-
