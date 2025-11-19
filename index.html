@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,387 +11,423 @@
     <!-- p5.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
 
-    <!-- Shared Styles (for fonts and glow effect) -->
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Shared styles (glass, scrollbar, modal, etc.) -->
     <link rel="stylesheet" href="shared-style.css">
-    
-    <!-- Favicon -->
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <link rel="alternate icon" href="favicon.png" />
 
-    <style>
-        /* Add smooth scrolling behavior for anchor links */
-        html {
-            scroll-behavior: smooth;
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        aura: {
+                            dark: '#05050a',
+                            card: 'rgba(20, 20, 35, 0.6)',
+                            accent: '#6366f1', // Indigo 500
+                            glow: '#818cf8', // Indigo 400
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
         }
-
-        body {
-            background-color: #111827; 
-        }
-
-        /* p5.js canvas container */
-        #p5-canvas-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; /* Place it behind all other content */
-        }
-
-        /* Card hover transition */
-        .app-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .app-card:hover {
-            transform: translateY(-8px);
-        }
-
-        /* Styles for the Settings/About Modal */
-        .modal-card {
-            background-color: #1f2937; /* gray-800 */
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            width: 90%;
-            max-width: 500px;
-            border: 1px solid #374151; /* gray-700 */
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-
-        /* Keyframes for Modal Animation */
-        @keyframes fade-in-up {
-            from { opacity: 0; transform: translateY(20px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        @keyframes fade-out-down {
-            from { opacity: 1; transform: translateY(0) scale(1); }
-            to { opacity: 0; transform: translateY(20px) scale(0.98); }
-        }
-
-        /* Animation classes to be toggled by JS */
-        .animate-fade-in-up {
-            animation: fade-in-up 0.3s ease-out forwards;
-        }
-        .animate-fade-out-down {
-            animation: fade-out-down 0.3s ease-out forwards;
-        }
-    </style>
+    </script>
 </head>
-<body class="text-white flex flex-col items-center min-h-screen p-4 font-[Orbitron]">
+<body class="landing-body flex flex-col min-h-screen font-sans selection:bg-indigo-500 selection:text-white">
 
-    <!-- p5.js canvas will be placed here -->
+    <!-- p5.js Background -->
     <div id="p5-canvas-container"></div>
 
-    <!-- Floating quick-launch for Other Sites -->
+    <!-- Floating Action Button (Sites) -->
     <button id="openSitesTop"
-            title="More sites"
-            class="fixed bottom-24 right-6 z-50 glass-button text-white p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-105"
+            class="fixed bottom-24 right-6 z-40 glass-button text-white p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 hover:rotate-90"
             aria-label="Open other sites menu">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+        </svg>
     </button>
 
-    <!-- Top Navbar (Primary) -->
-    <nav class="w-full z-50 fixed top-0 left-0 bg-gray-900/70 backdrop-blur-md shadow-lg border-b border-indigo-800/30">
-      <div class="max-w-6xl mx-auto px-4 sm:px-8 flex items-center justify-between h-16">
-        <!-- Logo/Brand -->
-        <a href="index.html" class="flex items-center gap-2">
-          <img src="favicon.svg" class="w-8 h-8" alt="AuraSync X Logo" />
-          <span class="font-black text-xl text-white tracking-wide drop-shadow-md">AuraSync X</span>
-        </a>
-        <!-- Nav Links -->
-        <div class="hidden md:flex items-center gap-8 text-sm font-semibold">
-          <a href="#apps" class="text-indigo-200 hover:text-white transition">Apps</a>
-          <a href="features.html" class="text-indigo-200 hover:text-white transition">Features</a>
-          <!-- Company Dropdown -->
-          <div class="relative" id="companyDropdownContainer">
-              <button id="companyDropdownBtn" class="flex items-center gap-1 text-indigo-200 hover:text-white transition focus:outline-none">
-                  <span>Company</span>
-                  <svg class="w-4 h-4 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
-              </button>
-              <div id="companyDropdownMenu" class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-50 hidden border border-indigo-800/50">
-                  <a href="about.html" class="block px-4 py-2 text-sm text-indigo-200 hover:bg-gray-700 hover:text-white transition-colors">About</a>
-                  <a href="careers.html" class="block px-4 py-2 text-sm text-indigo-200 hover:bg-gray-700 hover:text-white transition-colors">Careers & Press</a>
-              </div>
-          </div>
-          <!-- Community Dropdown -->
-          <div class="relative" id="communityDropdownContainer">
-              <button id="communityDropdownBtn" class="flex items-center gap-1 text-indigo-200 hover:text-white transition focus:outline-none">
-                  <span>Community</span>
-                  <svg class="w-4 h-4 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
-              </button>
-              <div id="communityDropdownMenu" class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-50 hidden border border-indigo-800/50">
-                  <a href="contact.html" class="block px-4 py-2 text-sm text-indigo-200 hover:bg-gray-700 hover:text-white transition-colors">Contact</a>
-                  <a href="faq.html" class="block px-4 py-2 text-sm text-indigo-200 hover:bg-gray-700 hover:text-white transition-colors">FAQ</a>
-              </div>
-          </div>
-          <!-- Legal Dropdown -->
-          <div class="relative" id="legalDropdownContainer">
-              <button id="legalDropdownBtn" class="flex items-center gap-1 text-indigo-200 hover:text-white transition focus:outline-none">
-                  <span>Legal</span>
-                  <svg class="w-4 h-4 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
-              </button>
-              <div id="legalDropdownMenu" class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-50 hidden border border-indigo-800/50">
-                  <a href="Terms.html" class="block px-4 py-2 text-sm text-indigo-200 hover:bg-gray-700 hover:text-white transition-colors">Terms</a>
-                  <a href="privacy.html" class="block px-4 py-2 text-sm text-indigo-200 hover:bg-gray-700 hover:text-white transition-colors">Privacy</a>
-              </div>
-          </div>
-          <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" target="_blank" class="bg-yellow-400 text-black px-3 py-1 rounded font-bold hover:bg-yellow-300 transition">Donate</a>
-        </div>
-        <!-- Mobile Menu Button -->
-        <button id="mobileMenuBtn" class="md:hidden flex items-center text-indigo-100 focus:outline-none">
-          <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </div>
-      <!-- Mobile Menu (hidden by default) -->
-      <div id="mobileMenu" class="md:hidden bg-gray-900/90 border-t border-indigo-800/30 px-4 pb-4 pt-2 hidden">
-        <a href="#apps" class="block py-2 text-indigo-200 hover:text-white transition">Apps</a>
-        <a href="features.html" class="block py-2 text-indigo-200 hover:text-white transition">Features</a>
-        <!-- Mobile Company Accordion -->
-        <div>
-            <button id="mobileCompanyBtn" class="w-full text-left flex justify-between items-center py-2 text-indigo-200 hover:text-white transition">
-                <span>Company</span>
-                <svg id="mobileCompanyIcon" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-            </button>
-            <div id="mobileCompanyMenu" class="pl-4 hidden border-l-2 border-indigo-700/50">
-                <a href="about.html" class="block py-2 text-indigo-200 hover:text-white transition">About</a>
-                <a href="careers.html" class="block py-2 text-indigo-200 hover:text-white transition">Careers & Press</a>
-            </div>
-        </div>
-        <!-- Mobile Community Accordion -->
-        <div>
-            <button id="mobileCommunityBtn" class="w-full text-left flex justify-between items-center py-2 text-indigo-200 hover:text-white transition">
-                <span>Community</span>
-                <svg id="mobileCommunityIcon" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-            </button>
-            <div id="mobileCommunityMenu" class="pl-4 hidden border-l-2 border-indigo-700/50">
-                <a href="contact.html" class="block py-2 text-indigo-200 hover:text-white transition">Contact</a>
-                <a href="faq.html" class="block py-2 text-indigo-200 hover:text-white transition">FAQ</a>
-            </div>
-        </div>
-        <!-- Mobile Legal Accordion -->
-        <div>
-            <button id="mobileLegalBtn" class="w-full text-left flex justify-between items-center py-2 text-indigo-200 hover:text-white transition">
-                <span>Legal</span>
-                <svg id="mobileLegalIcon" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-            </button>
-            <div id="mobileLegalMenu" class="pl-4 hidden border-l-2 border-indigo-700/50">
-                <a href="Terms.html" class="block py-2 text-indigo-200 hover:text-white transition">Terms</a>
-                <a href="privacy.html" class="block py-2 text-indigo-200 hover:text-white transition">Privacy</a>
-            </div>
-        </div>
-        <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" target="_blank" class="block py-2 text-yellow-400 hover:bg-yellow-500/10 rounded">Donate</a>
-      </div>
-    </nav>
-    
-    <!-- Spacer to offset fixed navbar -->
-    <div class="h-16"></div>
-
-    <!-- Main container for all content -->
-    <div class="w-full max-w-5xl mx-auto text-center">
-
-        <!-- Hero Section -->
-        <header class="my-16 md:my-24 min-h-[60vh] flex flex-col justify-center">
-            <img src="favicon.svg" class="w-20 h-20 mx-auto mb-6" alt="AuraSync X Logo" />
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-black bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text text-transparent mb-4 drop-shadow-lg">
-                Welcome to AuraSync X
-            </h1>
-            <p class="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto">
-                Visualize your music with a stunning 3D particle engine, or kick back with our sleek video player. Your personal media hub awaits.
-            </p>
-            <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="#apps" class="w-full sm:w-auto text-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-500 transition-colors px-8 py-3 rounded-lg shadow-lg">
-                    Open Apps
-                </a>
-                <a href="features.html" class="text-gray-400 hover:text-white transition-colors">
-                    See Features &darr;
-                </a>
-            </div>
-        </header>
-
-        <!-- App Selection Cards Section -->
-        <main id="apps" class="my-16 md:my-24">
-            <h2 class="text-3xl font-bold mb-12">Choose Your Experience</h2>
-            <div class="grid gap-8 md:gap-12 grid-cols-1 md:grid-cols-2">
-                <!-- Music Player Card -->
-                <div onclick="loadApp('MusicPlayer.html')" class="app-card cursor-pointer p-8 rounded-2xl bg-purple-600/20 backdrop-blur-sm border border-purple-500/50 hover:bg-purple-500/30 transition shadow-xl glow flex flex-col items-center">
-                    <svg class="w-16 h-16 mb-4 text-purple-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V7.5A2.25 2.25 0 0013.5 6h-3a2.25 2.25 0 00-2.25 2.25v1.5m1.5 6.75l-2.25-2.25a2.25 2.25 0 00-3.182 0l-2.25 2.25a2.25 2.25 0 000 3.182l2.25 2.25a2.25 2.25 0 003.182 0l2.25-2.25a2.25 2.25 0 000-3.182z" /></svg>
-                    <h2 class="text-2xl font-bold text-white">3D Music Visualizer</h2>
-                    <p class="text-gray-200 mt-2">Upload songs, stream radio, and customize stunning real-time visuals.</p>
-                </div>
-                <!-- Video Player Card -->
-                <div onclick="loadApp('VideoPlayer.html')" class="app-card cursor-pointer p-8 rounded-2xl bg-blue-600/20 backdrop-blur-sm border border-blue-500/50 hover:bg-blue-500/30 transition shadow-xl glow flex flex-col items-center">
-                     <svg class="w-16 h-16 mb-4 text-cyan-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" /></svg>
-                    <h2 class="text-2xl font-bold text-white">MP4 Video Player</h2>
-                    <p class="text-gray-200 mt-2">Play local or remote videos with a clean interface and playlist support.</p>
-                </div>
-            </div>
-        </main>
-        
-        <!-- Features & Benefits Section -->
-        <section id="features" class="my-16 md:my-24">
-            <h2 class="text-3xl font-bold mb-12">Why AuraSync X?</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-gray-800/30 p-6 rounded-lg"><svg class="w-12 h-12 mx-auto mb-4 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 12l4.179 2.25M6.429 9.75L12 12.75l5.571-3M6.429 9.75L12 6.75l5.571 3m0 0l4.179 2.25L12 18.75l-4.179-2.25m11.142 0l4.179 2.25L17.571 12l-5.571 3.001" /></svg><h3 class="text-xl font-semibold mb-2">Immersive Visuals</h3><p class="text-gray-400">Experience a real-time, GPU-accelerated 3D particle and wave engine.</p></div>
-                <div class="bg-gray-800/30 p-6 rounded-lg"><svg class="w-12 h-12 mx-auto mb-4 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" /></svg><h3 class="text-xl font-semibold mb-2">Seamless Playback</h3><p class="text-gray-400">Supports local files (MP3, MP4) and remote audio/video streams.</p></div>
-                <div class="bg-gray-800/30 p-6 rounded-lg"><svg class="w-12 h-12 mx-auto mb-4 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.998 15.998 0 013.388-1.62" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg><h3 class="text-xl font-semibold mb-2">Full Customization</h3><p class="text-gray-400">Choose from multiple visualization types and color schemes on the fly.</p></div>
-            </div>
-        </section>
-
-    </div>
-
-    <!-- Redesigned Footer -->
-    <footer class="w-full bg-gray-900/40 backdrop-blur-sm border-t border-gray-800/60 mt-24">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-gray-400">
-            <!-- Top section with grid layout -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-10">
-                <!-- About Section -->
-                <div class="lg:col-span-2">
-                    <div class="flex items-center space-x-3 mb-4">
-                        <img src="favicon.svg" class="w-10 h-10" alt="AuraSync X Logo" />
-                        <h4 class="text-xl font-bold text-white">AuraSync X</h4>
-                    </div>
-                    <p class="text-sm">Your personal hub for immersive music and video experiences. Sign up for updates!</p>
-                    <!-- Newsletter Form Added Here -->
-                    <form id="newsletterForm" class="flex gap-2 items-center justify-start mt-4">
-                      <input
-                        id="newsletterEmail"
-                        type="email"
-                        required
-                        placeholder="you@example.com"
-                        class="px-4 py-2 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-auto"
-                      />
-                      <button
-                        type="submit"
-                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-md text-white font-semibold flex items-center gap-2"
-                      >
-                        <span class="hidden sm:inline">Sign Up</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                      </button>
-                    </form>
-                </div>
-
-                <!-- Company Links -->
-                <div>
-                    <h4 class="font-semibold text-white tracking-wider uppercase mb-4">Company</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="about.html" class="hover:text-white transition-colors">About</a></li>
-                        <li><a href="careers.html" class="hover:text-white transition-colors">Careers & Press</a></li>
-                    </ul>
-                </div>
-
-                <!-- Community Links -->
-                <div>
-                    <h4 class="font-semibold text-white tracking-wider uppercase mb-4">Community</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="contact.html" class="hover:text-white transition-colors">Contact</a></li>
-                        <li><a href="faq.html" class="hover:text-white transition-colors">FAQ</a></li>
-                    </ul>
-                </div>
-
-                <!-- Legal Links -->
-                <div>
-                    <h4 class="font-semibold text-white tracking-wider uppercase mb-4">Legal</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="Terms.html" class="hover:text-white transition-colors">Terms of Service</a></li>
-                        <li><a href="privacy.html" class="hover:text-white transition-colors">Privacy Policy</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Bottom section with copyright and socials -->
-            <div class="border-t border-gray-700/50 pt-8 flex flex-col sm:flex-row justify-between items-center text-sm">
-                <p>&copy; 2025 AuraSync X &mdash; zombies21</p>
-                <div class="flex items-center space-x-5 mt-4 sm:mt-0">
-                    <a href="https://github.com/StephenAlf21" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition" aria-label="GitHub"><svg class="w-6 h-6 text-[#fcca03]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
-                    <a href="https://x.com/Zombes18" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition" aria-label="X (formerly Twitter)"><svg class="w-5 h-5 text-[#1D9BF0]" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                    <a href="https://www.youtube.com/@zombes1892" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition" aria-label="YouTube"><svg class="w-7 h-7 text-[#FF0000]" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg></a>
-                    <a href="https://www.facebook.com/gaming/PaddleBall3D" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition" aria-label="Facebook"><svg class="w-6 h-6 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v2.385z"/></svg></a>
-                    <button id="openSitesFooter" class="ml-2 px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-200 transition" aria-label="More sites">More Sites</button>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-
-    <!-- Paywall Modal -->
-    <div id="paywallModal" class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-      <div class="modal-card text-center">
-        <h2 class="text-2xl font-bold mb-4 text-indigo-400">Support AuraSync X</h2>
-        <p class="mb-4 text-gray-300">To help us keep this project alive, consider making a small donation! You can continue for free, but every bit helps cover costs.</p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-          <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" target="_blank" class="px-6 py-3 bg-yellow-400 text-black rounded-lg font-semibold shadow hover:bg-yellow-300 transition">Donate</a>
-          <button id="continueFree" class="px-6 py-3 bg-gray-700 text-white rounded-lg font-semibold shadow hover:bg-gray-600 transition">Continue for Free</button>
-        </div>
-        <p class="text-xs text-gray-400">You can always donate later via the "Donate" button in the navigation.</p>
-      </div>
-    </div>
-
-    <!-- Other Sites Modal -->
-    <div id="sitesModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="sitesTitle">
-      <div class="modal-card w-full max-w-xl will-change-transform">
-        <div class="flex justify-between items-center mb-4">
-          <h2 id="sitesTitle" class="text-xl font-bold text-indigo-300 tracking-wide">Explore More Projects</h2>
-          <button id="closeSites" class="p-2 rounded-full hover:bg-white/10 transition" aria-label="Close">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
-        </div>
-        <ul class="grid grid-cols-1 gap-3">
-          <li>
-            <a class="site-card group" href="https://stephenalf21.github.io/MusicVisualizer3D.github.io/" target="_blank" rel="noopener noreferrer">
-              <div class="pr-3">
-                <div class="font-semibold text-white/90 group-hover:text-white">3D Music Visualizer</div>
-                <p class="text-sm text-gray-300 mt-1 leading-snug">Bring Your Audio to Life The ultimate toolkit for music lovers and creators. Visualize, edit, and explore your sound in ways you never thought possible.</p>
-              </div>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/></svg>
-            </a>
-          </li>
-          <li>
-            <a class="site-card group" href="https://stephenalf21.github.io/PaddleBall-3D-Website/" target="_blank" rel="noopener noreferrer">
-              <div class="pr-3">
-                <div class="font-semibold text-white/90 group-hover:text-white">PaddleBall 3D</div>
-                <p class="text-sm text-gray-300 mt-1 leading-snug">Experience the next dimension of classic paddle gameplay. Dynamic AI, multiple game modes, and immersive audio await.</p>
-              </div>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/></svg>
-            </a>
-          </li>
-          <li>
-            <a class="site-card group" href="https://stephenalf21.github.io/FinancialCalculator.github.io/" target="_blank" rel="noopener noreferrer">
-              <div class="pr-3">
-                <div class="font-semibold text-white/90 group-hover:text-white">Financial Calculator</div>
-                <p class="text-sm text-gray-300 mt-1 leading-snug">Experience Music Like Never Before. An immersive audio-visual journey powered by generative art and curated ambient tracks. Press play to begin the experience.</p>
-              </div>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/></svg>
-            </a>
-          </li>
-          <li>
-            <a class="site-card group" href="https://stephenalf21.github.io/PoliticalCompass.github.io/" target="_blank" rel="noopener noreferrer">
-              <div class="pr-3">
-                <div class="font-semibold text-white/90 group-hover:text-white">Political Compass</div>
-                <p class="text-sm text-gray-300 mt-1 leading-snug">Political Compass Test
-Discover your political alignment through a materialist lens.</p>
-              </div>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/></svg>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-
     <!-- Back to Top Button -->
-    <button id="backToTopBtn" title="Back to top" class="fixed bottom-6 right-6 bg-indigo-600/80 hover:bg-indigo-500 text-white p-3 rounded-full shadow-lg transition-all duration-300 opacity-0 pointer-events-none z-50">
+    <button id="backToTopBtn" 
+            onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+            class="fixed bottom-6 right-6 bg-indigo-600 hover:bg-indigo-500 text-white p-3 rounded-full shadow-lg transition-all duration-300 opacity-0 translate-y-10 z-40 pointer-events-none">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
         </svg>
     </button>
 
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 glass-panel border-b-0 border-b-indigo-500/20 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="relative w-10 h-10 flex items-center justify-center bg-indigo-900/50 rounded-lg border border-indigo-500/30 group-hover:border-indigo-400 transition-colors overflow-hidden">
+                        <!-- Animated Logo SVG placeholder -->
+                        <svg class="w-6 h-6 text-indigo-300 group-hover:text-white transition-colors animate-pulse-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                        <div class="absolute inset-0 bg-indigo-500/20 blur-xl group-hover:bg-indigo-400/30 transition-all"></div>
+                    </div>
+                    <span class="font-display font-bold text-xl tracking-wider text-white">AuraSync <span class="text-indigo-400">X</span></span>
+                </a>
 
-    <script src="js/home.js"></script>
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#apps" class="text-sm font-medium text-gray-300 hover:text-white hover:scale-105 transition-all">Apps</a>
+                    <a href="features.html" class="text-sm font-medium text-gray-300 hover:text-white hover:scale-105 transition-all">Features</a>
+                    
+                    <!-- Dropdowns -->
+                    <div class="relative group" onmouseenter="showDropdown('companyMenu')" onmouseleave="hideDropdown('companyMenu')">
+                        <button class="flex items-center gap-1 text-sm font-medium text-gray-300 hover:text-white transition-colors py-2">
+                            Company
+                            <svg class="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="companyMenu" class="dropdown-enter absolute top-full right-0 w-48 pt-2 transition-all duration-200">
+                            <div class="glass-panel rounded-xl overflow-hidden shadow-2xl p-1">
+                                <a href="about.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-indigo-600/30 hover:text-white rounded-lg transition-colors">About Us</a>
+                                <a href="careers.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-indigo-600/30 hover:text-white rounded-lg transition-colors">Careers</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative group" onmouseenter="showDropdown('communityMenu')" onmouseleave="hideDropdown('communityMenu')">
+                        <button class="flex items-center gap-1 text-sm font-medium text-gray-300 hover:text-white transition-colors py-2">
+                            Community
+                            <svg class="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="communityMenu" class="dropdown-enter absolute top-full right-0 w-48 pt-2 transition-all duration-200">
+                            <div class="glass-panel rounded-xl overflow-hidden shadow-2xl p-1">
+                                <a href="contact.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-indigo-600/30 hover:text-white rounded-lg transition-colors">Contact</a>
+                                <a href="faq.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-indigo-600/30 hover:text-white rounded-lg transition-colors">FAQ</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="#" onclick="toggleModal('paywallModal'); return false;" class="px-5 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-black font-bold text-sm rounded-lg shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:scale-105 transition-all transform">
+                        Donate
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-gray-300 hover:text-white focus:outline-none">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobileMenu" class="hidden md:hidden glass-panel border-t border-gray-700/50">
+            <div class="px-4 pt-2 pb-6 space-y-1">
+                <a href="#apps" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Apps</a>
+                <a href="features.html" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Features</a>
+                
+                <div class="border-t border-gray-700/50 my-2 pt-2">
+                    <p class="px-3 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Company</p>
+                    <a href="about.html" class="block px-3 py-2 text-sm text-gray-400 hover:text-white pl-6">About</a>
+                    <a href="careers.html" class="block px-3 py-2 text-sm text-gray-400 hover:text-white pl-6">Careers</a>
+                </div>
+
+                <div class="border-t border-gray-700/50 my-2 pt-2">
+                    <p class="px-3 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Community</p>
+                    <a href="contact.html" class="block px-3 py-2 text-sm text-gray-400 hover:text-white pl-6">Contact</a>
+                    <a href="faq.html" class="block px-3 py-2 text-sm text-gray-400 hover:text-white pl-6">FAQ</a>
+                </div>
+
+                <a href="#" onclick="toggleModal('paywallModal')" class="block mt-4 text-center w-full px-5 py-3 bg-amber-500 text-black font-bold rounded-lg">Donate</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <div class="inline-block mb-6 animate-float">
+                <img src="favicon.svg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" class="w-24 h-24 mx-auto drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]" alt="Logo" />
+                <!-- Fallback SVG if favicon is missing -->
+                <svg style="display:none" class="w-24 h-24 mx-auto text-indigo-400 drop-shadow-[0_0_25px_rgba(99,102,241,0.6)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                </svg>
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-display font-black tracking-tight mb-6">
+                Welcome to <span class="text-gradient">AuraSync X</span>
+            </h1>
+            
+            <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-400 leading-relaxed font-light">
+                Visualize your reality. A next-generation media hub combining 
+                <span class="text-indigo-400 font-semibold">3D particle physics</span> 
+                with seamless playback.
+            </p>
+            
+            <div class="mt-10 flex justify-center gap-4">
+                <a href="#apps" class="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-semibold shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all hover:-translate-y-1">
+                    Launch Apps
+                </a>
+                <a href="features.html" class="px-8 py-4 glass-button text-indigo-100 rounded-full font-semibold hover:bg-white/10 transition-all hover:-translate-y-1">
+                    Discover Features
+                </a>
+            </div>
+        </div>
+        
+        <!-- Decorative Glows -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+    </header>
+
+    <!-- Apps Section -->
+    <main id="apps" class="py-24 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-display font-bold text-white mb-4">Choose Your Experience</h2>
+                <div class="h-1 w-24 bg-indigo-500 mx-auto rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto">
+                
+                <!-- Music Player Card -->
+                <div onclick="loadApp('MusicPlayer.html')" class="glass-panel p-8 rounded-3xl cursor-pointer hover-glow group relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <div class="w-20 h-20 rounded-2xl bg-purple-900/40 flex items-center justify-center mb-6 text-purple-400 group-hover:text-purple-300 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 font-display">3D Music Visualizer</h3>
+                        <p class="text-gray-400 leading-relaxed">
+                            Immerse yourself in a reactive soundscape. Upload audio or stream radio while a WebGL particle engine dances to the beat.
+                        </p>
+                        <span class="mt-6 text-purple-400 text-sm font-bold uppercase tracking-widest group-hover:text-purple-300 flex items-center gap-2">
+                            Launch <span class="text-lg">&rarr;</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Video Player Card -->
+                <div onclick="loadApp('VideoPlayer.html')" class="glass-panel p-8 rounded-3xl cursor-pointer hover-glow group relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-cyan-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <div class="w-20 h-20 rounded-2xl bg-cyan-900/40 flex items-center justify-center mb-6 text-cyan-400 group-hover:text-cyan-300 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3 font-display">Cinema Player</h3>
+                        <p class="text-gray-400 leading-relaxed">
+                            A sleek, minimalist video player. Supports local MP4 files and remote streams with curated playlists and distraction-free viewing.
+                        </p>
+                        <span class="mt-6 text-cyan-400 text-sm font-bold uppercase tracking-widest group-hover:text-cyan-300 flex items-center gap-2">
+                            Launch <span class="text-lg">&rarr;</span>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Features Grid -->
+    <section id="features" class="py-20 bg-gradient-to-b from-transparent to-gray-900/50 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <div class="p-6 rounded-2xl hover:bg-white/5 transition duration-300">
+                    <div class="w-12 h-12 bg-indigo-500/20 rounded-lg flex items-center justify-center mb-4 text-indigo-400 mx-auto md:mx-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Scientific Visualization</h3>
+                    <p class="text-sm text-gray-400">Built on real-time mathematical models. The particle engine simulates fluid dynamics and wave physics.</p>
+                </div>
+                <div class="p-6 rounded-2xl hover:bg-white/5 transition duration-300">
+                    <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4 text-blue-400 mx-auto md:mx-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Performance First</h3>
+                    <p class="text-sm text-gray-400">Optimized for high frame rates using GPU acceleration via WebGL. Smooth even on integrated graphics.</p>
+                </div>
+                <div class="p-6 rounded-2xl hover:bg-white/5 transition duration-300">
+                    <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4 text-purple-400 mx-auto md:mx-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Fully Customizable</h3>
+                    <p class="text-sm text-gray-400">Tweak colors, sensitivity, and visualization patterns. Your experience, your rules.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black/40 backdrop-blur-md border-t border-white/5 mt-auto relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+                
+                <!-- Brand Column -->
+                <div class="lg:col-span-2">
+                    <a href="#" class="flex items-center gap-2 mb-4">
+                        <span class="font-display font-bold text-xl text-white">AuraSync <span class="text-indigo-400">X</span></span>
+                    </a>
+                    <p class="text-gray-400 text-sm mb-6 max-w-xs">
+                        Pushing the boundaries of web-based media visualization. Join the revolution.
+                    </p>
+                    <form class="flex gap-2" onsubmit="event.preventDefault(); alert('Thank you for subscribing!');">
+                        <input type="email" placeholder="Enter your email" class="bg-gray-800/50 border border-gray-700 rounded-md px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 w-full max-w-[200px]">
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-md text-sm font-semibold text-white transition-colors">
+                            Join
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Links -->
+                <div>
+                    <h4 class="font-bold text-white mb-4 uppercase text-xs tracking-wider">Company</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="about.html" class="hover:text-indigo-400 transition">About</a></li>
+                        <li><a href="careers.html" class="hover:text-indigo-400 transition">Careers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4 uppercase text-xs tracking-wider">Community</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="contact.html" class="hover:text-indigo-400 transition">Contact</a></li>
+                        <li><a href="faq.html" class="hover:text-indigo-400 transition">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4 uppercase text-xs tracking-wider">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="Terms.html" class="hover:text-indigo-400 transition">Terms</a></li>
+                        <li><a href="privacy.html" class="hover:text-indigo-400 transition">Privacy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/5 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-500 text-sm">&copy; 2025 AuraSync X - zombies21</p>
+                <div class="flex items-center space-x-6">
+                    <a href="https://github.com/StephenAlf21" class="text-gray-400 hover:text-white transition"><span class="sr-only">GitHub</span>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    </a>
+                    <a href="https://x.com/Zombes18" class="text-gray-400 hover:text-white transition"><span class="sr-only">Twitter</span>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <button id="openSitesFooter" class="text-xs border border-gray-700 bg-gray-800 px-3 py-1 rounded hover:bg-gray-700 transition">More Projects</button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- Paywall / Donation Modal -->
+    <div id="paywallModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity opacity-0 pointer-events-none" style="transition: opacity 0.3s ease;">
+        <div class="glass-panel w-full max-w-md p-8 rounded-2xl transform scale-95 transition-transform duration-300 border border-amber-500/20 shadow-2xl">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">Support the Revolution</h2>
+                <p class="text-gray-300 mb-6 text-sm leading-relaxed">
+                    This project is maintained by one developer. Your contribution keeps the servers running and the code open source.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" target="_blank" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-lg shadow-lg transition-transform hover:-translate-y-1">
+                        Donate via PayPal
+                    </a>
+                    <button onclick="toggleModal('paywallModal')" class="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
+                        Maybe Later
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other Sites Modal -->
+    <div id="sitesModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-[60] hidden" role="dialog" aria-modal="true" aria-labelledby="sitesTitle">
+        <div class="modal-card w-full max-w-xl will-change-transform">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="sitesTitle" class="text-xl font-bold text-indigo-300 tracking-wide flex items-center gap-2">
+                    <span class="text-indigo-400">///</span> Network Projects
+                </h2>
+                <button id="closeSites" class="p-2 rounded-full hover:bg-white/10 transition" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <ul class="grid grid-cols-1 gap-3">
+                <li>
+                    <a class="site-card group" href="https://stephenalf21.github.io/MusicVisualizer3D.github.io/" target="_blank" rel="noopener noreferrer">
+                        <div class="pr-3">
+                            <div class="font-semibold text-white/90 group-hover:text-white">3D Music Visualizer</div>
+                            <p class="text-sm text-gray-300 mt-1 leading-snug">Advanced audio reactive toolkit for music lovers and creators.</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a class="site-card group" href="https://stephenalf21.github.io/PaddleBall-3D-Website/" target="_blank" rel="noopener noreferrer">
+                        <div class="pr-3">
+                            <div class="font-semibold text-white/90 group-hover:text-white">PaddleBall 3D</div>
+                            <p class="text-sm text-gray-300 mt-1 leading-snug">Next-gen arcade physics with multiple modes and dynamic AI.</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a class="site-card group" href="https://stephenalf21.github.io/FinancialCalculator.github.io/" target="_blank" rel="noopener noreferrer">
+                        <div class="pr-3">
+                            <div class="font-semibold text-white/90 group-hover:text-white">Financial Tools</div>
+                            <p class="text-sm text-gray-300 mt-1 leading-snug">Financial calculators for planning, analysis, and decision-making.</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a class="site-card group" href="https://stephenalf21.github.io/PoliticalCompass.github.io/" target="_blank" rel="noopener noreferrer">
+                        <div class="pr-3">
+                            <div class="font-semibold text-white/90 group-hover:text-white">Political Compass</div>
+                            <p class="text-sm text-gray-300 mt-1 leading-snug">Discover your political alignment through a materialist lens.</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <!-- p5 background for landing page -->
+    <script src="js/home-bg.js"></script>
+    <!-- Shared links modal behavior -->
     <script src="js/links-modal.js"></script>
+    <!-- Navbar, dropdowns, paywall, scroll UI -->
+    <script src="js/home.js"></script>
 </body>
 </html>

@@ -7,11 +7,6 @@
     color: #ffffff;
 }
 
-body {
-  font-family: 'Orbitron', monospace;
-  background-color: #1a202c;          /* Dark slate */
-}
-
 .glow {
   box-shadow: 0 0 15px rgba(99, 102, 241, 0.7);   /* Indigo glow */
 }
@@ -25,6 +20,13 @@ body {
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
+}
+
+/* Hover effect for glass buttons (used on landing + content pages) */
+.glass-button:hover {
+  background: rgba(99, 102, 241, 0.4);
+  border-color: rgba(99, 102, 241, 0.6);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
 }
 
 /* Scroll-bar, focus, tooltip, and modal styles */
@@ -144,3 +146,113 @@ button:focus-visible, input:focus-visible {
 
 /* Mouse glow position for cards */
 .site-card { --mx: 50%; --my: 0%; }
+
+/* Global custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4f46e5;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4338ca;
+}
+
+/* Canvas background for p5 instances when used as a page backdrop */
+#p5-canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+/* Glassmorphism utilities used on landing/navigation */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+/* Text gradient utility for headings */
+.text-gradient {
+  background: linear-gradient(to right, #818cf8, #c084fc, #22d3ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card hover glow for feature tiles */
+.hover-glow {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-glow:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.25);
+  border-color: rgba(99, 102, 241, 0.5);
+}
+
+/* Landing / home page body styling */
+.landing-body {
+  background-color: #05050a;
+  color: #e2e8f0;
+  overflow-x: hidden;
+}
+
+/* Dropdown transition helpers for nav menus */
+.dropdown-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+.dropdown-active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Media control bar styling (video player) */
+.glass-control-bar {
+  background: rgba(5, 5, 10, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Range input styling for volume/progress sliders */
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background: #818cf8;
+  cursor: pointer;
+  margin-top: -4px;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}

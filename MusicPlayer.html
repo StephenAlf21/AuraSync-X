@@ -9,62 +9,81 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AuraSync X | Ultimate 3D Music Visualizer</title>
-    <!-- Favicon Links Restored -->
+    <!-- Favicon Links -->
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="shortcut icon" href="favicon.png" />
+
+    <!-- Tailwind + Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+    <!-- Core Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
-    
+
     <!-- Tippy.js for Tooltips -->
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css"/>
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/material.css">
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
+
     <!-- Shared Styles -->
     <link rel="stylesheet" href="shared-style.css">
 </head>
-<body class="text-white min-h-screen bg-gray-900">
+<body class="landing-body flex flex-col h-screen font-sans selection:bg-indigo-500 selection:text-white">
+
+  <!-- p5.js Background -->
+  <div id="p5-canvas-container" data-count="100" data-dot="rgba(139, 92, 246, 0.45)" data-line="rgba(139, 92, 246, 0.12)"></div>
   
   <!-- 1) Make this full-screen flex-column: -->
-  <div id="mainContent" class="h-screen flex flex-col overflow-hidden">
+  <div id="mainContent" class="flex-1 flex flex-col overflow-hidden">
     <!-- 2) Container becomes flex-col and flex-1: -->
-    <div class="container mx-auto px-2 sm:px-4 py-6 flex flex-col flex-1">
-      <header class="flex flex-col md:flex-row justify-between items-center mb-6">
-        <div class="flex items-center mb-4 md:mb-0">
-          <div class="bg-indigo-600 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+    <div class="container mx-auto px-2 sm:px-4 py-4 flex flex-col flex-1">
+      <header class="glass-panel border-b border-b-indigo-500/10 rounded-xl px-4 sm:px-6 py-3 mb-4 flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center gap-3 mb-3 md:mb-0">
+          <button id="backBtn"
+                  data-tippy-content="Back to Main Menu"
+                  class="glass-button p-2 rounded-full text-gray-300 hover:text-white"
+                  aria-label="Back to Main Menu">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
             </svg>
+          </button>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 flex items-center justify-center bg-indigo-900/50 rounded border border-indigo-500/30 text-indigo-400">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2-3 .895-3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+              </svg>
+            </div>
+            <div class="flex flex-col">
+              <span class="font-display font-bold text-lg tracking-wider text-white">AuraSync <span class="text-gradient">Music</span></span>
+              <span id="appVersion" class="text-xs text-gray-400 mt-0.5"></span>
+            </div>
           </div>
-          <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">AuraSync X</h1>
         </div>
         <div class="flex flex-wrap justify-center sm:justify-end items-center gap-2">
-           <button id="togglePlaylistBtn" data-tippy-content="Open Playlist" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Open Playlist" aria-expanded="false" aria-controls="playlistPanel">
-              <svg id="playlistToggleIcon" class="w-6 h-6 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-           </button>
-          <button id="accessibilityBtn" data-tippy-content="Accessibility" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Accessibility settings">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
-               <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <button id="accessibilityBtn" data-tippy-content="Accessibility" class="glass-button p-2 rounded-lg text-gray-300" aria-label="Accessibility settings">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31 2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
           </button>
-          <button id="backBtn"
-                  data-tippy-content="Back to Main Menu"
-                  class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
-                  aria-label="Back to Main Menu">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-white" fill="none"
-                 viewBox="0 0 24 24" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button id="helpBtn" data-tippy-content="Help" class="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors" aria-label="Help">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
+          <button id="helpBtn" data-tippy-content="Help" class="glass-button p-2 rounded-lg text-gray-300" aria-label="Help">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </button>
-          <span id="appVersion" class="ml-3 text-gray-400 text-sm"></span>
+          <button id="togglePlaylistBtn"
+                  data-tippy-content="Toggle Playlist"
+                  class="glass-button p-2 rounded-lg text-indigo-300 border-indigo-500/30"
+                  aria-label="Toggle Playlist"
+                  aria-expanded="false"
+                  aria-controls="playlistPanel">
+            <svg id="playlistToggleIcon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
         </div>
       </header>
 
@@ -172,11 +191,11 @@
     </div>
   </div>
 
-  <aside id="playlistPanel" class="fixed top-0 right-0 h-full w-full sm:w-80 bg-gray-800 transform transition-transform duration-300 ease-in-out translate-x-full flex flex-col border-l border-gray-700 z-40 pb-12">
-      <div class="flex items-center justify-between p-4 border-b border-gray-700">
-          <h2 class="text-xl font-bold text-indigo-400">Playlist</h2>
-          <button id="closePlaylistBtn" class="p-2 rounded-lg hover:bg-gray-700" aria-label="Close Playlist">
-              <svg class="w-6 h-6 stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+  <aside id="playlistPanel" class="fixed top-0 right-0 h-full w-full sm:w-80 glass-panel transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col border-l border-indigo-500/20 z-40 pb-12">
+      <div class="flex items-center justify-between p-4 border-b border-white/10">
+          <h2 class="font-display font-bold text-white tracking-wide">Playlist</h2>
+          <button id="closePlaylistBtn" class="glass-button p-2 rounded-lg text-gray-300 hover:text-white" aria-label="Close Playlist">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
       </div>
       <div id="playlistTabs" class="flex justify-around gap-1 px-4 pt-2">
@@ -185,7 +204,7 @@
         <button data-layer="radio" class="playlist-tab flex-1 py-1.5 text-xs sm:text-sm rounded-lg bg-gray-700 hover:bg-indigo-500">Radio</button>
       </div>
       <div id="playlistContainer" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
-      <div class="p-4 border-t border-gray-700">
+      <div class="p-4 border-t border-white/10 bg-black/30">
           <input type="file" id="fileInput" accept=".mp3" multiple />
           <label for="fileInput" data-tippy-content="Add MP3 files from your computer" class="w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center justify-center cursor-pointer" aria-label="Add new track">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2">
@@ -304,6 +323,8 @@
     </div>
   </div>
 
+  <!-- Scripts -->
+  <script src="js/particles-bg.js"></script>
   <script src="js/music-player.js"></script>
 </body>
 </html>
