@@ -76,19 +76,98 @@
     <!-- p5.js Background -->
     <div id="p5-canvas-container"></div>
 
-    <!-- Nav -->
-    <nav class="h-20 flex-none glass-panel border-b border-b-indigo-500/10 z-30 relative flex items-center justify-between px-4 sm:px-6 lg:px-8">
-        <a href="index.html" class="flex items-center gap-2 group text-gray-400 hover:text-white transition">
-            <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-            <span class="font-display font-bold text-sm tracking-widest uppercase">Return Home</span>
-        </a>
-        
-        <div class="flex items-center gap-3">
-            <div class="w-8 h-8 flex items-center justify-center bg-indigo-900/50 rounded border border-indigo-500/30 text-indigo-400">
-                <img src="favicon.svg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" class="w-5 h-5" alt="Logo">
-                <svg style="display:none" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+    <!-- Navigation (shared with landing page) -->
+    <nav class="glass-panel border-b border-b-indigo-500/10 z-30 relative transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3 group">
+                    <div class="relative w-10 h-10 flex items-center justify-center bg-indigo-900/50 rounded-lg border border-indigo-500/30 group-hover:border-indigo-400 transition-colors overflow-hidden">
+                        <img src="favicon.svg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" class="w-6 h-6 relative z-10" alt="Logo" />
+                        <svg style="display:none" class="w-6 h-6 text-indigo-300 group-hover:text-white transition-colors relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                        <div class="absolute inset-0 bg-indigo-500/20 blur-xl group-hover:bg-indigo-400/30 transition-all"></div>
+                    </div>
+                    <span class="font-display font-bold text-xl tracking-wider text-white">AuraSync <span class="text-indigo-400">X</span></span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html#apps" class="text-sm font-medium text-gray-300 hover:text-white hover:scale-105 transition-all">Apps</a>
+                    <a href="features.html" class="text-sm font-medium text-gray-300 hover:text-white hover:scale-105 transition-all">Features</a>
+                    
+                    <!-- Dropdowns -->
+                    <div class="relative group" onmouseenter="showDropdown('companyMenu')" onmouseleave="hideDropdown('companyMenu')">
+                        <button class="flex items-center gap-1 text-sm font-medium text-gray-300 hover:text-white transition-colors py-2">
+                            Company
+                            <svg class="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="companyMenu" class="dropdown-enter absolute top-full right-0 w-48 pt-2 transition-all duration-200">
+                            <div class="glass-panel rounded-xl overflow-hidden shadow-2xl p-1">
+                                <a href="about.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-indigo-600/30 hover:text-white rounded-lg transition-colors">About Us</a>
+                                <a href="careers.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-indigo-600/30 hover:text-white rounded-lg transition-colors">Careers</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative group" onmouseenter="showDropdown('communityMenu')" onmouseleave="hideDropdown('communityMenu')">
+                        <button class="flex items-center gap-1 text-sm font-medium text-gray-300 hover:text-white transition-colors py-2">
+                            Community
+                            <svg class="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="communityMenu" class="dropdown-enter absolute top-full right-0 w-48 pt-2 transition-all duration-200">
+                            <div class="glass-panel rounded-xl overflow-hidden shadow-2xl p-1">
+                                <a href="contact.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-indigo-600/30 hover:text-white rounded-lg transition-colors">Contact</a>
+                                <a href="faq.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-indigo-600/30 hover:text-white rounded-lg transition-colors">FAQ</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Network Projects Button -->
+                    <button id="openSitesTop"
+                            class="ml-4 glass-button text-white p-2 rounded-full shadow-lg transition-all duration-300 hover:scale-110 hover:rotate-90"
+                            aria-label="Open other sites menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                        </svg>
+                    </button>
+
+                    <a href="#" onclick="toggleModal('paywallModal'); return false;" class="px-5 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-black font-bold text-sm rounded-lg shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:scale-105 transition-all transform">
+                        Donate
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-gray-300 hover:text-white focus:outline-none">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
             </div>
-            <span class="font-display font-bold text-lg tracking-wider text-white">Common <span class="text-gradient">Questions</span></span>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobileMenu" class="hidden md:hidden glass-panel border-t border-gray-700/50">
+            <div class="px-4 pt-2 pb-6 space-y-1">
+                <a href="index.html#apps" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Apps</a>
+                <a href="features.html" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Features</a>
+                
+                <div class="border-t border-gray-700/50 my-2 pt-2">
+                    <p class="px-3 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Company</p>
+                    <a href="about.html" class="block px-3 py-2 text-sm text-gray-400 hover:text-white pl-6">About</a>
+                    <a href="careers.html" class="block px-3 py-2 text-sm text-gray-400 hover:text-white pl-6">Careers</a>
+                </div>
+
+                <div class="border-t border-gray-700/50 my-2 pt-2">
+                    <p class="px-3 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Community</p>
+                    <a href="contact.html" class="block px-3 py-2 text-sm text-gray-400 hover:text-white pl-6">Contact</a>
+                    <a href="faq.html" class="block px-3 py-2 text-sm text-gray-400 hover:text-white pl-6">FAQ</a>
+                </div>
+
+                <a href="#" onclick="toggleModal('paywallModal'); return false;" class="block mt-4 text-center w-full px-5 py-3 bg-amber-500 text-black font-bold rounded-lg">Donate</a>
+            </div>
         </div>
     </nav>
 
@@ -247,8 +326,95 @@
         </div>
     </footer>
 
+    <!-- Paywall / Donation Modal -->
+    <div id="paywallModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity opacity-0 pointer-events-none" style="transition: opacity 0.3s ease;">
+        <div class="glass-panel w-full max-w-md p-8 rounded-2xl transform scale-95 transition-transform duration-300 border border-amber-500/20 shadow-2xl">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">Support the Revolution</h2>
+                <p class="text-gray-300 mb-6 text-sm leading-relaxed">
+                    This project is maintained by one developer. Your contribution keeps the servers running and the code open source.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" target="_blank" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-lg shadow-lg transition-transform hover:-translate-y-1">
+                        Donate via PayPal
+                    </a>
+                    <button onclick="toggleModal('paywallModal')" class="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
+                        Maybe Later
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other Sites Modal (shared layout, hooked by links-modal.js) -->
+    <div id="sitesModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-[60] hidden" role="dialog" aria-modal="true" aria-labelledby="sitesTitle">
+        <div class="modal-card w-full max-w-xl will-change-transform">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="sitesTitle" class="text-xl font-bold text-indigo-300 tracking-wide flex items-center gap-2">
+                    <span class="text-indigo-400">///</span> Network Projects
+                </h2>
+                <button id="closeSites" class="p-2 rounded-full hover:bg-white/10 transition" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <ul class="grid grid-cols-1 gap-3">
+                <li>
+                    <a class="site-card group" href="https://stephenalf21.github.io/MusicVisualizer3D.github.io/" target="_blank" rel="noopener noreferrer">
+                        <div class="pr-3">
+                            <div class="font-semibold text-white/90 group-hover:text-white">3D Music Visualizer</div>
+                            <p class="text-sm text-gray-300 mt-1 leading-snug">Advanced audio reactive toolkit for music lovers and creators.</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a class="site-card group" href="https://stephenalf21.github.io/PaddleBall-3D-Website/" target="_blank" rel="noopener noreferrer">
+                        <div class="pr-3">
+                            <div class="font-semibold text-white/90 group-hover:text-white">PaddleBall 3D</div>
+                            <p class="text-sm text-gray-300 mt-1 leading-snug">Next-gen arcade physics with multiple modes and dynamic AI.</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a class="site-card group" href="https://stephenalf21.github.io/FinancialCalculator.github.io/" target="_blank" rel="noopener noreferrer">
+                        <div class="pr-3">
+                            <div class="font-semibold text-white/90 group-hover:text-white">Financial Tools</div>
+                            <p class="text-sm text-gray-300 mt-1 leading-snug">Financial calculators for planning, analysis, and decision-making.</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a class="site-card group" href="https://stephenalf21.github.io/PoliticalCompass.github.io/" target="_blank" rel="noopener noreferrer">
+                        <div class="pr-3">
+                            <div class="font-semibold text-white/90 group-hover:text-white">Political Compass</div>
+                            <p class="text-sm text-gray-300 mt-1 leading-snug">Discover your political alignment through a materialist lens.</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <!-- Background & FAQ behavior -->
     <script src="js/particles-bg.js"></script>
+    <script src="js/links-modal.js"></script>
+    <script src="js/home.js"></script>
     <script src="js/faq.js"></script>
 </body>
 </html>
