@@ -16,6 +16,17 @@ body {
   box-shadow: 0 0 15px rgba(99, 102, 241, 0.7);   /* Indigo glow */
 }
 
+/* Glass button used for floating actions */
+.glass-button {
+  background: rgba(99, 102, 241, 0.18);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+}
+
 /* Scroll-bar, focus, tooltip, and modal styles */
 #playlistContainer::-webkit-scrollbar { 
   width: 6px; 
@@ -46,11 +57,90 @@ button:focus-visible, input:focus-visible {
   border-bottom-color: #2d3748;
 }
 
+/* Glassy modal card with subtle sheen */
 .modal-card {
-  background-color: #2d3748;    /* gray-800 */
-  border-radius: 0.75rem;
-  padding: 1.5rem;
+  position: relative;
+  background: rgba(17, 24, 39, 0.55); /* gray-900 with alpha */
+  border-radius: 0.9rem;
+  padding: 1.25rem;
   width: 90%;
   max-width: 500px;
-  border: 1px solid #4a5568;    /* gray-700 */
+  border: 1px solid rgba(99, 102, 241, 0.28);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.55),
+    0 2px 10px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  overflow: hidden;
 }
+
+.modal-card::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 60px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  transform: rotate(8deg);
+  pointer-events: none;
+}
+
+/* Pop animations for modal card */
+@keyframes pop-in {
+  0% { opacity: 0; transform: translateY(14px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pop-out {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(14px) scale(0.96); }
+}
+
+.animate-pop-in { animation: pop-in 260ms cubic-bezier(.22,.94,.36,1) forwards; }
+.animate-pop-out { animation: pop-out 200ms ease forwards; }
+
+/* Glassy interactive site card for links */
+.site-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 0.8rem;
+  background: rgba(31, 41, 55, 0.45);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  transition: transform 180ms ease, box-shadow 200ms ease, background 200ms ease, border-color 200ms ease;
+  position: relative;
+  overflow: hidden;
+  color: #e5e7eb;
+}
+
+.site-card:hover {
+  transform: translateY(-2px) scale(1.01);
+  background: rgba(62, 51, 160, 0.18);
+  border-color: rgba(99, 102, 241, 0.45);
+  box-shadow:
+    0 18px 45px rgba(62, 51, 160, 0.35),
+    0 8px 24px rgba(0,0,0,0.45);
+}
+
+.site-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(600px 120px at var(--mx, 50%) var(--my, 0%), rgba(99,102,241,0.12), transparent 60%);
+  pointer-events: none;
+  transition: opacity 200ms ease;
+  opacity: 0;
+}
+
+.site-card:hover::after { opacity: 1; }
+
+/* Mouse glow position for cards */
+.site-card { --mx: 50%; --my: 0%; }

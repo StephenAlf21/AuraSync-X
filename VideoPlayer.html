@@ -6,8 +6,6 @@
     <title>MP4 Video Player</title>
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- p5.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <!-- Anime.js for animations -->
     <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
     <!-- Tippy.js for tooltips -->
@@ -20,44 +18,8 @@
     <link rel="alternate icon" href="favicon.png" />
     <!-- Shared Styles -->
     <link rel="stylesheet" href="shared-style.css">
-    <style>
-        body {
-            background-color: #111827; /* Fallback background */
-        }
-        /* p5.js canvas container */
-        #p5-canvas-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; /* Place it behind all other content */
-        }
-        /* Ensure modals and sidebars appear above the main content but are still part of the flow */
-        #playlistPanel {
-            z-index: 40;
-        }
-        #alertModal, #helpModal, #backModal {
-            z-index: 50;
-        }
-        /* Custom modal card style from other pages for consistency */
-        .modal-card {
-            background: rgba(31, 41, 55, 0.75); /* gray-800 @ 75% opacity */
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            width: 90%;
-            max-width: 500px;
-            border: 1px solid rgba(79, 70, 229, 0.2);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-        }
-    </style>
 </head>
 <body class="text-white min-h-screen flex flex-col lg:flex-row">
-
-  <!-- p5.js canvas will be placed here -->
-  <div id="p5-canvas-container"></div>
 
   <!-- Main Content Area -->
   <div id="mainContent" class="flex-1 overflow-y-auto transition-all duration-300 ease-in-out">
@@ -95,9 +57,17 @@
 
       <main class="flex flex-col lg:flex-row gap-6">
         <!-- Video Player & Controls Wrapper -->
-        <section class="flex-1 flex flex-col rounded-xl overflow-hidden border border-gray-700 glow bg-gray-900/50 backdrop-blur-sm">
+        <section class="flex-1 flex flex-col rounded-xl overflow-hidden border border-gray-700 glow">
           <!-- Video Player Area -->
           <div class="flex-1 bg-black">
+            <!-- YouTube Embed Container (shown for YouTube items) -->
+            <div id="youtubeContainer" class="w-full h-full aspect-video hidden">
+              <iframe id="youtubeFrame" class="w-full h-full" frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen
+                      referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            </div>
+            <!-- Native video element (shown for local/remote files) -->
             <video id="videoPlayer" class="w-full h-full aspect-video" controlslist="nodownload nofullscreen noremoteplayback" disablepictureinpicture></video>
           </div>
 
@@ -138,7 +108,7 @@
   </div>
 
   <!-- Playlist Panel (Sidebar) -->
-  <aside id="playlistPanel" class="fixed top-0 right-0 h-full w-full sm:w-80 bg-gray-800/80 backdrop-blur-sm transform transition-transform duration-300 ease-in-out translate-x-full flex flex-col border-l border-gray-700 z-40">
+  <aside id="playlistPanel" class="fixed top-0 right-0 h-full w-full sm:w-80 bg-gray-800 transform transition-transform duration-300 ease-in-out translate-x-full flex flex-col border-l border-gray-700 z-40">
       <div class="flex items-center justify-between p-4 border-b border-gray-700">
           <h2 class="text-xl font-bold text-indigo-400">Playlist</h2>
           <button id="closePlaylistBtn" class="p-2 rounded-lg hover:bg-gray-700" aria-label="Close Playlist">
@@ -149,7 +119,7 @@
           <!-- Playlist items will be injected here -->
       </div>
       <div class="p-4 border-t border-gray-700 space-y-4">
-          <input type="file" id="fileInput" accept=".mp4" multiple class="hidden"/>
+          <input type="file" id="fileInput" accept=".mp4" multiple />
           <label for="fileInput" data-tippy-content="Add MP4 files from your computer" class="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center justify-center cursor-pointer font-semibold" aria-label="Add new video">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -224,7 +194,7 @@
           </svg>
         </button>
       </div>
-      <p class="text-gray-200 mb-6">Are you sure you want to go back to the main menu? Your playlist will be lost.</p>
+      <p class="text-gray-200 mb-6">Are you sure you want to go back to the main menu? Unsaved changes will be lost.</p>
       <div class="flex justify-end space-x-2">
         <button id="backConfirm"
                 class="px-4 py-2 bg-red-600 hover:bg-red-500 rounded-lg font-semibold">
@@ -238,391 +208,6 @@
     </div>
   </div>
 
-  <script>
-    // --- p5.js Sketch for Animated Background ---
-    let particles = [];
-
-    function setup() {
-        let canvas = createCanvas(windowWidth, windowHeight);
-        canvas.parent('p5-canvas-container'); // Attach canvas to the container div
-        for (let i = 0; i < 150; i++) { // Increased particle count slightly for more density
-            particles.push(new Particle());
-        }
-    }
-
-    function draw() {
-        background('#111827');
-        for (let i = 0; i < particles.length; i++) {
-            particles[i].createParticle();
-            particles[i].moveParticle();
-            particles[i].joinParticles(particles.slice(i));
-        }
-    }
-
-    function windowResized() {
-        resizeCanvas(windowWidth, windowHeight);
-    }
-
-    // Particle class
-    class Particle {
-        constructor() {
-            this.x = random(0, width);
-            this.y = random(0, height);
-            this.r = random(1, 4);
-            this.xSpeed = random(-0.5, 0.5);
-            this.ySpeed = random(-0.5, 0.5);
-        }
-
-        createParticle() {
-            noStroke();
-            fill('rgba(139, 92, 246, 0.5)'); // A nice purple color from your theme
-            circle(this.x, this.y, this.r);
-        }
-
-        moveParticle() {
-            if (this.x < 0 || this.x > width) this.xSpeed *= -1;
-            if (this.y < 0 || this.y > height) this.ySpeed *= -1;
-            this.x += this.xSpeed;
-            this.y += this.ySpeed;
-        }
-
-        joinParticles(otherParticles) {
-            otherParticles.forEach(p => {
-                let d = dist(this.x, this.y, p.x, p.y);
-                if (d < 90) { // Slightly increased distance for more connections
-                    stroke('rgba(139, 92, 246, 0.15)');
-                    line(this.x, this.y, p.x, p.y);
-                }
-            });
-        }
-    }
-
-
-    // --- ORIGINAL VIDEOPLAYER SCRIPT ---
-    // --- GLOBAL STATE & VARIABLES ---
-    let playlist = [];
-    let isPlaying = false;
-    let currentTrackIndex = -1;
-
-    // --- DOM ELEMENTS ---
-    const mainContent = document.getElementById('mainContent');
-    const playlistPanel = document.getElementById('playlistPanel');
-    const playlistContainer = document.getElementById('playlistContainer');
-    const togglePlaylistBtn = document.getElementById('togglePlaylistBtn');
-    const closePlaylistBtn = document.getElementById('closePlaylistBtn');
-    const playlistToggleIcon = document.getElementById('playlistToggleIcon');
-    const playPauseBtn = document.getElementById('playPauseBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const prevBtn = document.getElementById('prevBtn');
-    const fileInput = document.getElementById('fileInput');
-    const videoPlayer = document.getElementById('videoPlayer');
-    const currentTimeEl = document.getElementById('currentTime');
-    const durationEl = document.getElementById('durationTime');
-    const progressWrapper = document.getElementById('progressWrapper');
-    const progressBar = document.getElementById('progressBar');
-    const volumeSlider = document.getElementById('volumeSlider');
-    const trackTitleEl = document.getElementById('trackTitle');
-    const trackArtistEl = document.getElementById('trackArtist');
-
-    // --- ICONS ---
-    const playIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-    const pauseIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-
-    // --- PLAYLIST & PLAYBACK LOGIC ---
-    function handleFiles(files) {
-        Array.from(files).forEach(file => {
-          if (file.type === 'video/mp4') {
-            playlist.push({
-              file: file,
-              url: URL.createObjectURL(file),
-              name: file.name.replace('.mp4',''),
-              artist: 'Local File',
-            });
-          }
-        });
-        if (currentTrackIndex === -1 && playlist.length > 0) {
-          playTrack(0);
-        }
-        renderPlaylist();
-        updateButtons();
-    }
-
-    function removeTrack(index) {
-      const removedCurrent = index === currentTrackIndex;
-      playlist.splice(index, 1);
-
-      if (removedCurrent) {
-        videoPlayer.pause();
-        if (playlist.length > 0) {
-            playTrack(index % playlist.length);
-        } else {
-            currentTrackIndex = -1;
-            videoPlayer.src = '';
-            trackTitleEl.textContent = 'No Video Loaded';
-            trackArtistEl.textContent = 'Add videos to the playlist to begin';
-            isPlaying = false;
-            playPauseBtn.innerHTML = playIconSVG;
-            updateProgressBar();
-        }
-      } else if (index < currentTrackIndex) {
-          currentTrackIndex--;
-      }
-      renderPlaylist();
-      updateButtons();
-    }
-
-    function playTrack(index) {
-        if (index < 0 || index >= playlist.length) return;
-
-        currentTrackIndex = index;
-        const track = playlist[index];
-        trackTitleEl.textContent = track.name;
-        trackArtistEl.textContent = track.artist;
-
-        videoPlayer.src = track.url;
-        const playPromise = videoPlayer.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.error("Playback error:", error);
-                showAlert("Could not play the selected video.", "Playback Error");
-            });
-        }
-
-        renderPlaylist();
-        updateButtons();
-    }
-
-    function playNextTrack() {
-        if (playlist.length === 0) return;
-        playTrack((currentTrackIndex + 1) % playlist.length);
-    }
-
-    function playPrevTrack() {
-        if (playlist.length === 0) return;
-        playTrack((currentTrackIndex - 1 + playlist.length) % playlist.length);
-    }
-
-    function togglePlayPause() {
-      if (!videoPlayer.src) return;
-      if (videoPlayer.paused) {
-        videoPlayer.play();
-      } else {
-        videoPlayer.pause();
-      }
-    }
-
-    // --- UI & VISUALIZATION LOGIC ---
-    function renderPlaylist() {
-        playlistContainer.innerHTML = '';
-        if (playlist.length === 0) {
-            playlistContainer.innerHTML = `<p class="text-gray-400 text-center">No videos in the playlist.</p>`;
-            return;
-        }
-
-        playlist.forEach((track, index) => {
-            const isActive = index === currentTrackIndex;
-            const item = document.createElement('div');
-            item.className = `p-3 rounded-lg cursor-pointer flex items-center transition-colors ${isActive ? 'bg-indigo-600' : 'bg-gray-700 hover:bg-gray-600'}`;
-            item.innerHTML = `
-              <svg class="w-5 h-5 mr-3 ${isActive ? 'text-white' : 'text-indigo-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-              <div class="flex-1 min-w-0">
-                <div class="font-bold truncate">${track.name}</div>
-                <div class="text-sm text-gray-400 truncate">${track.artist}</div>
-              </div>
-              <button class="remove-btn ml-2 p-1 rounded-full hover:bg-red-500 hover:text-white transition-colors" aria-label="Remove track">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-              </button>`;
-            item.addEventListener('click', e => {
-              if (e.target.closest('.remove-btn')) return;
-              playTrack(index);
-            });
-            item.querySelector('.remove-btn').addEventListener('click', e => {
-              e.stopPropagation();
-              removeTrack(index);
-            });
-            playlistContainer.appendChild(item);
-        });
-    }
-
-    function updateButtons() {
-        const hasTracks = playlist.length > 0;
-        playPauseBtn.disabled = !hasTracks;
-        nextBtn.disabled = !hasTracks;
-        prevBtn.disabled = !hasTracks;
-    }
-
-    // --- HELPER FUNCTIONS FOR PLAYER CONTROLS ---
-    function formatTime(sec) {
-      if (isNaN(sec)) return '0:00';
-      const m = Math.floor(sec / 60);
-      const s = Math.floor(sec % 60).toString().padStart(2, '0');
-      return `${m}:${s}`;
-    }
-
-    function seek(e) {
-      if (!videoPlayer.duration) return;
-      const rect = progressWrapper.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const newTime = (clickX / rect.width) * videoPlayer.duration;
-      videoPlayer.currentTime = newTime;
-    }
-
-    function updateProgressBar() {
-        if (!videoPlayer.duration) {
-            progressBar.style.width = '0%';
-            currentTimeEl.textContent = '0:00';
-            durationEl.textContent = '0:00';
-            return;
-        }
-        const pct = (videoPlayer.currentTime / videoPlayer.duration) * 100;
-        progressBar.style.width = pct + '%';
-        currentTimeEl.textContent = formatTime(videoPlayer.currentTime);
-    }
-
-    // --- MODAL ANIMATION HELPERS ---
-    function openModal(modalId) {
-      const modal = document.getElementById(modalId);
-      modal.classList.remove('hidden');
-      anime({ targets: modal.querySelector('.modal-card'), scale: [0.9, 1], opacity: [0, 1], duration: 300, easing: 'easeOutQuad' });
-    }
-
-    function closeModal(modalId) {
-      const modal = document.getElementById(modalId);
-      anime({
-        targets: modal.querySelector('.modal-card'),
-        scale: [1, 0.9],
-        opacity: [1, 0],
-        duration: 300,
-        easing: 'easeInQuad',
-        complete: () => modal.classList.add('hidden')
-      });
-    }
-
-    function showAlert(message, title = 'Notice') {
-      document.getElementById('alertTitle').textContent = title;
-      document.getElementById('alertMessage').textContent = message;
-      openModal('alertModal');
-    }
-
-    // --- EVENT LISTENERS ---
-    document.addEventListener('DOMContentLoaded', () => {
-      renderPlaylist();
-      updateButtons();
-
-      // Player controls
-      playPauseBtn.addEventListener('click', togglePlayPause);
-      nextBtn.addEventListener('click', playNextTrack);
-      prevBtn.addEventListener('click', playPrevTrack);
-      progressWrapper.addEventListener('click', seek);
-      volumeSlider.addEventListener('input', e => videoPlayer.volume = e.target.value);
-      fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-
-      // Video element events
-      videoPlayer.addEventListener('play', () => {
-        isPlaying = true;
-        playPauseBtn.innerHTML = pauseIconSVG;
-      });
-      videoPlayer.addEventListener('pause', () => {
-        isPlaying = false;
-        playPauseBtn.innerHTML = playIconSVG;
-      });
-      videoPlayer.addEventListener('loadedmetadata', () => durationEl.textContent = formatTime(videoPlayer.duration));
-      videoPlayer.addEventListener('timeupdate', updateProgressBar);
-      videoPlayer.addEventListener('ended', playNextTrack);
-
-      // URL input
-      const urlInput = document.getElementById('urlInput');
-      const addUrlBtn = document.getElementById('addUrlBtn');
-      addUrlBtn.addEventListener('click', () => {
-        const url = urlInput.value.trim();
-        if (!url) return;
-
-        if (!/^https?:\/\/.+\.(mp4|webm|ogv)(\?.*)?$/i.test(url)) {
-          showAlert('Please enter a direct link to a video file (mp4, webm, ogv).', 'Invalid URL');
-          return;
-        }
-
-        const filename = url.split('/').pop().split('?')[0];
-        playlist.push({
-          file: null,
-          url: url,
-          name: decodeURIComponent(filename),
-          artist:'Remote URL',
-        });
-
-        renderPlaylist();
-        updateButtons();
-        urlInput.value = '';
-      });
-
-      // Playlist sidebar
-      function setSidebarVisibility(visible) {
-        togglePlaylistBtn.setAttribute('aria-expanded', visible);
-        if (visible) {
-            playlistPanel.classList.remove('translate-x-full');
-            mainContent.classList.add('lg:pr-80');
-            playlistToggleIcon.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>`;
-        } else {
-            playlistPanel.classList.add('translate-x-full');
-            mainContent.classList.remove('lg:pr-80');
-            playlistToggleIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>`;
-        }
-      }
-      togglePlaylistBtn.addEventListener('click', () => {
-          const isCurrentlyHidden = playlistPanel.classList.contains('translate-x-full');
-          setSidebarVisibility(isCurrentlyHidden);
-      });
-      closePlaylistBtn.addEventListener('click', () => setSidebarVisibility(false));
-
-      // Modals
-      document.getElementById('helpBtn').addEventListener('click', () => openModal('helpModal'));
-      document.getElementById('closeHelp').addEventListener('click', () => closeModal('helpModal'));
-      document.getElementById('closeAlert').addEventListener('click', () => closeModal('alertModal'));
-
-      // Back-to-menu logic
-      const backBtn      = document.getElementById('backBtn');
-      const backModal    = document.getElementById('backModal');
-      const backConfirm  = document.getElementById('backConfirm');
-      const backCancel   = document.getElementById('backCancel');
-      const backCancel2  = document.getElementById('backCancel2');
-
-      backBtn.addEventListener('click', () => {
-        openModal('backModal');
-      });
-
-      backCancel.addEventListener('click', () => closeModal('backModal'));
-      backCancel2.addEventListener('click', () => closeModal('backModal'));
-
-      backConfirm.addEventListener('click', () => {
-        window.location.href = 'index.html';
-      });
-
-      // Keyboard shortcuts
-      document.addEventListener('keydown', e => {
-        if (e.target.tagName === 'INPUT' || e.target.isContentEditable) return;
-        switch (e.key) {
-          case ' ': e.preventDefault(); togglePlayPause(); break;
-          case 'ArrowRight': e.preventDefault(); videoPlayer.currentTime += 5; break;
-          case 'ArrowLeft': e.preventDefault(); videoPlayer.currentTime -= 5; break;
-        }
-      });
-      
-      // Initialize tooltips
-      tippy('[data-tippy-content]', {
-        theme: 'material',
-        animation: 'shift-away-subtle',
-        delay: [150, 0],
-      });
-      
-      // Initial page load animation
-      anime({
-        targets: '.container > *',
-        translateY: [20, 0],
-        opacity: [0, 1],
-        delay: anime.stagger(100),
-        easing: 'easeOutQuad'
-      });
-    });
-  </script>
+  <script src="js/video-player.js"></script>
 </body>
 </html>

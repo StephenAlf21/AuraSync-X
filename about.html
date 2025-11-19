@@ -55,7 +55,7 @@
 </head>
 <body class="text-white bg-gray-900 p-4 sm:p-6">
 
-    <div id="p5-canvas-container"></div>
+    <div id="p5-canvas-container" data-count="150" data-dot="rgba(139, 92, 246, 0.5)" data-line="rgba(139, 92, 246, 0.15)"></div>
 
     <div class="max-w-4xl mx-auto my-8 content-card">
         <header class="text-center mb-12">
@@ -88,7 +88,7 @@
                  <div class="flex flex-col sm:flex-row items-center gap-6 bg-gray-800/30 p-6 rounded-lg font-sans">
                     <img src="https://placehold.co/128x128/1f2937/a78bfa?text=SA" alt="Portrait of Stephen Alfred" class="w-32 h-32 rounded-full border-4 border-indigo-500">
                     <div>
-                        <h3 class="text-2xl font-bold text-white -mt-4">Stephen (zombies21)</h3>
+                        <h3 class="text-2xl font-bold text-white -mt-4">Stephen Alfred (zombies21)</h3>
                         <p class="text-indigo-300">Creator & Lead Developer</p>
                         <p class="text-gray-400 mt-2">A history and politics enthusiast from Nova Scotia, I believe in leveraging technology to create open and accessible tools for everyone. When not coding, I enjoy biking and exploring the rich history of my home province. This project is a testament to the idea that powerful applications can be built with privacy and user freedom as the top priorities.</p>
                     </div>
@@ -109,55 +109,7 @@
         </main>
     </div>
 
-    <script>
-        let particles = [];
-        function setup() {
-            let canvas = createCanvas(windowWidth, windowHeight);
-            canvas.parent('p5-canvas-container');
-            for (let i = 0; i < 150; i++) {
-                particles.push(new Particle());
-            }
-        }
-        function draw() {
-            background('#111827');
-            particles.forEach(p => {
-                p.createParticle();
-                p.moveParticle();
-                p.joinParticles(particles.slice(particles.indexOf(p)));
-            });
-        }
-        function windowResized() { resizeCanvas(windowWidth, windowHeight); }
-        class Particle {
-            constructor() {
-                this.x = random(0, width);
-                this.y = random(0, height);
-                this.r = random(1, 4);
-                this.xSpeed = random(-0.5, 0.5);
-                this.ySpeed = random(-0.5, 0.5);
-            }
-            createParticle() {
-                noStroke();
-                fill('rgba(139, 92, 246, 0.5)');
-                circle(this.x, this.y, this.r);
-            }
-            moveParticle() {
-                if (this.x < 0 || this.x > width) this.xSpeed *= -1;
-                if (this.y < 0 || this.y > height) this.ySpeed *= -1;
-                this.x += this.xSpeed;
-                this.y += this.ySpeed;
-            }
-            joinParticles(otherParticles) {
-                otherParticles.forEach(p => {
-                    let d = dist(this.x, this.y, p.x, p.y);
-                    if (d < 90) {
-                        stroke('rgba(139, 92, 246, 0.15)');
-                        line(this.x, this.y, p.x, p.y);
-                    }
-                });
-            }
-        }
-    </script>
+    <script src="js/particles-bg.js"></script>
 
 </body>
 </html>
-

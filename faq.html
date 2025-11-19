@@ -41,7 +41,7 @@
 </head>
 <body class="text-white bg-gray-900 p-4 sm:p-6">
 
-    <div id="p5-canvas-container"></div>
+    <div id="p5-canvas-container" data-count="150" data-dot="rgba(139, 92, 246, 0.5)" data-line="rgba(139, 92, 246, 0.15)"></div>
 
     <div class="max-w-4xl mx-auto my-8 content-card">
         <header class="text-center mb-12">
@@ -106,50 +106,8 @@
         </main>
     </div>
 
+    <script src="js/particles-bg.js"></script>
     <script>
-        // p5.js script
-        let particles = [];
-        function setup() {
-            let canvas = createCanvas(windowWidth, windowHeight);
-            canvas.parent('p5-canvas-container');
-            for (let i = 0; i < 150; i++) { particles.push(new Particle()); }
-        }
-        function draw() {
-            background('#111827');
-            particles.forEach(p => {
-                p.createParticle();
-                p.moveParticle();
-                p.joinParticles(particles.slice(particles.indexOf(p)));
-            });
-        }
-        function windowResized() { resizeCanvas(windowWidth, windowHeight); }
-        class Particle {
-            constructor() {
-                this.x = random(0, width); this.y = random(0, height);
-                this.r = random(1, 4);
-                this.xSpeed = random(-0.5, 0.5); this.ySpeed = random(-0.5, 0.5);
-            }
-            createParticle() {
-                noStroke();
-                fill('rgba(139, 92, 246, 0.5)');
-                circle(this.x, this.y, this.r);
-            }
-            moveParticle() {
-                if (this.x < 0 || this.x > width) this.xSpeed *= -1;
-                if (this.y < 0 || this.y > height) this.ySpeed *= -1;
-                this.x += this.xSpeed; this.y += this.ySpeed;
-            }
-            joinParticles(otherParticles) {
-                otherParticles.forEach(p => {
-                    let d = dist(this.x, this.y, p.x, p.y);
-                    if (d < 90) {
-                        stroke('rgba(139, 92, 246, 0.15)');
-                        line(this.x, this.y, p.x, p.y);
-                    }
-                });
-            }
-        }
-
         // FAQ Accordion script
         document.addEventListener('DOMContentLoaded', () => {
             const faqItems = document.querySelectorAll('.faq-item');
