@@ -4,82 +4,209 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Careers & Press - AuraSync X</title>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- p5.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Shared styles (glass, scrollbar, etc.) -->
+    <link rel="stylesheet" href="shared-style.css">
+
+    <!-- Favicon -->
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="alternate icon" href="favicon.png" />
-    <link rel="stylesheet" href="shared-style.css">
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        aura: {
+                            dark: '#05050a',
+                            card: 'rgba(20, 20, 35, 0.6)',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        body { background-color: #111827; font-family: 'Orbitron', sans-serif; }
-        #p5-canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        .content-card {
-            background: rgba(31, 41, 55, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 1rem;
-            border: 1px solid rgba(79, 70, 229, 0.2);
-            padding: 1.5rem;
+        body {
+            background-color: #05050a;
+            color: #e2e8f0;
+            overflow-x: hidden;
         }
-        @media (min-width: 640px) { .content-card { padding: 3rem; } }
-        .prose-custom h2 {
-            color: #e5e7eb;
-            font-weight: 700;
-            margin-top: 2em;
-            margin-bottom: 1em;
-            font-size: 1.875rem;
-            border-bottom: 2px solid #4f46e5;
-            padding-bottom: 0.5rem;
+
+        /* Canvas Background (p5 instance is driven by particles-bg.js) */
+        #p5-canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.5;
         }
-        .prose-custom p { font-family: 'Inter', sans-serif; color: #9ca3af; line-height: 1.75; }
-        .prose-custom a { color: #818cf8; text-decoration: underline; }
-        .prose-custom a:hover { color: #a78bfa; }
+
+        /* Local glass helpers for careers layout */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #818cf8, #c084fc, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
     </style>
 </head>
-<body class="text-white bg-gray-900 p-4 sm:p-6">
+<body class="flex flex-col min-h-screen font-sans selection:bg-indigo-500 selection:text-white">
 
-    <div id="p5-canvas-container" data-count="150" data-dot="rgba(139, 92, 246, 0.5)" data-line="rgba(139, 92, 246, 0.15)"></div>
+    <!-- p5.js Background -->
+    <div id="p5-canvas-container" data-count="120" data-dot="rgba(139, 92, 246, 0.5)" data-line="rgba(139, 92, 246, 0.15)"></div>
 
-    <div class="max-w-4xl mx-auto my-8 content-card">
-        <header class="text-center mb-12">
-            <a href="index.html" class="inline-block mb-8 text-indigo-400 hover:text-indigo-300 transition font-sans">&larr; Back to Home</a>
-            <h1 class="text-4xl sm:text-5xl font-black bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text text-transparent">
-                Join Our Mission
-            </h1>
-            <p class="text-lg text-gray-400 mt-4 font-sans">Opportunities to work with, write about, or partner with AuraSync X.</p>
-        </header>
+    <!-- Nav -->
+    <nav class="h-20 flex-none glass-panel border-b border-b-indigo-500/10 z-30 relative flex items-center justify-between px-4 sm:px-6 lg:px-8">
+        <a href="index.html" class="flex items-center gap-2 group text-gray-400 hover:text-white transition">
+            <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <span class="font-display font-bold text-sm tracking-widest uppercase">Return Home</span>
+        </a>
+        
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 flex items-center justify-center bg-indigo-900/50 rounded border border-indigo-500/30 text-indigo-400">
+                <img src="favicon.svg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" class="w-5 h-5" alt="Logo">
+                <svg style="display:none" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+            </div>
+            <span class="font-display font-bold text-lg tracking-wider text-white">Careers &amp; <span class="text-gradient">Press</span></span>
+        </div>
+    </nav>
 
-        <main class="prose-custom max-w-none">
-            <section id="careers">
-                <h2>Careers</h2>
-                <p>We believe in building a small, passionate team dedicated to creating open and powerful web software. While we are not actively hiring at the moment, we are always interested in hearing from talented developers, designers, and visionaries who align with our mission. If you believe you'd be a great fit for our team, please send your portfolio and a brief introduction to <a href="mailto:careers@aurasyncx.example">careers@aurasyncx.example</a>.</p>
-            </section>
+    <!-- Main Content -->
+    <main class="flex-1 relative z-10">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
+            
+            <!-- Header -->
+            <header class="text-center mb-12">
+                <p class="inline-flex items-center px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-xs font-mono uppercase tracking-[0.2em] text-indigo-300 mb-4">
+                    Collaborate · Create · Amplify
+                </p>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black font-display text-gradient mb-4">
+                    Join Our Mission
+                </h1>
+                <p class="text-xl text-gray-400 font-light max-w-2xl mx-auto">
+                    Collaborate, create, and communicate. Opportunities to work with, write about, or partner with AuraSync X.
+                </p>
+            </header>
 
-            <section id="press" class="mt-16">
-                <h2>Press & Media</h2>
-                <p>Are you a journalist, blogger, or content creator interested in featuring AuraSync X? We're happy to provide you with the information you need. Below you can download our official media kit, which includes logos, screenshots, and a project fact sheet.</p>
-                <div class="mt-6 text-center">
-                    <a href="/downloads/aurasyncx-media-kit.zip" class="inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-lg transition-colors no-underline">
-                        Download Media Kit (.zip)
+            <!-- Main Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
+                
+                <!-- Careers Section -->
+                <div class="glass-panel p-8 rounded-3xl flex flex-col hover:border-indigo-500/40 transition duration-300">
+                    <div class="w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center mb-6 text-indigo-400">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                    </div>
+                    <h2 class="text-2xl font-display font-bold text-white mb-4">Careers</h2>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6 flex-1">
+                        We believe in building a small, passionate team dedicated to creating open and powerful web software. While we are not actively hiring at the moment, we are always interested in hearing from talented developers, designers, and visionaries who align with our mission.
+                    </p>
+                    <a href="mailto:careers@aurasyncx.example" class="glass-button w-full py-3 rounded-lg text-center text-sm font-bold text-white hover:bg-indigo-600/50 transition">
+                        Email Portfolio &rarr;
                     </a>
                 </div>
-                 <p class="mt-4">For interviews, quotes, or other specific media inquiries, please contact us directly at <a href="mailto:press@aurasyncx.example">press@aurasyncx.example</a>.</p>
-            </section>
-            
-            <section id="partners" class="mt-16">
-                <h2>Partnerships</h2>
-                <p>We are open to partnerships and integrations that bring value to our users and align with our privacy-first principles. If you represent a company, an open-source project, or a community and have an idea for a collaboration, we'd love to hear from you. Potential partnership areas include:</p>
-                 <ul class="list-disc pl-5 font-sans text-gray-400 space-y-2">
-                    <li>Integrating AuraSync X technology into other platforms.</li>
-                    <li>Sponsoring new features or development cycles.</li>
-                    <li>Co-hosting community events or contests.</li>
-                </ul>
-                <p>Please direct all partnership inquiries to <a href="mailto:partners@aurasyncx.example">partners@aurasyncx.example</a>.</p>
-            </section>
-        </main>
-    </div>
 
+                <!-- Press & Media Section -->
+                <div class="glass-panel p-8 rounded-3xl flex flex-col hover:border-purple-500/40 transition duration-300">
+                    <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6 text-purple-400">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
+                    </div>
+                    <h2 class="text-2xl font-display font-bold text-white mb-4">Press &amp; Media</h2>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6 flex-1">
+                        Are you a journalist, blogger, or content creator interested in featuring AuraSync X? We're happy to provide you with the information you need. Download our official media kit containing logos, screenshots, and a fact sheet.
+                    </p>
+                    <div class="space-y-3">
+                        <a href="/downloads/aurasyncx-media-kit.zip" class="block w-full py-3 rounded-lg text-center text-sm font-bold bg-purple-600 hover:bg-purple-500 text-white transition shadow-lg shadow-purple-900/20">
+                            Download Media Kit (.zip)
+                        </a>
+                        <a href="mailto:press@aurasyncx.example" class="block w-full py-3 rounded-lg text-center text-sm font-bold text-gray-400 hover:text-white transition">
+                            Contact Press Team
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Partnerships Section -->
+                <div class="glass-panel p-8 rounded-3xl flex flex-col hover:border-cyan-500/40 transition duration-300">
+                    <div class="w-12 h-12 bg-cyan-500/20 rounded-xl flex items-center justify-center mb-6 text-cyan-400">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                    </div>
+                    <h2 class="text-2xl font-display font-bold text-white mb-4">Partnerships</h2>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6 flex-1">
+                        We are open to partnerships that align with our privacy-first principles. Potential collaboration areas include:
+                    </p>
+                    <ul class="space-y-2 text-sm text-gray-300 mb-8 font-mono">
+                        <li class="flex items-center gap-2"><span class="text-cyan-400">></span> Platform Integrations</li>
+                        <li class="flex items-center gap-2"><span class="text-cyan-400">></span> Feature Sponsorships</li>
+                        <li class="flex items-center gap-2"><span class="text-cyan-400">></span> Community Events</li>
+                    </ul>
+                    <a href="mailto:partners@aurasyncx.example" class="glass-button w-full py-3 rounded-lg text-center text-sm font-bold text-white hover:bg-cyan-600/50 transition">
+                        Discuss Collaboration &rarr;
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Info Block -->
+            <div class="mt-12 glass-card p-6 rounded-2xl text-center border border-dashed border-gray-700">
+                <p class="text-sm text-gray-500">
+                    For general inquiries unrelated to careers or press, please visit our <a href="contact.html" class="text-indigo-400 hover:text-white transition">Contact Page</a>.
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center text-gray-600 text-sm relative z-10 border-t border-white/5 bg-black/20">
+        &copy; 2025 AuraSync X. Built with <span class="text-red-500">&hearts;</span> in Nova Scotia.
+    </footer>
+
+    <!-- Background -->
     <script src="js/particles-bg.js"></script>
 
 </body>

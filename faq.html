@@ -4,124 +4,197 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAQ - AuraSync X</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- p5.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Shared styles (glass, scrollbar, etc.) -->
+    <link rel="stylesheet" href="shared-style.css">
+
+    <!-- Favicon -->
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="alternate icon" href="favicon.png" />
-    <link rel="stylesheet" href="shared-style.css">
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-    <style>
-        body { background-color: #111827; font-family: 'Orbitron', sans-serif; }
-        #p5-canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        .content-card {
-            background: rgba(31, 41, 55, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 1rem;
-            border: 1px solid rgba(79, 70, 229, 0.2);
-            padding: 1.5rem;
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        aura: {
+                            dark: '#05050a',
+                            card: 'rgba(20, 20, 35, 0.6)',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
         }
-        @media (min-width: 640px) { .content-card { padding: 3rem; } }
+    </script>
+
+    <style>
+        body {
+            background-color: #05050a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        /* Accordion Logic */
         .faq-answer {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
+            opacity: 0;
+            padding-top: 0;
+            transition:
+                max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s ease-out,
+                padding 0.3s ease-out;
         }
-        .faq-item.open .faq-answer {
-            max-height: 500px; /* Adjust as needed */
+        .faq-item.active .faq-answer {
+            opacity: 1;
             padding-top: 1rem;
-            padding-bottom: 1rem;
         }
-        .faq-question svg { transition: transform 0.3s ease; }
-        .faq-item.open .faq-question svg { transform: rotate(180deg); }
+        .faq-icon { transition: transform 0.25s ease; }
+        .faq-item.active .faq-icon { transform: rotate(180deg); }
     </style>
 </head>
-<body class="text-white bg-gray-900 p-4 sm:p-6">
+<body class="flex flex-col min-h-screen font-sans selection:bg-indigo-500 selection:text-white">
 
-    <div id="p5-canvas-container" data-count="150" data-dot="rgba(139, 92, 246, 0.5)" data-line="rgba(139, 92, 246, 0.15)"></div>
+    <!-- p5.js Background -->
+    <div id="p5-canvas-container"></div>
 
-    <div class="max-w-4xl mx-auto my-8 content-card">
-        <header class="text-center mb-12">
-            <a href="index.html" class="inline-block mb-8 text-indigo-400 hover:text-indigo-300 transition font-sans">&larr; Back to Home</a>
-            <h1 class="text-4xl sm:text-5xl font-black bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text text-transparent">
-                Frequently Asked Questions
+    <!-- Nav -->
+    <nav class="h-20 flex-none glass-panel border-b border-b-indigo-500/10 z-30 relative flex items-center justify-between px-4 sm:px-6 lg:px-8">
+        <a href="index.html" class="flex items-center gap-2 group text-gray-400 hover:text-white transition">
+            <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <span class="font-display font-bold text-sm tracking-widest uppercase">Return Home</span>
+        </a>
+        
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 flex items-center justify-center bg-indigo-900/50 rounded border border-indigo-500/30 text-indigo-400">
+                <img src="favicon.svg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" class="w-5 h-5" alt="Logo">
+                <svg style="display:none" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <span class="font-display font-bold text-lg tracking-wider text-white">Common <span class="text-gradient">Questions</span></span>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="flex-1 container mx-auto px-4 py-12 max-w-4xl">
+        
+        <!-- Header -->
+        <header class="text-center mb-16 animate-float">
+            <h1 class="text-4xl md:text-6xl font-display font-black tracking-tight mb-4">
+                Common <span class="text-gradient">Questions</span>
             </h1>
-            <p class="text-lg text-gray-400 mt-4 font-sans">Your common questions, answered.</p>
+            <p class="text-xl text-gray-400 font-light max-w-2xl mx-auto">
+                Everything you need to know about compatibility, privacy, and features.
+            </p>
         </header>
 
-        <main class="max-w-3xl mx-auto space-y-4 font-sans">
-            <!-- FAQ Item 1 -->
-            <div class="faq-item bg-gray-800/50 rounded-lg">
-                <button class="faq-question w-full flex justify-between items-center text-left p-4">
-                    <span class="font-semibold text-white">What browsers are supported?</span>
-                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div class="faq-answer text-gray-400">
-                    <p>AuraSync X is built on modern web technologies and works best on the latest versions of desktop browsers like Google Chrome, Mozilla Firefox, and Microsoft Edge. While it may function on other browsers, we recommend these for the best performance, especially for the 3D visualizer.</p>
-                </div>
-            </div>
-            <!-- FAQ Item 2 -->
-            <div class="faq-item bg-gray-800/50 rounded-lg">
-                <button class="faq-question w-full flex justify-between items-center text-left p-4">
-                    <span class="font-semibold text-white">Is AuraSync X free to use?</span>
-                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div class="faq-answer text-gray-400">
-                    <p>Yes, AuraSync X is completely free to use. It is a passion project, and the goal is to provide a high-quality tool to the community. If you enjoy the app, please consider a small <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" target="_blank" class="text-indigo-400 hover:underline">donation</a> to help cover server and development costs.</p>
-                </div>
-            </div>
-            <!-- FAQ Item 3 -->
-            <div class="faq-item bg-gray-800/50 rounded-lg">
-                <button class="faq-question w-full flex justify-between items-center text-left p-4">
-                    <span class="font-semibold text-white">What file formats are supported?</span>
-                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div class="faq-answer text-gray-400">
-                    <p>The 3D Music Visualizer primarily supports <strong>.MP3</strong> files for local uploads. The MP4 Video Player supports <strong>.MP4</strong> files. Both applications also support direct streaming from URLs, provided they link to a compatible audio or video stream.</p>
-                </div>
-            </div>
-            <!-- FAQ Item 4 -->
-            <div class="faq-item bg-gray-800/50 rounded-lg">
-                <button class="faq-question w-full flex justify-between items-center text-left p-4">
-                    <span class="font-semibold text-white">Is my data safe? Are my files uploaded anywhere?</span>
-                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div class="faq-answer text-gray-400">
-                    <p>Your privacy is our top priority. AuraSync X is a fully client-side application. This means <strong>no files or personal data are ever uploaded to our servers</strong>. All processing happens locally in your browser. For more details, please read our full <a href="privacy.html" class="text-indigo-400 hover:underline">Privacy Policy</a>.</p>
-                </div>
-            </div>
-            <!-- FAQ Item 5 -->
-            <div class="faq-item bg-gray-800/50 rounded-lg">
-                <button class="faq-question w-full flex justify-between items-center text-left p-4">
-                    <span class="font-semibold text-white">How can I report a bug or suggest a feature?</span>
-                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
-                <div class="faq-answer text-gray-400">
-                    <p>The best way to report issues or make suggestions is through our <a href="https://github.com/StephenAlf21/AuraSync-X/issues" target="_blank" class="text-indigo-400 hover:underline">GitHub Issues page</a>. This allows us to track feedback publicly and transparently. You can also reach out via the methods on our <a href="contact.html" class="text-indigo-400 hover:underline">Contact page</a>.</p>
-                </div>
-            </div>
-        </main>
-    </div>
+        <!-- FAQ List -->
+        <div class="space-y-4">
 
+            <!-- Item 1 -->
+            <div class="glass-panel rounded-2xl faq-item group hover:border-indigo-500/30 transition-colors">
+                <button class="w-full flex justify-between items-center p-6 text-left focus:outline-none faq-toggle">
+                    <span class="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">What browsers are supported?</span>
+                    <svg class="w-6 h-6 text-indigo-500 faq-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="faq-answer px-6 pb-0 text-gray-400 leading-relaxed border-t border-white/5">
+                    <p class="mb-6">
+                        AuraSync X is built on modern web technologies (WebGL, Web Audio API) and works best on the latest versions of desktop browsers like <span class="text-white">Google Chrome</span>, <span class="text-white">Mozilla Firefox</span>, and <span class="text-white">Microsoft Edge</span>. While it may function on other browsers, we recommend these for the smoothest 60fps visualization experience.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="glass-panel rounded-2xl faq-item group hover:border-indigo-500/30 transition-colors">
+                <button class="w-full flex justify-between items-center p-6 text-left focus:outline-none faq-toggle">
+                    <span class="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">Is AuraSync X free to use?</span>
+                    <svg class="w-6 h-6 text-indigo-500 faq-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="faq-answer px-6 pb-0 text-gray-400 leading-relaxed border-t border-white/5">
+                    <p class="mb-6">
+                        Yes, AuraSync X is completely free and open-source. It is a passion project designed to provide high-quality tools to the community without paywalls. If you enjoy the app, please consider a small <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_BUTTON_ID" target="_blank" class="text-indigo-400 hover:text-white underline decoration-indigo-500/30">donation</a> to help cover server costs.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="glass-panel rounded-2xl faq-item group hover:border-indigo-500/30 transition-colors">
+                <button class="w-full flex justify-between items-center p-6 text-left focus:outline-none faq-toggle">
+                    <span class="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">What file formats are supported?</span>
+                    <svg class="w-6 h-6 text-indigo-500 faq-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="faq-answer px-6 pb-0 text-gray-400 leading-relaxed border-t border-white/5">
+                    <div class="mb-6">
+                        <p class="mb-2">We support most modern web-compatible formats:</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li><strong>Audio:</strong> MP3, WAV, OGG</li>
+                            <li><strong>Video:</strong> MP4, WebM</li>
+                        </ul>
+                        <p class="mt-2 text-sm">Both applications also support direct streaming from URLs, provided they link to a compatible raw media stream.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="glass-panel rounded-2xl faq-item group hover:border-indigo-500/30 transition-colors">
+                <button class="w-full flex justify-between items-center p-6 text-left focus:outline-none faq-toggle">
+                    <span class="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">Is my data safe?</span>
+                    <svg class="w-6 h-6 text-indigo-500 faq-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="faq-answer px-6 pb-0 text-gray-400 leading-relaxed border-t border-white/5">
+                    <p class="mb-6">
+                        Absolutely. AuraSync X is a <span class="text-white">client-side application</span>. This means your files are processed locally in your browser's memory and are <strong class="text-white">never uploaded</strong> to our servers. We track zero personal data.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Item 5 -->
+            <div class="glass-panel rounded-2xl faq-item group hover:border-indigo-500/30 transition-colors">
+                <button class="w-full flex justify-between items-center p-6 text-left focus:outline-none faq-toggle">
+                    <span class="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">How can I report a bug?</span>
+                    <svg class="w-6 h-6 text-indigo-500 faq-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="faq-answer px-6 pb-0 text-gray-400 leading-relaxed border-t border-white/5">
+                    <p class="mb-6">
+                        The best way to report issues is via our <a href="https://github.com/StephenAlf21/AuraSync-X/issues" target="_blank" class="text-indigo-400 hover:text-white underline decoration-indigo-500/30">GitHub Issues page</a>. This allows us to track bugs transparently. You can also email us directly via the <a href="contact.html" class="text-indigo-400 hover:text-white underline decoration-indigo-500/30">Contact page</a>.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center text-gray-600 text-sm relative z-10 border-t border-white/5 bg-black/20 mt-auto">
+        &copy; 2025 AuraSync X. Built with <span class="text-red-500">&hearts;</span> in Nova Scotia.
+    </footer>
+
+    <!-- Background & FAQ behavior -->
     <script src="js/particles-bg.js"></script>
-    <script>
-        // FAQ Accordion script
-        document.addEventListener('DOMContentLoaded', () => {
-            const faqItems = document.querySelectorAll('.faq-item');
-            faqItems.forEach(item => {
-                const question = item.querySelector('.faq-question');
-                question.addEventListener('click', () => {
-                    const currentlyOpen = document.querySelector('.faq-item.open');
-                    if (currentlyOpen && currentlyOpen !== item) {
-                        currentlyOpen.classList.remove('open');
-                    }
-                    item.classList.toggle('open');
-                });
-            });
-        });
-    </script>
+    <script src="js/faq.js"></script>
 </body>
 </html>

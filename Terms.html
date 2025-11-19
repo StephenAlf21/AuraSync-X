@@ -4,177 +4,292 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terms of Service - AuraSync X</title>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- p5.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Shared styles -->
+    <link rel="stylesheet" href="shared-style.css">
+
     <!-- Favicon -->
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="alternate icon" href="favicon.png" />
-    <!-- Shared Styles -->
-    <link rel="stylesheet" href="shared-style.css">
-    <style>
-        body {
-            background-color: #111827;
-            font-family: 'Orbitron', sans-serif;
-        }
-        /* p5.js canvas container */
-        #p5-canvas-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; /* Place it behind all other content */
-        }
-        /* Glassmorphism content card */
-        .content-card {
-            background: rgba(31, 41, 55, 0.6); /* gray-800 @ 60% opacity */
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 1rem; /* 16px */
-            border: 1px solid rgba(79, 70, 229, 0.2); /* indigo-600 @ 20% opacity */
-            padding: 1.5rem;
-        }
-        @media (min-width: 640px) {
-            .content-card {
-                padding: 3rem; /* More padding on larger screens */
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        aura: {
+                            dark: '#05050a',
+                            card: 'rgba(20, 20, 35, 0.6)',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
             }
         }
-        .prose-invert a {
-            color: #818cf8;
-        }
-        .prose-invert a:hover {
-            color: #a78bfa;
-        }
-        /* Custom prose styles for better readability */
-        .prose-custom {
-            color: #d1d5db; /* gray-300 */
-        }
-        .prose-custom h2 {
-            color: #e5e7eb; /* gray-200 */
-            font-weight: 700;
-            margin-top: 2em;
-            margin-bottom: 1em;
-        }
-        .prose-custom h3 {
-            color: #d1d5db; /* gray-300 */
-            font-weight: 600;
-            margin-top: 1.5em;
-            margin-bottom: 0.5em;
-        }
-        .prose-custom p, .prose-custom li {
-            font-family: 'Inter', sans-serif; /* Use a more readable font for paragraphs */
-            color: #9ca3af; /* gray-400 */
-            line-height: 1.75;
-        }
-        .prose-custom ul {
-            list-style-type: disc;
-            padding-left: 1.5rem;
-        }
-        .prose-custom strong {
-            color: #f3f4f6; /* gray-100 */
-        }
-    </style>
-     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    </script>
 </head>
-<body class="text-white bg-gray-900 p-4 sm:p-6">
+<body class="landing-body flex flex-col min-h-screen font-sans selection:bg-indigo-500 selection:text-white">
 
-    <!-- p5.js canvas will be placed here -->
+    <!-- p5.js Background (driven by particles-bg.js) -->
     <div id="p5-canvas-container" data-count="100" data-dot="rgba(167, 139, 250, 0.5)" data-line="rgba(167, 139, 250, 0.2)"></div>
 
-    <div class="max-w-4xl mx-auto my-8 content-card">
-        <header class="text-center mb-12">
-            <a href="index.html" class="inline-block mb-8 text-indigo-400 hover:text-indigo-300 transition font-sans">&larr; Back to Home</a>
-            <h1 class="text-4xl font-black bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text text-transparent">AuraSync X — Terms of Service</h1>
-            <p class="text-gray-400 mt-2 font-sans">Last updated: August 4, 2025</p>
+    <!-- Top Nav / Back -->
+    <nav class="h-20 flex-none glass-panel border-b border-b-indigo-500/10 z-30 relative flex items-center justify-between px-4 sm:px-6 lg:px-8">
+        <a href="index.html" class="flex items-center gap-2 group text-gray-400 hover:text-white transition">
+            <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <span class="font-display font-bold text-sm tracking-widest uppercase">Return Home</span>
+        </a>
+        
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 flex items-center justify-center bg-indigo-900/50 rounded border border-indigo-500/30 text-indigo-400">
+                <img src="favicon.svg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" class="w-5 h-5" alt="Logo">
+                <svg style="display:none" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <span class="font-display font-bold text-lg tracking-wider text-white">Terms of <span class="text-gradient">Service</span></span>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="flex-1 mx-auto w-full max-w-6xl px-4 md:px-10 lg:px-20 py-12">
+        
+        <!-- Header -->
+        <header class="text-center mb-16 animate-float">
+            <h1 class="text-4xl md:text-5xl font-display font-black tracking-tight mb-4">
+                AuraSync X <span class="text-gradient">Terms</span>
+            </h1>
+            <p class="text-sm font-mono text-indigo-400">
+                Last updated: August 4, 2025
+            </p>
         </header>
 
-        <main class="prose-custom max-w-none">
-            <h2>1. Introduction</h2>
-            <p>Welcome to AuraSync X (“AuraSync”, “Service”, “we”, “our”, or “us”). These Terms of Service (“Terms”) form a legally binding contract between you (“you”, “your”, or “User”) and us regarding your use of the AuraSync web application, including its 3-D Music Visualizer and MP4 Video Player (collectively, the “Applications”). By accessing or using any part of the Service, you acknowledge that you have read, understood, and agree to be bound by these Terms. If you do not agree, you must not use the Service.</p>
+        <!-- Legal Document Container -->
+        <div class="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden">
+            <!-- Decorative Top Border -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500"></div>
 
-            <h2>2. Definitions</h2>
-            <p><strong>Content</strong> – Any text, graphics, audio, video, code, or other materials uploaded, streamed, or otherwise made available through the Service.</p>
-            <p><strong>Local Processing</strong> – Execution of code entirely within your browser or device without transmission of files to our servers.</p>
-            <p><strong>Personal Data</strong> – Information relating to an identified or identifiable natural person, as defined under applicable privacy laws.</p>
+            <article class="prose prose-invert prose-indigo max-w-none font-light text-gray-300 leading-relaxed">
+                
+                <!-- Section 1 -->
+                <h2 class="text-white font-display font-bold mt-0">1. Introduction</h2>
+                <p>
+                    Welcome to AuraSync X (“AuraSync”, “Service”, “we”, “our”, or “us”).
+                    These Terms of Service (“Terms”) form a legally binding contract between you (“you”, “your”, or “User”)
+                    and us regarding your use of the AuraSync web application, including its 3D Music Visualizer and MP4
+                    Video Player (collectively, the “Applications”). By accessing or using any part of the Service,
+                    you acknowledge that you have read, understood, and agree to be bound by these Terms. If you do not
+                    agree, you must not use the Service.
+                </p>
 
-            <h2>3. Eligibility & Age Requirements</h2>
-            <p>You must be (a) at least the age of majority in your province, state, or country; or (b) 13 years or older and have your parent or legal guardian’s consent to use the Service. By using the Service, you represent and warrant that you meet these requirements.</p>
+                <!-- Section 2 -->
+                <h2 class="text-white font-display font-bold">2. Definitions</h2>
+                <ul class="list-disc pl-5 space-y-2 marker:text-indigo-500">
+                    <li><strong class="text-white">Content:</strong> Any text, graphics, audio, video, code, or other materials uploaded, streamed, or otherwise made available through the Service.</li>
+                    <li><strong class="text-white">Local Processing:</strong> Execution of code entirely within your browser or device without transmission of files to our servers.</li>
+                    <li><strong class="text-white">Personal Data:</strong> Information relating to an identified or identifiable natural person, as defined under applicable privacy laws.</li>
+                </ul>
 
-            <h2>4. Changes to the Service or Terms</h2>
-            <p>We may modify the Service or these Terms at any time. Material changes will be announced via an in-app notice or on our website at least 30 days before taking effect whenever required by Canadian or U.S. consumer-protection law. Your continued use of the Service after changes become effective constitutes acceptance of the revised Terms.</p>
+                <!-- Section 3 -->
+                <h2 class="text-white font-display font-bold">3. Eligibility &amp; Age Requirements</h2>
+                <p>
+                    You must be (a) at least the age of majority in your province, state, or country; or (b) 13 years or
+                    older and have your parent or legal guardian’s consent to use the Service. By using the Service, you
+                    represent and warrant that you meet these requirements.
+                </p>
 
-            <h2>5. License & Intellectual-Property Rights</h2>
-            <h3>License to You</h3>
-            <p>We grant you a limited, revocable, non-exclusive, non-transferable licence to access and use the Applications for personal, non-commercial purposes, subject to these Terms.</p>
-            <h3>Ownership</h3>
-            <p>All right, title, and interest in the Service (including source code, visual interfaces, trademarks, and logos) remain with us and our licensors. The Terms do not transfer any intellectual-property rights except the limited licence above.</p>
-            <h3>Feedback</h3>
-            <p>If you submit ideas or suggestions, you grant us a perpetual, worldwide, royalty-free licence to use, reproduce, and exploit that feedback without obligation to you.</p>
+                <!-- Section 4 -->
+                <h2 class="text-white font-display font-bold">4. Changes to the Service or Terms</h2>
+                <p>
+                    We may modify the Service or these Terms at any time. Material changes will be announced via an in-app
+                    notice or on our website at least 30 days before taking effect whenever required by Canadian or U.S.
+                    consumer-protection law. Your continued use of the Service after changes become effective constitutes
+                    acceptance of the revised Terms.
+                </p>
 
-            <h2>6. User Content & Conduct</h2>
-            <h3>Responsibility</h3>
-            <p>All Content you load, stream, or display via the Service remains your sole responsibility.</p>
-            <h3>Permissions</h3>
-            <p>You must have all necessary rights (including copyright, neighbouring-rights, and public-performance rights) for any Content you use.</p>
-            <h3>Prohibited Conduct</h3>
-            <p>You agree not to:</p>
-            <ul>
-                <li>Use Content that is unlawful, defamatory, obscene, hateful, or infringes intellectual-property or privacy rights;</li>
-                <li>Circumvent or interfere with security features;</li>
-                <li>Use automated means (bots, scrapers) to access or modify the Service;</li>
-                <li>Reverse engineer, de-compile, or attempt to extract source code, except to the limited extent allowed by applicable law;</li>
-                <li>Use the Service for commercial streaming, public performance, or any activity that violates applicable broadcasting statutes (e.g., Canadian Broadcasting Act, U.S. Copyright Act §§ 106–114).</li>
-            </ul>
+                <!-- Section 5 -->
+                <h2 class="text-white font-display font-bold">5. License &amp; Intellectual-Property Rights</h2>
+                <h3 class="text-indigo-300 font-bold text-lg mt-4">License to You</h3>
+                <p>
+                    We grant you a limited, revocable, non-exclusive, non-transferable licence to access and use the
+                    Applications for personal, non-commercial purposes, subject to these Terms.
+                </p>
+                <h3 class="text-indigo-300 font-bold text-lg mt-4">Ownership</h3>
+                <p>
+                    All right, title, and interest in the Service (including source code, visual interfaces, trademarks,
+                    and logos) remain with us and our licensors. These Terms do not transfer any intellectual-property
+                    rights except the limited licence above.
+                </p>
+                <h3 class="text-indigo-300 font-bold text-lg mt-4">Feedback</h3>
+                <p>
+                    If you submit ideas or suggestions, you grant us a perpetual, worldwide, royalty-free licence to use,
+                    reproduce, and exploit that feedback without obligation to you.
+                </p>
 
-            <h2>7. Privacy & Data Processing</h2>
-            <h3>No Server-Side Collection</h3>
-            <p>AuraSync is designed for fully local processing. We do not collect, retain, or otherwise process Personal Data or media files on our servers.</p>
-            <h3>Diagnostic Data</h3>
-            <p>We may collect minimal, non-identifying diagnostic information (e.g., error logs) solely to maintain and improve Service stability. Such data are anonymised and never linked to an individual User.</p>
-            <h3>EU/EEA Users</h3>
-            <p>Because no Personal Data is processed, AuraSync is generally outside the material scope of the EU General Data Protection Regulation (GDPR). Should limited diagnostic data be deemed personal under GDPR, we rely on our legitimate interest (Art. 6 (1)(f) GDPR) in ensuring Service security.</p>
+                <!-- Section 6 -->
+                <h2 class="text-white font-display font-bold">6. User Content &amp; Conduct</h2>
+                <h3 class="text-indigo-300 font-bold text-lg mt-4">Responsibility</h3>
+                <p>
+                    All Content you load, stream, or display via the Service remains your sole responsibility.
+                </p>
+                <h3 class="text-indigo-300 font-bold text-lg mt-4">Permissions</h3>
+                <p>
+                    You must have all necessary rights (including copyright, neighbouring rights, and public-performance
+                    rights) for any Content you use.
+                </p>
+                <h3 class="text-indigo-300 font-bold text-lg mt-4">Prohibited Conduct</h3>
+                <p>You agree not to:</p>
+                <ul class="list-disc pl-5 space-y-1 marker:text-indigo-500">
+                    <li>Use Content that is unlawful, defamatory, obscene, hateful, or infringes intellectual-property or privacy rights;</li>
+                    <li>Circumvent or interfere with security features;</li>
+                    <li>Use automated means (bots, scrapers) to access or modify the Service;</li>
+                    <li>Reverse engineer, de-compile, or attempt to extract source code, except to the limited extent allowed by applicable law;</li>
+                    <li>Use the Service for commercial streaming, public performance, or any activity that violates applicable broadcasting statutes (for example, the Canadian Broadcasting Act or U.S. Copyright Act §§ 106–114).</li>
+                </ul>
 
-            <h2>8. Third-Party Content & Links</h2>
-            <p>The Service may contain links to third-party websites, radio streams, or other resources. We do not endorse, control, or assume responsibility for any third-party content. Accessing third-party resources is at your own risk and subject to their separate terms.</p>
+                <!-- Section 7 -->
+                <h2 class="text-white font-display font-bold">7. Privacy &amp; Data Processing</h2>
+                <h3 class="text-indigo-300 font-bold text-lg mt-4">No Server-Side Collection</h3>
+                <p>
+                    AuraSync is designed for fully local processing. We do not collect, retain, or otherwise process
+                    Personal Data or media files on our servers.
+                </p>
+                <h3 class="text-indigo-300 font-bold text-lg mt-4">Diagnostic Data</h3>
+                <p>
+                    We may collect minimal, non-identifying diagnostic information (for example, error logs) solely to
+                    maintain and improve Service stability. Such data are anonymised and never linked to an individual
+                    User.
+                </p>
+                <h3 class="text-indigo-300 font-bold text-lg mt-4">EU/EEA Users</h3>
+                <p>
+                    Because no Personal Data is processed, AuraSync is generally outside the material scope of the EU
+                    General Data Protection Regulation (GDPR). Should limited diagnostic data be deemed personal under
+                    GDPR, we rely on our legitimate interest (Art. 6(1)(f) GDPR) in ensuring Service security.
+                </p>
 
-            <h2>9. Disclaimer of Warranties</h2>
-            <p>The Service is provided “AS IS” and “AS AVAILABLE.” To the fullest extent permitted by applicable law, we disclaim all warranties, express or implied, including merchantability, fitness for a particular purpose, non-infringement, and uninterrupted or error-free operation. Because some jurisdictions (e.g., Québec, certain U.S. states, EU consumer-law) do not allow exclusions of certain warranties, these disclaimers may not apply to you in whole or in part.</p>
+                <!-- Section 8 -->
+                <h2 class="text-white font-display font-bold">8. Third-Party Content &amp; Links</h2>
+                <p>
+                    The Service may contain links to third-party websites, radio streams, or other resources. We do not
+                    endorse, control, or assume responsibility for any third-party content. Accessing third-party resources
+                    is at your own risk and subject to their separate terms.
+                </p>
 
-            <h2>10. Limitation of Liability</h2>
-            <p>To the maximum extent permitted by law, in no event shall we (or our directors, officers, employees, or licensors) be liable for any indirect, incidental, special, consequential, or punitive damages (including loss of profits, data, goodwill, or other intangible losses) arising out of or relating to the Service, even if we have been advised of the possibility of such damages. Our aggregate liability for all claims under these Terms shall not exceed CAD 100 (or the equivalent in your local currency).</p>
-            <p>Certain consumer-protection statutes (e.g., Canadian Consumer Protection Acts, EU Directive 2019/771) may provide you additional rights; this clause does not override mandatory statutory protections.</p>
+                <!-- Section 9 -->
+                <h2 class="text-white font-display font-bold">9. Disclaimer of Warranties</h2>
+                <div class="p-4 rounded-lg bg-white/5 border border-white/10 text-sm italic">
+                    <p class="m-0">
+                        The Service is provided “AS IS” and “AS AVAILABLE.” To the fullest extent permitted by applicable law,
+                        we disclaim all warranties, express or implied, including merchantability, fitness for a particular
+                        purpose, non-infringement, and uninterrupted or error-free operation. Because some jurisdictions do
+                        not allow exclusions of certain warranties, these disclaimers may not apply to you in whole or in
+                        part.
+                    </p>
+                </div>
 
-            <h2>11. Indemnification</h2>
-            <p>You agree to indemnify, defend, and hold us harmless from any claims, liabilities, damages, losses, and expenses (including reasonable legal fees) arising from: (a) your breach of these Terms; (b) Content you load or stream via the Service; or (c) your violation of any law or third-party right.</p>
+                <!-- Section 10 -->
+                <h2 class="text-white font-display font-bold">10. Limitation of Liability</h2>
+                <p>
+                    To the maximum extent permitted by law, in no event shall we (or our directors, officers, employees, or
+                    licensors) be liable for any indirect, incidental, special, consequential, or punitive damages (including
+                    loss of profits, data, goodwill, or other intangible losses) arising out of or relating to the Service,
+                    even if we have been advised of the possibility of such damages. Our aggregate liability for all claims
+                    under these Terms shall not exceed CAD 100 (or the equivalent in your local currency). This clause does
+                    not override any mandatory consumer-protection rights that apply in your jurisdiction.
+                </p>
 
-            <h2>12. Termination</h2>
-            <p>We may suspend or terminate your access to the Service immediately, without notice, if you breach these Terms. Upon termination, Sections 5–14 will survive.</p>
+                <!-- Section 11 -->
+                <h2 class="text-white font-display font-bold">11. Indemnification</h2>
+                <p>
+                    You agree to indemnify, defend, and hold us harmless from any claims, liabilities, damages, losses, and
+                    expenses (including reasonable legal fees) arising from: (a) your breach of these Terms; (b) Content you
+                    load or stream via the Service; or (c) your violation of any law or third-party right.
+                </p>
 
-            <h2>13. Governing Law & Jurisdiction</h2>
-            <p>These Terms are governed by the laws of the Province of Nova Scotia and the federal laws of Canada applicable therein, without regard to conflict-of-law principles. You and we agree to submit to the exclusive jurisdiction of the courts located in Halifax, Nova Scotia, Canada.</p>
-            <p>For U.S. residents, any claim arising under U.S. federal law (e.g., 17 U.S.C. § 512) will be heard in the United States District Court for the District of Massachusetts, and state-law claims in the courts of the Commonwealth of Massachusetts, unless prohibited by consumer-protection statutes in your state of residence.</p>
+                <!-- Section 12 -->
+                <h2 class="text-white font-display font-bold">12. Termination</h2>
+                <p>
+                    We may suspend or terminate your access to the Service immediately, without notice, if you breach these
+                    Terms. Upon termination, Sections 5–16 will survive.
+                </p>
 
-            <h2>14. International Users</h2>
-            <p>AuraSync is controlled from Canada. If you access the Service from outside Canada or the United States, you are responsible for compliance with local laws, including export-control regulations (e.g., EU Dual-Use Regulation 2021/821, U.S. Export Administration Regulations). Nothing in these Terms shall limit mandatory rights you have under the laws of your country of habitual residence.</p>
+                <!-- Section 13 -->
+                <h2 class="text-white font-display font-bold">13. Governing Law &amp; Jurisdiction</h2>
+                <p>
+                    These Terms are governed by the laws of the Province of Nova Scotia and the federal laws of Canada
+                    applicable therein, without regard to conflict-of-law principles. You and we agree to submit to the
+                    exclusive jurisdiction of the courts located in Halifax, Nova Scotia, Canada.
+                </p>
 
-            <h2>15. Severability</h2>
-            <p>If any provision of these Terms is held invalid or unenforceable, the remaining provisions will remain in full force and effect, and the invalid provision will be interpreted to fulfil its intended purpose to the maximum lawful extent.</p>
+                <!-- Section 14 -->
+                <h2 class="text-white font-display font-bold">14. International Users</h2>
+                <p>
+                    AuraSync is controlled from Canada. If you access the Service from outside Canada or the United States,
+                    you are responsible for compliance with local laws, including any applicable export-control regulations.
+                    Nothing in these Terms limits mandatory rights you have under the laws of your country of habitual
+                    residence.
+                </p>
 
-            <h2>16. Entire Agreement</h2>
-            <p>These Terms constitute the entire agreement between you and us regarding the Service and supersede all prior or contemporaneous agreements, communications, and understandings, whether oral or written.</p>
+                <!-- Section 15 -->
+                <h2 class="text-white font-display font-bold">15. Severability</h2>
+                <p>
+                    If any provision of these Terms is held invalid or unenforceable, the remaining provisions will remain
+                    in full force and effect, and the invalid provision will be interpreted to fulfil its intended purpose
+                    to the maximum lawful extent.
+                </p>
 
-            <h2>17. Contact Information</h2>
-            <p>If you have any questions about these Terms, alleged copyright infringement, or wish to exercise statutory rights (e.g., GDPR access request), please contact:</p>
-            <address class="font-sans not-italic text-gray-400">
-                AuraSync X Legal<br>
-                c/o Stephen Alfred<br>
-                Halifax, Nova Scotia, Canada<br>
-                Email: support@aurasyncx.example
-            </address>
-        </main>
-    </div>
-    
+                <!-- Section 16 -->
+                <h2 class="text-white font-display font-bold">16. Entire Agreement</h2>
+                <p>
+                    These Terms constitute the entire agreement between you and us regarding the Service and supersede all
+                    prior or contemporaneous agreements, communications, and understandings, whether oral or written.
+                </p>
+
+                <!-- Section 17 -->
+                <h2 class="text-white font-display font-bold">17. Contact Information</h2>
+                <p>
+                    If you have any questions about these Terms, alleged copyright infringement, or wish to exercise
+                    statutory rights, please contact:
+                </p>
+                <div class="not-italic bg-indigo-900/30 p-6 rounded-xl border border-indigo-500/30">
+                    <strong class="text-white block mb-2">AuraSync X Legal</strong>
+                    <span class="block text-gray-300">c/o Stephen Alfred</span>
+                    <span class="block text-gray-300">Halifax, Nova Scotia, Canada</span>
+                    <a href="mailto:support@aurasyncx.example" class="text-indigo-400 hover:text-white transition block mt-2">support@aurasyncx.example</a>
+                </div>
+            </article>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 text-center text-gray-600 text-sm relative z-10 border-t border-white/5 bg-black/20 mt-12">
+        &copy; 2025 AuraSync X. Built with <span class="text-red-500">&hearts;</span> in Nova Scotia.
+    </footer>
+
+    <!-- Background constellation for terms page -->
     <script src="js/particles-bg.js"></script>
+
 </body>
 </html>

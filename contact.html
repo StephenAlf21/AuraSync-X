@@ -4,135 +4,299 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact - AuraSync X</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- p5.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap">
+
+    <!-- Shared styles (glass, scrollbar, etc.) -->
+    <link rel="stylesheet" href="shared-style.css">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Favicon -->
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="alternate icon" href="favicon.png" />
-    <link rel="stylesheet" href="shared-style.css">
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-    <style>
-        body { background-color: #111827; font-family: 'Orbitron', sans-serif; }
-        #p5-canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        .content-card {
-            background: rgba(31, 41, 55, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 1rem;
-            border: 1px solid rgba(79, 70, 229, 0.2);
-            padding: 1.5rem;
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        aura: {
+                            dark: '#05050a',
+                            card: 'rgba(20, 20, 35, 0.6)',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
         }
-        @media (min-width: 640px) { .content-card { padding: 3rem; } }
-        .prose-custom p { font-family: 'Inter', sans-serif; color: #9ca3af; line-height: 1.75; }
-        .social-link svg { transition: transform 0.2s ease-in-out; }
-        .social-link:hover svg { transform: scale(1.2); }
+    </script>
+
+    <style>
+        body {
+            background-color: #05050a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+
+        /* Canvas Background */
+        #p5-canvas-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; opacity: 0.4; pointer-events: none;
+        }
+
+        /* Glass Utilities */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .glass-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .glass-input:focus {
+            border-color: #818cf8;
+            outline: none;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #818cf8, #c084fc, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
     </style>
 </head>
-<body class="text-white bg-gray-900 p-4 sm:p-6">
+<body class="flex flex-col min-h-screen font-sans selection:bg-indigo-500 selection:text-white">
 
-    <div id="p5-canvas-container" data-count="150" data-dot="rgba(139, 92, 246, 0.5)" data-line="rgba(139, 92, 246, 0.15)"></div>
+    <!-- p5.js Background -->
+    <div id="p5-canvas-container"></div>
 
-    <!-- Floating quick-launch for Other Sites -->
-    <button id="openSitesTop"
-            title="More sites"
-            class="fixed bottom-24 right-6 z-50 glass-button text-white p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-105"
-            aria-label="Open other sites menu">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
-    </button>
+    <!-- Nav -->
+    <nav class="h-20 flex-none glass-panel border-b border-b-indigo-500/10 z-30 relative flex items-center justify-between px-4 sm:px-6 lg:px-8">
+        <a href="index.html" class="flex items-center gap-2 group text-gray-400 hover:text-white transition">
+            <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <span class="font-display font-bold text-sm tracking-widest uppercase">Return Home</span>
+        </a>
+        
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 flex items-center justify-center bg-indigo-900/50 rounded border border-indigo-500/30 text-indigo-400">
+                <img src="favicon.svg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" class="w-5 h-5" alt="Logo">
+                <svg style="display:none" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <span class="font-display font-bold text-lg tracking-wider text-white">Contact <span class="text-gradient">Us</span></span>
+            <button id="openSitesTop" class="glass-button px-3 py-1.5 rounded-lg text-xs font-semibold text-indigo-200 hover:text-white border border-indigo-500/40 hover:border-indigo-400 transition-colors">
+                Other Sites
+            </button>
+        </div>
+    </nav>
 
-    <div class="max-w-4xl mx-auto my-8 content-card">
-        <header class="text-center mb-12">
-            <a href="index.html" class="inline-block mb-8 text-indigo-400 hover:text-indigo-300 transition font-sans">&larr; Back to Home</a>
-            <h1 class="text-4xl sm:text-5xl font-black bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text text-transparent">
-                Get In Touch
+    <!-- Content -->
+    <main class="flex-1 container mx-auto px-4 py-12 max-w-5xl">
+        
+        <!-- Header -->
+        <header class="text-center mb-16 animate-float">
+            <h1 class="text-4xl md:text-6xl font-display font-black tracking-tight mb-4">
+                Get in <span class="text-gradient">Touch</span>
             </h1>
-            <p class="text-lg text-gray-400 mt-4 font-sans">Have a question, feedback, or a bug to report? Here's how to reach us.</p>
+            <p class="text-xl text-gray-400 font-light max-w-2xl mx-auto">
+                Have a question, feedback, or a bug to report? We are always listening.
+            </p>
         </header>
 
-        <main class="max-w-xl mx-auto text-center">
-            <div class="bg-gray-800/50 p-8 rounded-lg">
-                <h2 class="text-2xl font-bold text-white mb-4">Direct Email</h2>
-                <p class="prose-custom">For support, business inquiries, or other formal matters, the best way to reach out is via email.</p>
-                <a href="mailto:support@aurasyncx.example" class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">
-                    support@aurasyncx.example
-                </a>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Column: Info & Socials -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <!-- Email Card -->
+                <div class="glass-panel p-8 rounded-3xl border-l-4 border-l-indigo-500">
+                    <h2 class="text-2xl font-display font-bold text-white mb-2">Direct Support</h2>
+                    <p class="text-gray-400 text-sm mb-6">
+                        For formal inquiries, bugs, or business proposals.
+                    </p>
+                    <a href="mailto:support@aurasyncx.example" class="flex items-center gap-3 p-4 glass-card rounded-xl text-indigo-300 hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        <span class="font-mono text-sm">support@aurasyncx.example</span>
+                    </a>
+                </div>
+
+                <!-- Socials Card -->
+                <div class="glass-panel p-8 rounded-3xl">
+                    <h2 class="text-xl font-display font-bold text-white mb-6">Follow Dev</h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <a href="https://github.com/StephenAlf21" target="_blank" class="glass-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 text-gray-400 hover:text-white group">
+                            <svg class="w-8 h-8 text-[#fcca03] group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            <span class="text-xs font-bold">GitHub</span>
+                        </a>
+                        <a href="https://x.com/Zombes18" target="_blank" class="glass-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 text-gray-400 hover:text-white group">
+                            <svg class="w-8 h-8 text-[#1D9BF0] group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            <span class="text-xs font-bold">X / Twitter</span>
+                        </a>
+                        <a href="https://www.youtube.com/@zombes1892" target="_blank" class="glass-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 text-gray-400 hover:text-white group">
+                            <svg class="w-8 h-8 text-[#FF0000] group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                            <span class="text-xs font-bold">YouTube</span>
+                        </a>
+                        <a href="https://www.facebook.com/gaming/PaddleBall3D" target="_blank" class="glass-card p-4 rounded-xl flex flex-col items-center justify-center gap-2 text-gray-400 hover:text-white group">
+                            <svg class="w-8 h-8 text-[#1877F2] group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v2.385z"/></svg>
+                            <span class="text-xs font-bold">Facebook</span>
+                        </a>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="mt-12">
-                <h2 class="text-2xl font-bold text-white mb-4">Follow on Social Media</h2>
-                <p class="prose-custom mb-6">For project updates, announcements, and general discussion, follow the developer on these platforms.</p>
-                <div class="flex justify-center items-center space-x-6">
-                    <a href="https://github.com/StephenAlf21" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition social-link" aria-label="GitHub">
-                        <svg class="w-8 h-8 text-[#fcca03]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                    </a>
-                    <a href="https://x.com/Zombes18" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition social-link" aria-label="X (formerly Twitter)">
-                        <svg class="w-7 h-7 text-[#1D9BF0]" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                    </a>
-                    <a href="https://www.youtube.com/@zombes1892" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition social-link" aria-label="YouTube">
-                        <svg class="w-9 h-9 text-[#FF0000]" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
-                    </a>
-                    <a href="https://www.facebook.com/gaming/PaddleBall3D" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition social-link" aria-label="Facebook">
-                        <svg class="w-8 h-8 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v2.385z"/></svg>
-                    </a>
-                    <button id="openSitesFooter" class="ml-2 px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-200 transition" aria-label="More sites">More Sites</button>
+            <!-- Right Column: Message Form -->
+            <div class="lg:col-span-7">
+                <div class="glass-panel p-8 rounded-3xl h-full">
+                    <h2 class="text-2xl font-display font-bold text-white mb-6">Send a Message</h2>
+                    <form onsubmit="event.preventDefault(); alert('Thank you for your message! We will get back to you shortly.');" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Name</label>
+                                <input type="text" required class="w-full p-3 rounded-xl glass-input focus:ring-2 focus:ring-indigo-500 transition" placeholder="John Doe">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Email</label>
+                                <input type="email" required class="w-full p-3 rounded-xl glass-input focus:ring-2 focus:ring-indigo-500 transition" placeholder="john@example.com">
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Subject</label>
+                            <select class="w-full p-3 rounded-xl glass-input focus:ring-2 focus:ring-indigo-500 transition">
+                                <option>General Inquiry</option>
+                                <option>Bug Report</option>
+                                <option>Feature Request</option>
+                                <option>Partnership</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Message</label>
+                            <textarea rows="5" required class="w-full p-3 rounded-xl glass-input focus:ring-2 focus:ring-indigo-500 transition" placeholder="Tell us what's on your mind..."></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transform hover:-translate-y-1 transition-all">
+                            Send Message
+                        </button>
+                    </form>
                 </div>
             </div>
-        </main>
-    </div>
-
-    <!-- Other Sites Modal -->
-    <div id="sitesModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="sitesTitle">
-      <div class="modal-card w-full max-w-xl will-change-transform">
-        <div class="flex justify-between items-center mb-4">
-          <h2 id="sitesTitle" class="text-xl font-bold text-indigo-300 tracking-wide">Explore More Projects</h2>
-          <button id="closeSites" class="p-2 rounded-full hover:bg-white/10 transition" aria-label="Close">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
         </div>
-        <ul class="grid grid-cols-1 gap-3">
-          <li>
-            <a class="site-card group" href="https://stephenalf21.github.io/MusicVisualizer3D.github.io/" target="_blank" rel="noopener noreferrer">
-              <div class="pr-3">
-                <div class="font-semibold text-white/90 group-hover:text-white">3D Music Visualizer</div>
-                <p class="text-sm text-gray-300 mt-1 leading-snug">Bring Your Audio to Life The ultimate toolkit for music lovers and creators. Visualize, edit, and explore your sound in ways you never thought possible.</p>
-              </div>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/></svg>
-            </a>
-          </li>
-          <li>
-            <a class="site-card group" href="https://stephenalf21.github.io/PaddleBall-3D-Website/" target="_blank" rel="noopener noreferrer">
-              <div class="pr-3">
-                <div class="font-semibold text-white/90 group-hover:text-white">PaddleBall 3D</div>
-                <p class="text-sm text-gray-300 mt-1 leading-snug">Experience the next dimension of classic paddle gameplay. Dynamic AI, multiple game modes, and immersive audio await.</p>
-              </div>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/></svg>
-            </a>
-          </li>
-          <li>
-            <a class="site-card group" href="https://stephenalf21.github.io/FinancialCalculator.github.io/" target="_blank" rel="noopener noreferrer">
-              <div class="pr-3">
-                <div class="font-semibold text-white/90 group-hover:text-white">Financial Calculator</div>
-                <p class="text-sm text-gray-300 mt-1 leading-snug">Experience Music Like Never Before. An immersive audio-visual journey powered by generative art and curated ambient tracks. Press play to begin the experience.</p>
-              </div>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/></svg>
-            </a>
-          </li>
-          <li>
-            <a class="site-card group" href="https://stephenalf21.github.io/PoliticalCompass.github.io/" target="_blank" rel="noopener noreferrer">
-              <div class="pr-3">
-                <div class="font-semibold text-white/90 group-hover:text-white">Political Compass</div>
-                <p class="text-sm text-gray-300 mt-1 leading-snug">Political Compass Test
-Discover your political alignment through a materialist lens.</p>
-              </div>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/></svg>
-            </a>
-          </li>
-        </ul>
-      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center text-gray-600 text-sm relative z-10 border-t border-white/5 bg-black/20 mt-auto">
+        &copy; 2025 AuraSync X. Built with <span class="text-red-500">&hearts;</span> in Nova Scotia.
+    </footer>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- Other Sites Modal (shared structure) -->
+    <div id="sitesModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-[60] hidden" role="dialog" aria-modal="true" aria-labelledby="sitesTitle">
+        <div class="modal-card w-full max-w-xl will-change-transform">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="sitesTitle" class="text-xl font-bold text-indigo-300 tracking-wide flex items-center gap-2">
+                    <span class="text-indigo-400">///</span> Network Projects
+                </h2>
+                <button id="closeSites" class="p-2 rounded-full hover:bg-white/10 transition" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <ul class="grid grid-cols-1 gap-3">
+                <li>
+                    <a class="site-card group" href="https://stephenalf21.github.io/MusicVisualizer3D.github.io/" target="_blank" rel="noopener noreferrer">
+                        <div class="pr-3">
+                            <div class="font-semibold text-white/90 group-hover:text-white">3D Music Visualizer</div>
+                            <p class="text-sm text-gray-300 mt-1 leading-snug">Advanced audio reactive toolkit for music lovers and creators.</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a class="site-card group" href="https://stephenalf21.github.io/PaddleBall-3D-Website/" target="_blank" rel="noopener noreferrer">
+                        <div class="pr-3">
+                            <div class="font-semibold text-white/90 group-hover:text-white">PaddleBall 3D</div>
+                            <p class="text-sm text-gray-300 mt-1 leading-snug">Next-gen arcade physics with multiple modes and dynamic AI.</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a class="site-card group" href="https://stephenalf21.github.io/FinancialCalculator.github.io/" target="_blank" rel="noopener noreferrer">
+                        <div class="pr-3">
+                            <div class="font-semibold text-white/90 group-hover:text-white">Financial Tools</div>
+                            <p class="text-sm text-gray-300 mt-1 leading-snug">Financial calculators for planning, analysis, and decision-making.</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a class="site-card group" href="https://stephenalf21.github.io/PoliticalCompass.github.io/" target="_blank" rel="noopener noreferrer">
+                        <div class="pr-3">
+                            <div class="font-semibold text-white/90 group-hover:text-white">Political Compass</div>
+                            <p class="text-sm text-gray-300 mt-1 leading-snug">Discover your political alignment through a materialist lens.</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-1 opacity-80 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h4m0 0v4m0-4L10 14"/>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 
+    <!-- Background & Modals -->
     <script src="js/particles-bg.js"></script>
     <script src="js/links-modal.js"></script>
 </body>

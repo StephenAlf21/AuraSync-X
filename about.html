@@ -4,18 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About - AuraSync X</title>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- p5.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Shared styles (glass, scrollbar, etc.) -->
+    <link rel="stylesheet" href="shared-style.css">
+
+    <!-- Favicon -->
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="alternate icon" href="favicon.png" />
-    <link rel="stylesheet" href="shared-style.css">
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        aura: {
+                            dark: '#05050a',
+                            card: 'rgba(20, 20, 35, 0.6)',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         body {
-            background-color: #111827;
-            font-family: 'Orbitron', sans-serif;
+            background-color: #05050a;
+            color: #e2e8f0;
+            overflow-x: hidden;
         }
+
+        /* Canvas Background (p5 instance is driven by particles-bg.js) */
         #p5-canvas-container {
             position: fixed;
             top: 0;
@@ -23,92 +66,194 @@
             width: 100%;
             height: 100%;
             z-index: -1;
+            opacity: 0.5;
         }
-        .content-card {
-            background: rgba(31, 41, 55, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 1rem;
-            border: 1px solid rgba(79, 70, 229, 0.2);
-            padding: 1.5rem;
+
+        /* Local glass helpers for about layout */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(99, 102, 241, 0.15);
         }
-        @media (min-width: 640px) {
-            .content-card {
-                padding: 3rem;
-            }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
         }
-        .prose-custom h2 {
-            color: #e5e7eb;
-            font-weight: 700;
-            margin-top: 2em;
-            margin-bottom: 1em;
-            font-size: 1.875rem;
-            border-bottom: 2px solid #4f46e5;
-            padding-bottom: 0.5rem;
+        .glass-card:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
         }
-        .prose-custom p {
-            font-family: 'Inter', sans-serif;
-            color: #9ca3af;
-            line-height: 1.75;
+
+        .text-gradient {
+            background: linear-gradient(to right, #818cf8, #c084fc, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
     </style>
 </head>
-<body class="text-white bg-gray-900 p-4 sm:p-6">
+<body class="flex flex-col min-h-screen font-sans selection:bg-indigo-500 selection:text-white">
 
-    <div id="p5-canvas-container" data-count="150" data-dot="rgba(139, 92, 246, 0.5)" data-line="rgba(139, 92, 246, 0.15)"></div>
+    <!-- p5.js Background -->
+    <div id="p5-canvas-container" data-count="120" data-dot="rgba(139, 92, 246, 0.5)" data-line="rgba(139, 92, 246, 0.15)"></div>
 
-    <div class="max-w-4xl mx-auto my-8 content-card">
-        <header class="text-center mb-12">
-            <a href="index.html" class="inline-block mb-8 text-indigo-400 hover:text-indigo-300 transition font-sans">&larr; Back to Home</a>
-            <h1 class="text-4xl sm:text-5xl font-black bg-gradient-to-r from-indigo-300 to-purple-400 bg-clip-text text-transparent">
-                About AuraSync X
-            </h1>
-            <p class="text-lg text-gray-400 mt-4 font-sans">The story, the tech, and the future of your favorite media hub.</p>
-        </header>
+    <!-- Top Nav / Back -->
+    <nav class="h-20 flex-none glass-panel border-b border-b-indigo-500/10 z-30 relative flex items-center justify-between px-4 sm:px-6 lg:px-8">
+        <a href="index.html" class="flex items-center gap-2 group text-gray-400 hover:text-white transition">
+            <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <span class="font-display font-bold text-sm tracking-widest uppercase">Return Home</span>
+        </a>
+        
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 flex items-center justify-center bg-indigo-900/50 rounded border border-indigo-500/30 text-indigo-400">
+                <img src="favicon.svg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" class="w-5 h-5" alt="Logo">
+                <svg style="display:none" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <span class="font-display font-bold text-lg tracking-wider text-white">About <span class="text-gradient">AuraSync X</span></span>
+        </div>
+    </nav>
 
-        <main class="prose-custom max-w-none">
-            <section id="story">
-                <h2>Our Story</h2>
-                <p>AuraSync X began as a passion project by Stephen Alfred, a developer based in Nova Scotia, Canada. Inspired by the classic visualizers of the early 2000s and a love for modern web technology, the goal was to create a beautiful, private, and powerful media player that runs entirely in the browser. What started as a simple particle visualizer grew into a comprehensive suite, all while holding true to the core principle: your data is your own.</p>
-            </section>
-
-            <section id="tech-stack" class="mt-16">
-                <h2>Technology Stack</h2>
-                <p>This project stands on the shoulders of giants. It's built with a focus on modern, open-source technologies that allow for a fast and responsive user experience.</p>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center mt-8 font-sans">
-                    <div class="bg-gray-800/50 p-4 rounded-lg"><img src="https://placehold.co/64x64/7e22ce/ffffff?text=p5" class="mx-auto mb-2 h-12 w-12" alt="p5.js Logo">p5.js</div>
-                    <div class="bg-gray-800/50 p-4 rounded-lg"><img src="https://placehold.co/64x64/38bdf8/ffffff?text=TW" class="mx-auto mb-2 h-12 w-12" alt="Tailwind CSS Logo">Tailwind CSS</div>
-                    <div class="bg-gray-800/50 p-4 rounded-lg"><img src="https://placehold.co/64x64/facc15/000000?text=JS" class="mx-auto mb-2 h-12 w-12" alt="JavaScript Logo">JavaScript</div>
-                    <div class="bg-gray-800/50 p-4 rounded-lg"><img src="https://placehold.co/64x64/f97316/ffffff?text=HTML5" class="mx-auto mb-2 h-12 w-12" alt="HTML5 Logo">HTML5</div>
-                </div>
-            </section>
+    <!-- Main Content -->
+    <main class="flex-1 relative z-10">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
             
-            <section id="developer" class="mt-16">
-                <h2>The Developer</h2>
-                 <div class="flex flex-col sm:flex-row items-center gap-6 bg-gray-800/30 p-6 rounded-lg font-sans">
-                    <img src="https://placehold.co/128x128/1f2937/a78bfa?text=SA" alt="Portrait of Stephen Alfred" class="w-32 h-32 rounded-full border-4 border-indigo-500">
-                    <div>
-                        <h3 class="text-2xl font-bold text-white -mt-4">Stephen Alfred (zombies21)</h3>
-                        <p class="text-indigo-300">Creator & Lead Developer</p>
-                        <p class="text-gray-400 mt-2">A history and politics enthusiast from Nova Scotia, I believe in leveraging technology to create open and accessible tools for everyone. When not coding, I enjoy biking and exploring the rich history of my home province. This project is a testament to the idea that powerful applications can be built with privacy and user freedom as the top priorities.</p>
-                    </div>
+            <!-- Header Section -->
+            <header class="text-center mb-12">
+                <p class="inline-flex items-center px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-xs font-mono uppercase tracking-[0.2em] text-indigo-300 mb-4">
+                    Version 1 · Built in Nova Scotia
+                </p>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black font-display text-gradient mb-4">
+                    The Story Behind AuraSync X
+                </h1>
+                <p class="text-xl text-gray-400 font-light max-w-2xl mx-auto">
+                    Forged in Nova Scotia. Built on the principles of privacy, performance, and user freedom.
+                </p>
+            </header>
+
+            <!-- Grid Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Main Column (Story & Roadmap) -->
+                <div class="lg:col-span-8 space-y-8">
+                    
+                    <!-- Story Section -->
+                    <section class="glass-panel p-8 rounded-3xl border-l-4 border-l-indigo-500">
+                        <h2 class="text-2xl font-display font-bold text-white mb-6 flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-sm">01</span>
+                            Our Origins
+                        </h2>
+                        <div class="prose prose-invert prose-lg text-gray-300 font-light leading-relaxed">
+                            <p class="mb-4">
+                                AuraSync X began as a passion project by Stephen Alfred, a developer based in Nova Scotia, Canada. Inspired by the classic Winamp visualizers of the early 2000s and a love for modern web technology, the goal was simple: create a beautiful, private, and powerful media hub that runs entirely in your browser.
+                            </p>
+                            <p>
+                                What started as a simple particle experiment grew into a comprehensive suite. In an era of subscription services and data harvesting, AuraSync X holds true to a core principle: <span class="text-indigo-300 font-semibold">your media, your data, your control.</span>
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Roadmap Section -->
+                    <section class="glass-panel p-8 rounded-3xl">
+                        <h2 class="text-2xl font-display font-bold text-white mb-6 flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 text-sm">02</span>
+                            Project Roadmap
+                        </h2>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4 p-4 glass-card rounded-xl">
+                                <div class="w-6 h-6 mt-1 rounded-full border-2 border-indigo-500 flex items-center justify-center flex-none">
+                                    <div class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-white">Advanced Visualization</h3>
+                                    <p class="text-sm text-gray-400">More reaction patterns, color palettes, and WebGL shader effects.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4 p-4 glass-card rounded-xl">
+                                <div class="w-6 h-6 mt-1 rounded-full border-2 border-gray-600 flex items-center justify-center flex-none"></div>
+                                <div>
+                                    <h3 class="font-bold text-gray-300">Expanded Format Support</h3>
+                                    <p class="text-sm text-gray-500">Native support for FLAC, MKV, and streaming protocols.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4 p-4 glass-card rounded-xl">
+                                <div class="w-6 h-6 mt-1 rounded-full border-2 border-gray-600 flex items-center justify-center flex-none"></div>
+                                <div>
+                                    <h3 class="font-bold text-gray-300">Community Radio</h3>
+                                    <p class="text-sm text-gray-500">Crowd-sourced station lists and revolutionary radio archives.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                 </div>
-            </section>
 
-            <section id="roadmap" class="mt-16">
-                <h2>Project Roadmap</h2>
-                <p>The journey is far from over. Here are some of the features and improvements planned for the future:</p>
-                <ul class="list-disc pl-5 font-sans text-gray-400 space-y-2">
-                    <li>More advanced visualization options and greater customization.</li>
-                    <li>Support for additional audio and video formats.</li>
-                    <li>Improved playlist import/export functionality.</li>
-                    <li>Light theme for enhanced accessibility.</li>
-                    <li>Community-sourced radio station lists.</li>
-                </ul>
-            </section>
-        </main>
-    </div>
+                <!-- Sidebar Column (Developer & Tech) -->
+                <div class="lg:col-span-4 space-y-8">
+                    
+                    <!-- Developer Profile -->
+                    <section class="glass-panel p-6 rounded-3xl text-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-b from-indigo-500/10 to-transparent pointer-events-none"></div>
+                        <div class="relative z-10">
+                            <div class="w-32 h-32 mx-auto mb-4 rounded-full p-1 bg-gradient-to-tr from-indigo-500 to-purple-500">
+                                <img src="https://placehold.co/128x128/1f2937/a78bfa?text=SA" alt="Stephen Alfred" class="w-full h-full rounded-full object-cover border-4 border-gray-900">
+                            </div>
+                            <h3 class="text-xl font-display font-bold text-white">Stephen Alfred</h3>
+                            <p class="text-indigo-400 text-sm font-mono mb-4">@zombies21</p>
+                            
+                            <p class="text-sm text-gray-300 leading-relaxed mb-6">
+                                Creator & Lead Developer. History buff, politics enthusiast, and cyclist. Believer in open tools for the working class.
+                            </p>
+                            
+                            <div class="flex justify-center gap-3">
+                                <a href="https://github.com/StephenAlf21" target="_blank" class="p-2 glass-button rounded-lg text-gray-400 hover:text-white transition" aria-label="GitHub">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                                </a>
+                                <a href="https://x.com/Zombes18" target="_blank" class="p-2 glass-button rounded-lg text-gray-400 hover:text-white transition" aria-label="Twitter">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
 
+                    <!-- Tech Stack -->
+                    <section class="glass-panel p-6 rounded-3xl">
+                        <h3 class="text-lg font-display font-bold text-white mb-4">Tech Stack</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="glass-card p-3 rounded-xl text-center">
+                                <div class="text-indigo-400 font-bold mb-1">p5.js</div>
+                                <div class="text-xs text-gray-500">Visualization</div>
+                            </div>
+                            <div class="glass-card p-3 rounded-xl text-center">
+                                <div class="text-cyan-400 font-bold mb-1">Tailwind</div>
+                                <div class="text-xs text-gray-500">Styling</div>
+                            </div>
+                            <div class="glass-card p-3 rounded-xl text-center">
+                                <div class="text-yellow-400 font-bold mb-1">JavaScript</div>
+                                <div class="text-xs text-gray-500">Logic</div>
+                            </div>
+                            <div class="glass-card p-3 rounded-xl text-center">
+                                <div class="text-orange-400 font-bold mb-1">HTML5</div>
+                                <div class="text-xs text-gray-500">Structure</div>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center text-gray-600 text-sm relative z-10">
+        &copy; 2025 AuraSync X. Built with <span class="text-red-500">&hearts;</span> in Nova Scotia.
+    </footer>
+
+    <!-- Background & Extras -->
     <script src="js/particles-bg.js"></script>
 
 </body>

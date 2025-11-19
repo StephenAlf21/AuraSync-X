@@ -184,6 +184,19 @@ button:focus-visible, input:focus-visible {
   border: 1px solid rgba(99, 102, 241, 0.2);
 }
 
+/* Generic glass card used on secondary pages (about, features, contact, careers) */
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-5px);
+}
+
 /* Text gradient utility for headings */
 .text-gradient {
   background: linear-gradient(to right, #818cf8, #c084fc, #22d3ee);
@@ -255,4 +268,24 @@ input[type=range]::-webkit-slider-runnable-track {
   cursor: pointer;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 2px;
+}
+
+/* Glass-styled tables used on legal/policy pages */
+.glass-table th {
+  background-color: rgba(99, 102, 241, 0.1);
+  color: #e0e7ff;
+  font-weight: 600;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-table td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+}
+
+.glass-table tr:last-child td {
+  border-bottom: none;
 }
