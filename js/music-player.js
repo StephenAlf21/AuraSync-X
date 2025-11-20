@@ -30,7 +30,7 @@
     let sensitivity = 5;
     let timeData;
 
-    let audioContext, analyser, source;
+    let audioContext, analyser, source, gainNode;
     let bufferLength, dataArray;
 
     const mainContent = document.getElementById('mainContent');
@@ -187,11 +187,16 @@
         if (!audioContext) {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             analyser = audioContext.createAnalyser();
-            analyser.connect(audioContext.destination);
             analyser.fftSize = 256;
             bufferLength = analyser.frequencyBinCount;
             dataArray = new Uint8Array(bufferLength);
             timeData = new Float32Array(analyser.fftSize);
+            gainNode = audioContext.createGain();
+            analyser.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            if (volumeSlider) {
+              gainNode.gain.value = Number(volumeSlider.value);
+            }
         }
     }
 
@@ -206,9 +211,11 @@
       }
       audioElement = new Audio();
 
-      // BUG FIX: Apply volume from slider every time a new track is initialized
+      // Apply volume from slider every time a new track is initialized
       if (volumeSlider) {
-        audioElement.volume = Number(volumeSlider.value);
+        const vol = Number(volumeSlider.value);
+        audioElement.volume = vol;
+        if (gainNode) gainNode.gain.value = vol;
       }
       
       if (track.file) {
@@ -593,6 +600,10 @@
         btn.setAttribute('aria-pressed', pressed);
         btn.classList.toggle('bg-indigo-600', pressed); btn.classList.toggle('bg-gray-700', !pressed);
       });
+      // Re-apply gain based on slider for iOS where element volume may be ignored
+      if (volumeSlider && gainNode) {
+        gainNode.gain.value = Number(volumeSlider.value);
+      }
     }
     function switchColorScheme(scheme) {
       currentColorScheme = scheme;
@@ -624,6 +635,7 @@
         if (!audioElement) return;
         const newVolume = Math.min(1, Math.max(0, audioElement.volume + delta));
         audioElement.volume = newVolume;
+        if (gainNode) gainNode.gain.value = newVolume;
         if (volumeSlider) { volumeSlider.value = newVolume; setRangeFill(volumeSlider); }
     }
 
@@ -700,7 +712,11 @@
         document.addEventListener('pointerup', onPointerUp);
       });
 
-      const handleVolumeChange = (e) => { if (audioElement) { audioElement.volume = Number(e.target.value); } };
+      const handleVolumeChange = (e) => { 
+        const vol = Number(e.target.value);
+        if (audioElement) { audioElement.volume = vol; }
+        if (gainNode) { gainNode.gain.value = vol; }
+      };
       volumeSlider.addEventListener('input', handleVolumeChange);
       volumeSlider.addEventListener('change', handleVolumeChange);
       
