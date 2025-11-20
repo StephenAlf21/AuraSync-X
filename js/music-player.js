@@ -41,7 +41,6 @@
     const playlistToggleIcon = document.getElementById('playlistToggleIcon');
     const playPauseBtn = document.getElementById('playPauseBtn');
     const playPauseBtnMobile = document.getElementById('playPauseBtnMobile');
-    const settingsHeaderBtn = document.getElementById('settingsHeaderBtn');
     const settingsInlineBtn = document.getElementById('settingsInlineBtn');
     const nextBtn = document.getElementById('nextBtn');
     const prevBtn = document.getElementById('prevBtn');
@@ -752,8 +751,10 @@
           setTimeout(() => settingsOverlay.classList.add('hidden'), 300);
         }
       };
-      if (settingsHeaderBtn) settingsHeaderBtn.addEventListener('click', openDrawer);
-      if (settingsInlineBtn) settingsInlineBtn.addEventListener('click', openDrawer);
+      if (settingsInlineBtn) {
+        settingsInlineBtn.addEventListener('click', openDrawer);
+        settingsInlineBtn.addEventListener('touchstart', (e) => { e.preventDefault(); openDrawer(); }, { passive: false });
+      }
       if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
       if (drawerHandle) drawerHandle.addEventListener('click', closeDrawer);
       if (settingsOverlay) settingsOverlay.addEventListener('click', closeDrawer);
