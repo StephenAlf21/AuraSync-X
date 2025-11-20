@@ -755,6 +755,22 @@
       if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
       if (drawerHandle) drawerHandle.addEventListener('click', closeDrawer);
       if (settingsOverlay) settingsOverlay.addEventListener('click', closeDrawer);
+      window.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && settingsDrawer) {
+          settingsDrawer.classList.add('translate-y-full');
+          if (settingsOverlay) {
+            settingsOverlay.classList.add('hidden');
+            settingsOverlay.classList.add('opacity-0');
+          }
+        }
+      });
+      window.addEventListener('pageshow', () => { // re-close drawer on restore from bfcache
+        if (settingsDrawer) settingsDrawer.classList.add('translate-y-full');
+        if (settingsOverlay) {
+          settingsOverlay.classList.add('hidden');
+          settingsOverlay.classList.add('opacity-0');
+        }
+      });
 
       // Advanced settings toggle
       if (advancedToggleBtn && advancedSettings) {

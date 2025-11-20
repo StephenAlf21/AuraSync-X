@@ -69,6 +69,13 @@
             border-radius: 9999px;
             background: linear-gradient(90deg, rgba(99,102,241,0.4), rgba(56,189,248,0.4));
         }
+
+        /* Safe-area friendly FAB positioning */
+        .safe-fab {
+            right: 1rem;
+            bottom: calc(env(safe-area-inset-bottom, 0px) + 4.5rem);
+            touch-action: manipulation;
+        }
         
         /* Mobile Drawer transition */
         .mobile-drawer {
@@ -122,7 +129,7 @@
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <div class="hidden sm:flex gap-2">
+          <div class="flex gap-2">
             <button id="accessibilityBtn" class="glass-button p-2 rounded-lg text-gray-300" aria-label="Accessibility">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31 2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
             </button>
@@ -210,7 +217,7 @@
 
         <!-- Mobile Settings FAB -->
         <button id="mobileSettingsFab" 
-                class="lg:hidden fixed bottom-28 right-4 z-30 w-14 h-14 rounded-full bg-gray-800/90 border border-indigo-500/50 text-indigo-400 shadow-xl flex items-center justify-center active:scale-95 transition-transform backdrop-blur-md">
+                class="lg:hidden fixed safe-fab z-30 w-14 h-14 rounded-full bg-gray-800/90 border border-indigo-500/50 text-indigo-400 shadow-xl flex items-center justify-center active:scale-95 transition-transform backdrop-blur-md">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
             </svg>
@@ -360,8 +367,8 @@
     </div>
   </div>
 
-  <div id="accessibilityModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="accessibilityTitle">
-    <div class="modal-card">
+  <div id="accessibilityModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center z-50 hidden p-4" role="dialog" aria-modal="true" aria-labelledby="accessibilityTitle">
+    <div class="modal-card max-h-[80vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-6">
         <h2 id="accessibilityTitle" class="text-2xl font-bold text-indigo-400">Accessibility Settings</h2>
         <button id="closeAccessibility" class="p-2 rounded-full hover:bg-gray-700 transition-colors" aria-label="Close">
@@ -395,8 +402,8 @@
     </div>
   </div>
 
-  <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
-    <div class="modal-card">
+  <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center z-50 hidden p-4" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="modal-card max-h-[80vh] overflow-y-auto">
         <div class="flex justify-between items-center mb-6">
             <h2 id="helpTitle" class="text-2xl font-bold text-indigo-400">How to Use AuraSync X</h2>
             <button id="closeHelp" class="p-2 rounded-full hover:bg-gray-700 transition-colors" aria-label="Close">
