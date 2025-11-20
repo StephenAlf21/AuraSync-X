@@ -35,6 +35,40 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
         ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.5); border-radius: 3px; }
+
+        /* Touch-friendly slider styling */
+        .touch-slider {
+            height: 18px;
+            padding: 6px 0;
+            touch-action: pan-y;
+        }
+        .touch-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 26px;
+            width: 26px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            border: 2px solid rgba(99,102,241,0.6);
+        }
+        .touch-slider::-webkit-slider-runnable-track {
+            height: 6px;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, rgba(99,102,241,0.4), rgba(56,189,248,0.4));
+        }
+        .touch-slider::-moz-range-thumb {
+            height: 26px;
+            width: 26px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            border: 2px solid rgba(99,102,241,0.6);
+        }
+        .touch-slider::-moz-range-track {
+            height: 6px;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, rgba(99,102,241,0.4), rgba(56,189,248,0.4));
+        }
         
         /* Mobile Drawer transition */
         .mobile-drawer {
@@ -227,7 +261,7 @@
 
                 <div>
                      <h3 class="text-xs font-bold uppercase text-gray-500 tracking-wider mb-3">Volume</h3>
-                     <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-500" aria-label="Volume">
+                     <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" class="touch-slider w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-500" aria-label="Volume">
                 </div>
 
                 <div class="pt-2 border-t border-gray-700">
@@ -243,8 +277,8 @@
                                     <span>Reactivity</span>
                                     <span>Animation Speed</span>
                                 </div>
-                                <input type="range" id="sensitivity" min="1" max="10" value="5" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-500 mb-4" />
-                                <input type="range" id="speed" min="1" max="10" value="5" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-500" />
+                                <input type="range" id="sensitivity" min="1" max="10" value="5" class="touch-slider w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-500 mb-4" />
+                                <input type="range" id="speed" min="1" max="10" value="5" class="touch-slider w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-500" />
                             </div>
 
                             <div>

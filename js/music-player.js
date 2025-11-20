@@ -700,7 +700,9 @@
         document.addEventListener('pointerup', onPointerUp);
       });
 
-      volumeSlider.addEventListener('input', e => { if (audioElement) { audioElement.volume = e.target.value; } });
+      const handleVolumeChange = (e) => { if (audioElement) { audioElement.volume = Number(e.target.value); } };
+      volumeSlider.addEventListener('input', handleVolumeChange);
+      volumeSlider.addEventListener('change', handleVolumeChange);
       
       // BUG FIX: Wire up visualization control sliders
       speedSlider.addEventListener('input', e => {
@@ -712,6 +714,7 @@
         setRangeFill(sensitivitySlider);
       });
       volumeSlider.addEventListener('input', () => setRangeFill(volumeSlider));
+      volumeSlider.addEventListener('change', () => setRangeFill(volumeSlider));
       [volumeSlider, speedSlider, sensitivitySlider].forEach(setRangeFill);
 
       // Mobile drawer controls
