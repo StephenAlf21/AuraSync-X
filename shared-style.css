@@ -35,7 +35,7 @@
 }
 
 #playlistContainer::-webkit-scrollbar-thumb {
-  background-color: rgba(99, 102, 241, 0.7); /* Indigo */
+  background-color: rgba(239, 68, 68, 0.8); /* red-500 */
   border-radius: 3px;
 }
 
@@ -157,12 +157,12 @@ button:focus-visible, input:focus-visible {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4f46e5;
+  background: #ef4444; /* red-500 */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4338ca;
+  background: #f87171; /* red-400 */
 }
 
 /* Firefox selection fallback */
