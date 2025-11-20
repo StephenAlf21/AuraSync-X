@@ -396,17 +396,24 @@
       seekToPercent(pct);
     }
 
+    function setPlayheadVisible(show) {
+      if (!progressHandle) return;
+      progressHandle.style.opacity = show ? '1' : '0';
+    }
+
     function updateProgressBar() {
         if (!audioElement || !isFinite(audioElement.duration)) {
             updateProgressVisual(0);
             currentTimeEl.textContent = '0:00';
             durationEl.textContent = '0:00';
+            setPlayheadVisible(false);
             if (audioElement && !isFinite(audioElement.duration)) {
               updateProgressVisual(100);
               currentTimeEl.textContent = 'Live';
             }
             return;
         }
+        setPlayheadVisible(true);
         const pct = (audioElement.currentTime / audioElement.duration) * 100;
         updateProgressVisual(pct);
         currentTimeEl.textContent = formatTime(audioElement.currentTime);
