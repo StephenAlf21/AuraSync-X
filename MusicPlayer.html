@@ -120,13 +120,14 @@
                <button id="nextBtn" data-tippy-content="Next" class="p-2 rounded-full bg-gray-700 hover:bg-indigo-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed" aria-label="Next track" disabled>
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M11.555 5.168A1 1 0 0010 5.832v8.336a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664l-5.335-4.168zM4 5v10a1 1 0 001.555.832l5.335-4.168a1 1 0 000-1.664L5.555 4.168A1 1 0 004 5z"></path></svg>
               </button>
-              <span id="currentTime" class="text-sm w-12 text-right">0:00</span>
-              <div id="progressWrapper" class="flex-1 cursor-pointer" aria-label="Track progress">
-                <div class="h-1 bg-gray-700 rounded-full overflow-hidden">
-                  <div id="progressBar" class="h-full bg-indigo-500 w-0 transition-all duration-100 ease-linear"></div>
+              <span id="currentTime" class="text-sm w-14 text-right">0:00</span>
+              <div id="progressWrapper" class="flex-1 cursor-pointer select-none" aria-label="Track progress">
+                <div class="relative h-2 bg-gray-700/80 rounded-full">
+                  <div id="progressBar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-indigo-500 to-cyan-400 w-0 rounded-full"></div>
+                  <div id="progressHandle" class="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white shadow-[0_0_0_3px_rgba(99,102,241,0.35)] pointer-events-none"></div>
                 </div>
               </div>
-              <span id="durationTime" class="text-sm w-12 text-left">0:00</span>
+              <span id="durationTime" class="text-sm w-14 text-left">0:00</span>
             </div>
           </div>
         </section>

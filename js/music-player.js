@@ -43,8 +43,9 @@
     const nextBtn = document.getElementById('nextBtn');
     const prevBtn = document.getElementById('prevBtn');
     const fileInput = document.getElementById('fileInput');
-    let currentTimeEl, durationEl, progressWrapper, progressBar, volumeSlider, speedSlider, sensitivitySlider;
+    let currentTimeEl, durationEl, progressWrapper, progressBar, progressHandle, volumeSlider, speedSlider, sensitivitySlider;
     let specCanvas, specCtx, decibelBar, decibelValue;
+    let isScrubbing = false;
 
     const playIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
     const pauseIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 stroke-white" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
@@ -329,27 +330,40 @@
     
     function setDuration() { if (audioElement) { durationEl.textContent = formatTime(audioElement.duration); } }
     
-    function seek(e) {
+    function updateProgressVisual(pct) {
+      const clamped = Math.max(0, Math.min(100, pct));
+      if (progressBar) progressBar.style.width = clamped + '%';
+      if (progressHandle) progressHandle.style.left = clamped + '%';
+    }
+
+    function seekToPercent(percent) {
       if (!audioElement || !audioElement.duration || !isFinite(audioElement.duration)) return;
+      const clamped = Math.max(0, Math.min(1, percent));
+      audioElement.currentTime = clamped * audioElement.duration;
+      updateProgressVisual(clamped * 100);
+      currentTimeEl.textContent = formatTime(audioElement.currentTime);
+    }
+
+    function handleScrub(clientX) {
+      if (!progressWrapper) return;
       const rect = progressWrapper.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      audioElement.currentTime = (clickX / rect.width) * audioElement.duration;
-      updateProgressBar();
+      const pct = (clientX - rect.left) / rect.width;
+      seekToPercent(pct);
     }
 
     function updateProgressBar() {
         if (!audioElement || !isFinite(audioElement.duration)) {
-            progressBar.style.width = '0%';
+            updateProgressVisual(0);
             currentTimeEl.textContent = '0:00';
             durationEl.textContent = '0:00';
             if (audioElement && !isFinite(audioElement.duration)) {
-              progressBar.style.width = '100%';
+              updateProgressVisual(100);
               currentTimeEl.textContent = 'Live';
             }
             return;
         }
         const pct = (audioElement.currentTime / audioElement.duration) * 100;
-        progressBar.style.width = pct + '%';
+        updateProgressVisual(pct);
         currentTimeEl.textContent = formatTime(audioElement.currentTime);
     }
     
@@ -483,7 +497,7 @@
         if (!audioElement) return;
         const newVolume = Math.min(1, Math.max(0, audioElement.volume + delta));
         audioElement.volume = newVolume;
-        if (volumeSlider) { volumeSlider.value = newVolume; }
+        if (volumeSlider) { volumeSlider.value = newVolume; setRangeFill(volumeSlider); }
     }
 
     function openModal(modalId) {
@@ -526,21 +540,47 @@
       durationEl = document.getElementById('durationTime');
       progressWrapper = document.getElementById('progressWrapper');
       progressBar = document.getElementById('progressBar');
+      progressHandle = document.getElementById('progressHandle');
       volumeSlider = document.getElementById('volumeSlider');
       // BUG FIX: Get slider elements
       speedSlider = document.getElementById('speed');
       sensitivitySlider = document.getElementById('sensitivity');
       
-      progressWrapper.addEventListener('click', seek);
+      const onPointerMove = (evt) => {
+        if (!isScrubbing) return;
+        evt.preventDefault();
+        handleScrub(evt.clientX);
+      };
+
+      const onPointerUp = (evt) => {
+        if (!isScrubbing) return;
+        handleScrub(evt.clientX);
+        isScrubbing = false;
+        document.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointerup', onPointerUp);
+      };
+
+      progressWrapper.addEventListener('pointerdown', e => {
+        if (!audioElement || !audioElement.duration || !isFinite(audioElement.duration)) return;
+        isScrubbing = true;
+        handleScrub(e.clientX);
+        document.addEventListener('pointermove', onPointerMove);
+        document.addEventListener('pointerup', onPointerUp);
+      });
+
       volumeSlider.addEventListener('input', e => { if (audioElement) { audioElement.volume = e.target.value; } });
       
       // BUG FIX: Wire up visualization control sliders
       speedSlider.addEventListener('input', e => {
         animationSpeed = Number(e.target.value);
+        setRangeFill(speedSlider);
       });
       sensitivitySlider.addEventListener('input', e => {
         sensitivity = Number(e.target.value);
+        setRangeFill(sensitivitySlider);
       });
+      volumeSlider.addEventListener('input', () => setRangeFill(volumeSlider));
+      [volumeSlider, speedSlider, sensitivitySlider].forEach(setRangeFill);
 
       document.querySelectorAll('.viz-type').forEach(btn => btn.addEventListener('click', () => switchVisualization(btn.dataset.viz)));
       document.querySelectorAll('.color-scheme').forEach(btn => btn.addEventListener('click', () => switchColorScheme(btn.dataset.scheme)));
@@ -701,3 +741,11 @@
         delay: [150, 0],
       });
     });
+    function setRangeFill(el) {
+      if (!el) return;
+      const min = Number(el.min ?? 0);
+      const max = Number(el.max ?? 100);
+      const val = Number(el.value ?? 0);
+      const pct = ((val - min) / (max - min)) * 100;
+      el.style.setProperty('--range-progress', `${pct}%`);
+    }
