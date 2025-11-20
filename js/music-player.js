@@ -40,9 +40,18 @@
     const closePlaylistBtn = document.getElementById('closePlaylistBtn');
     const playlistToggleIcon = document.getElementById('playlistToggleIcon');
     const playPauseBtn = document.getElementById('playPauseBtn');
+    const playPauseBtnMobile = document.getElementById('playPauseBtnMobile');
     const nextBtn = document.getElementById('nextBtn');
     const prevBtn = document.getElementById('prevBtn');
     const fileInput = document.getElementById('fileInput');
+    const mobileSettingsFab = document.getElementById('mobileSettingsFab');
+    const settingsDrawer = document.getElementById('settingsDrawer');
+    const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+    const drawerHandle = document.getElementById('drawerHandle');
+    const settingsOverlay = document.getElementById('settingsOverlay');
+    const advancedToggleBtn = document.getElementById('advancedToggleBtn');
+    const advancedSettings = document.getElementById('advancedSettings');
+    const advancedChevron = document.getElementById('advancedChevron');
     let currentTimeEl, durationEl, progressWrapper, progressBar, progressHandle, volumeSlider, speedSlider, sensitivitySlider;
     let specCanvas, specCtx, decibelBar, decibelValue;
     let isScrubbing = false;
@@ -211,15 +220,13 @@
 
       audioElement.addEventListener('play', () => { 
         isPlaying = true; 
-        playPauseBtn.innerHTML = pauseIconSVG;
-        playPauseBtn.setAttribute('aria-label','Pause');
+        setPlayUI(true);
         animate(); 
         drawSpectrum();
       });
       audioElement.addEventListener('pause', () => { 
           isPlaying = false; 
-          playPauseBtn.innerHTML = playIconSVG;
-          playPauseBtn.setAttribute('aria-label','Play');
+          setPlayUI(false);
       });
 
       source = audioContext.createMediaElementSource(audioElement);
@@ -362,6 +369,7 @@
     function updateButtons() {
         const hasTracks = !!playlist.length;
         playPauseBtn.disabled = !hasTracks;
+        if (playPauseBtnMobile) playPauseBtnMobile.disabled = !hasTracks;
         nextBtn.disabled = !hasTracks;
         prevBtn.disabled = !hasTracks;
     }
@@ -469,6 +477,19 @@
       const db = rms > 0 ? 20 * Math.log10(rms) : -100;
       decibelValue.textContent = `${Math.max(db, -100).toFixed(1)} dB`;
       decibelBar.style.width = `${Math.min(rms * 100, 100)}%`;
+    }
+
+    function setPlayUI(isNowPlaying) {
+        const icon = isNowPlaying ? pauseIconSVG : playIconSVG;
+        const label = isNowPlaying ? 'Pause' : 'Play';
+        if (playPauseBtn) {
+          playPauseBtn.innerHTML = icon;
+          playPauseBtn.setAttribute('aria-label', label);
+        }
+        if (playPauseBtnMobile) {
+          playPauseBtnMobile.innerHTML = icon;
+          playPauseBtnMobile.setAttribute('aria-label', label);
+        }
     }
 
     function updateParticles(avgFrequency, speed) {
@@ -650,6 +671,11 @@
       // BUG FIX: Get slider elements
       speedSlider = document.getElementById('speed');
       sensitivitySlider = document.getElementById('sensitivity');
+
+      const mobilePlayBtn = document.getElementById('playPauseBtnMobile');
+      if (mobilePlayBtn) {
+        mobilePlayBtn.addEventListener('click', togglePlayPause);
+      }
       
       const onPointerMove = (evt) => {
         if (!isScrubbing) return;
@@ -686,6 +712,38 @@
       });
       volumeSlider.addEventListener('input', () => setRangeFill(volumeSlider));
       [volumeSlider, speedSlider, sensitivitySlider].forEach(setRangeFill);
+
+      // Mobile drawer controls
+      const openDrawer = () => {
+        if (!settingsDrawer) return;
+        settingsDrawer.classList.remove('translate-y-full');
+        if (settingsOverlay) {
+          settingsOverlay.classList.remove('hidden');
+          setTimeout(() => settingsOverlay.classList.remove('opacity-0'), 10);
+        }
+      };
+      const closeDrawer = () => {
+        if (!settingsDrawer) return;
+        settingsDrawer.classList.add('translate-y-full');
+        if (settingsOverlay) {
+          settingsOverlay.classList.add('opacity-0');
+          setTimeout(() => settingsOverlay.classList.add('hidden'), 300);
+        }
+      };
+      if (mobileSettingsFab) mobileSettingsFab.addEventListener('click', openDrawer);
+      if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
+      if (drawerHandle) drawerHandle.addEventListener('click', closeDrawer);
+      if (settingsOverlay) settingsOverlay.addEventListener('click', closeDrawer);
+
+      // Advanced settings toggle
+      if (advancedToggleBtn && advancedSettings) {
+        advancedToggleBtn.addEventListener('click', () => {
+          advancedSettings.classList.toggle('hidden');
+          if (advancedChevron) {
+            advancedChevron.style.transform = advancedSettings.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+          }
+        });
+      }
 
       document.querySelectorAll('.viz-type').forEach(btn => btn.addEventListener('click', () => switchVisualization(btn.dataset.viz)));
       document.querySelectorAll('.color-scheme').forEach(btn => btn.addEventListener('click', () => switchColorScheme(btn.dataset.scheme)));
@@ -833,7 +891,7 @@
       switchColorScheme('blue');
       
       anime({ 
-        targets: '.container > *',
+        targets: '#mainContent > *',
         translateY: [20, 0], 
         opacity: [0, 1], 
         delay: anime.stagger(100), 
