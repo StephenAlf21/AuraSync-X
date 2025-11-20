@@ -721,6 +721,7 @@
           settingsOverlay.classList.remove('hidden');
           setTimeout(() => settingsOverlay.classList.remove('opacity-0'), 10);
         }
+        requestAnimationFrame(resizeSpectrumCanvas);
       };
       const closeDrawer = () => {
         if (!settingsDrawer) return;
@@ -741,6 +742,10 @@
           advancedSettings.classList.toggle('hidden');
           if (advancedChevron) {
             advancedChevron.style.transform = advancedSettings.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+          }
+          // When showing the advanced section, ensure the spectrum canvas sizes correctly.
+          if (!advancedSettings.classList.contains('hidden')) {
+            requestAnimationFrame(resizeSpectrumCanvas);
           }
         });
       }
