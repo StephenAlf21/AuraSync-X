@@ -94,22 +94,8 @@
         <section class="lg:flex-1 flex flex-col rounded-xl overflow-hidden border border-gray-700 glow">
           <!-- Visualizer and spectrum container -->
           <div class="flex flex-col sm:flex-row flex-1 min-h-0">
-            <!-- 3D Visualizer always fills available space -->
+            <!-- 3D Visualizer fills available space -->
             <div id="visualizer" class="flex-1 min-h-0 bg-black"></div>
-
-            <!-- Spectrum stacks below on small, sits beside on larger -->
-            <canvas
-              id="spectrumCanvas"
-              class="
-                hidden
-                md:block        /* hide on mobile, show from md-up */
-                w-full          /* full-width when it’s stacked (md:hidden→md:block) */
-                h-32            /* fixed height on medium screens */
-                lg:w-1/5        /* side-by-side at lg and up, 20% width */
-                lg:h-auto       /* full-height to match viz on lg+ */
-                bg-black
-              "
-            ></canvas>
           </div>
           <!-- Player controls, fixed at the bottom of the section -->
           <div class="bg-gray-800 bg-opacity-80 p-4 flex items-center border-t border-gray-700">
@@ -183,7 +169,14 @@
             <div class="w-full bg-gray-700 rounded overflow-hidden h-2">
               <div id="decibelBar" class="h-full bg-green-400 w-0 transition-all duration-100 ease-linear"></div>
             </div>
-            <span id="decibelValue" class="text-sm text-gray-300 mt-1 block">–∞ dB</span>
+            <span id="decibelValue" class="text-sm text-gray-300 mt-1 block">-∞ dB</span>
+          </div>
+          <div class="mb-6">
+            <h3 class="font-semibold mb-2">2D Spectrum</h3>
+            <canvas
+              id="spectrumCanvas"
+              class="w-full h-32 rounded-lg bg-black border border-gray-700"
+            ></canvas>
           </div>
         </aside>
         
