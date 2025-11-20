@@ -65,14 +65,14 @@
     };
     
     function resizeSpectrumCanvas() {
-      if (specCanvas) {
-        const dpr = window.devicePixelRatio || 1;
-        specCanvas.width  = specCanvas.clientWidth * dpr;
-        specCanvas.height = specCanvas.clientHeight * dpr;
-        if (specCtx) {
-            specCtx.scale(dpr, dpr);
-        }
-      }
+      if (!specCanvas || !specCtx) return;
+      const dpr = window.devicePixelRatio || 1;
+      const displayWidth = specCanvas.clientWidth || (specCanvas.parentElement ? specCanvas.parentElement.clientWidth : 0);
+      const displayHeight = specCanvas.clientHeight || (specCanvas.parentElement ? specCanvas.parentElement.clientHeight : 0);
+      specCanvas.width  = displayWidth * dpr;
+      specCanvas.height = displayHeight * dpr;
+      specCtx.setTransform(1, 0, 0, 1, 0, 0); // reset before scaling to avoid compounding
+      specCtx.scale(dpr, dpr);
     }
 
     function initThreeJS() {
@@ -452,6 +452,7 @@
     function drawSpectrum() {
       if (!isPlaying || !specCtx) return;
       spectrumAnimationId = requestAnimationFrame(drawSpectrum);
+      resizeSpectrumCanvas();
       const unscaledWidth = specCanvas.clientWidth;
       const unscaledHeight = specCanvas.clientHeight;
       specCtx.clearRect(0, 0, unscaledWidth, unscaledHeight);

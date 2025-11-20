@@ -57,13 +57,13 @@
         }
     </style>
 </head>
-<body class="landing-body flex flex-col min-h-screen font-sans selection:bg-indigo-500 selection:text-white overflow-y-auto">
+<body class="landing-body flex flex-col min-h-screen font-sans selection:bg-indigo-500 selection:text-white overflow-y-auto pb-24">
 
   <!-- p5.js Background -->
   <div id="p5-canvas-container" data-count="100" data-dot="rgba(139, 92, 246, 0.45)" data-line="rgba(139, 92, 246, 0.12)"></div>
   
   <!-- Main Content Wrapper -->
-  <div id="mainContent" class="flex-1 flex flex-col overflow-y-auto relative z-10">
+  <div id="mainContent" class="flex-1 flex flex-col overflow-y-auto relative z-10 pb-12">
     
     <!-- Header -->
     <header class="glass-panel border-b border-white/5 px-4 py-3 flex justify-between items-center z-20 flex-shrink-0">
@@ -184,10 +184,10 @@
 
         <!-- Control Panel / Drawer -->
         <aside id="settingsDrawer" 
-               class="mobile-drawer fixed bottom-0 left-0 w-full h-[70vh] lg:h-auto lg:static lg:w-80 lg:my-4 lg:mr-4 
+               class="mobile-drawer fixed bottom-0 left-0 w-full h-[75vh] max-h-[85vh] lg:h-auto lg:max-h-none lg:static lg:w-80 lg:my-4 lg:mr-4 
                       bg-gray-900/95 lg:bg-gray-800/50 backdrop-blur-xl lg:backdrop-blur-md 
                       rounded-t-2xl lg:rounded-xl border-t lg:border border-gray-700 
-                      z-40 transform translate-y-full lg:translate-y-0 flex flex-col shadow-2xl lg:shadow-none">
+                      z-40 transform translate-y-full lg:translate-y-0 flex flex-col shadow-2xl lg:shadow-none overflow-y-auto">
             
             <!-- Mobile Drawer Handle -->
             <div class="lg:hidden w-full flex flex-col items-center pt-3 pb-1 border-b border-gray-800 cursor-pointer" id="drawerHandle">
