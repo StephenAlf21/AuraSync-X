@@ -92,28 +92,60 @@
       initParticles(); initWaves(); initSphere(); initTunnel();
       scene.add(particles);
     }
+
+    // --- REDESIGNED PARTICLES (Nebula Swarm) ---
     function initParticles() {
       const particleCount = 2000;
+      const geometry = new THREE.BufferGeometry();
       const positions = new Float32Array(particleCount * 3);
       const colors = new Float32Array(particleCount * 3);
+      const randoms = new Float32Array(particleCount);
       const baseColor = new THREE.Color(colorSchemes[currentColorScheme][0]);
+
       for (let i = 0; i < particleCount; i++) {
-        positions[i * 3] = (Math.random() - 0.5) * 100;
-        positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
-        positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
-        colors[i * 3] = baseColor.r; colors[i * 3 + 1] = baseColor.g; colors[i * 3 + 2] = baseColor.b;
+        const angle = Math.random() * Math.PI * 2;
+        const radius = 5 + Math.random() * 40;
+        const spread = (Math.random() - 0.5) * 15;
+        
+        positions[i * 3] = Math.cos(angle) * radius;
+        positions[i * 3 + 1] = spread;
+        positions[i * 3 + 2] = Math.sin(angle) * radius;
+
+        colors[i * 3] = baseColor.r;
+        colors[i * 3 + 1] = baseColor.g;
+        colors[i * 3 + 2] = baseColor.b;
+
+        randoms[i] = Math.random();
       }
-      const geometry = new THREE.BufferGeometry();
+      
       geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-      const material = new THREE.PointsMaterial({ size: 0.5, vertexColors: true, transparent: true, opacity: 0.8 });
+      geometry.setAttribute('random', new THREE.BufferAttribute(randoms, 1));
+
+      const material = new THREE.PointsMaterial({
+          size: 0.5,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.8,
+          blending: THREE.AdditiveBlending
+      });
       particles = new THREE.Points(geometry, material);
+      particles.geometry.userData = { originalPositions: positions.slice() };
     }
+
+    // --- REDESIGNED WAVES (Cyber Terrain) ---
     function initWaves() {
         const geometry = new THREE.PlaneGeometry(100, 100, 64, 64);
-        const material = new THREE.MeshBasicMaterial({ color: colorSchemes[currentColorScheme][0], wireframe: true, transparent: true, opacity: 0.7 });
+        const material = new THREE.MeshBasicMaterial({
+            color: colorSchemes[currentColorScheme][0],
+            wireframe: true,
+            transparent: true,
+            opacity: 0.5,
+            side: THREE.DoubleSide
+        });
         waves = new THREE.Mesh(geometry, material);
         waves.rotation.x = -Math.PI / 2;
+        waves.position.y = -10;
     }
     function initSphere() {
         const geometry = new THREE.SphereGeometry(15, 64, 64);
@@ -122,10 +154,23 @@
         sphere.geometry.setAttribute('initialPosition', sphere.geometry.attributes.position.clone());
     }
     function initTunnel() {
-        const geometry = new THREE.CylinderGeometry(10, 10, 200, 64, 32, true);
-        const material = new THREE.MeshBasicMaterial({ color: colorSchemes[currentColorScheme][0], wireframe: true, transparent: true, opacity: 0.7, side: THREE.BackSide });
-        tunnel = new THREE.Mesh(geometry, material);
-        tunnel.rotation.x = Math.PI / 2;
+        tunnel = new THREE.Group();
+        const ringCount = 20;
+        
+        for (let i = 0; i < ringCount; i++) {
+            const geometry = new THREE.RingGeometry(5, 5.5, 6);
+            const material = new THREE.MeshBasicMaterial({
+                color: colorSchemes[currentColorScheme][0],
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.1 + (i / ringCount) * 0.5,
+                wireframe: true
+            });
+            const ring = new THREE.Mesh(geometry, material);
+            ring.position.z = -i * 8;
+            ring.userData = { initialZ: -i * 8, id: i };
+            tunnel.add(ring);
+        }
     }
     
     function unlockAudio() {
@@ -420,21 +465,54 @@
     }
 
     function updateParticles(avgFrequency, speed) {
-        particles.rotation.y += speed;
-        const scale = 1 + (avgFrequency / 128) * (sensitivity / 10);
-        particles.scale.set(scale, scale, scale);
+        particles.rotation.y += speed * 0.5;
+        const positions = particles.geometry.attributes.position.array;
+        const randoms = particles.geometry.attributes.random.array;
+        const original = particles.geometry.userData.originalPositions;
+        const time = Date.now() * 0.001;
+        
+        const bass = dataArray ? dataArray.slice(0, 10).reduce((a,b)=>a+b,0)/10 : 0;
+        const pulse = 1 + (bass / 255) * (sensitivity / 10);
+
+        for (let i = 0; i < positions.length; i += 3) {
+             const r = randoms[i / 3];
+             const yOffset = Math.sin(time * 2 + r * 10) * 0.5;
+             
+             positions[i + 1] = original[i + 1] + yOffset;
+             
+             if (bass > 100) {
+                 positions[i] = original[i] * pulse;
+                 positions[i + 2] = original[i + 2] * pulse;
+             } else {
+                 positions[i] = original[i];
+                 positions[i + 2] = original[i + 2];
+             }
+        }
+        particles.geometry.attributes.position.needsUpdate = true;
     }
     function updateWaves(speed) {
+        waves.position.z = (Date.now() * speed * 0.05) % 10;
+        
         const positions = waves.geometry.attributes.position.array;
         const currentSensitivity = sensitivity / 5;
-        const time = Date.now() * 0.005;
+        const time = Date.now() * 0.002;
+        
         for (let i = 0; i < positions.length; i += 3) {
-            const x = positions[i]; const z = positions[i + 2];
-            const dataIndex = Math.floor(Math.abs(x + z) % bufferLength);
-            positions[i + 1] = Math.sin((x + z) * 0.1 + time) * (dataArray[dataIndex] / 255) * 10 * currentSensitivity;
+            const x = positions[i];
+            const y = positions[i + 1];
+
+            const noise1 = Math.sin(x * 0.1 + time);
+            const noise2 = Math.cos(y * 0.1 + time);
+            let zHeight = (noise1 + noise2) * 2;
+
+            const dataIndex = Math.floor(Math.abs(x) + Math.abs(y)) % bufferLength;
+            if (dataArray) {
+                zHeight += (dataArray[dataIndex] / 255) * 15 * currentSensitivity;
+            }
+            
+            positions[i + 2] = zHeight;
         }
         waves.geometry.attributes.position.needsUpdate = true;
-        waves.rotation.y += speed / 2;
     }
     function updateSphere(speed) {
         const positions = sphere.geometry.attributes.position.array;
@@ -452,17 +530,26 @@
         sphere.rotation.y += speed;
     }
     function updateTunnel(speed) {
-        tunnel.position.z = (tunnel.position.z - speed * 50) % 100;
-        const positions = tunnel.geometry.attributes.position.array;
+        const children = tunnel.children;
+        const bass = dataArray ? dataArray[0] : 0;
+        const treble = dataArray ? dataArray[100] : 0;
         const currentSensitivity = sensitivity / 5;
-        for (let i = 0; i < positions.length; i += 3) {
-            const angle = Math.atan2(positions[i], positions[i+1]);
-            const dataIndex = Math.floor(((angle + Math.PI) / (2 * Math.PI)) * bufferLength) % bufferLength;
-            const radius = 10 + (dataArray[dataIndex] / 255) * 10 * currentSensitivity;
-            positions[i] = Math.cos(angle) * radius;
-            positions[i+1] = Math.sin(angle) * radius;
-        }
-        tunnel.geometry.attributes.position.needsUpdate = true;
+
+        children.forEach((ring, i) => {
+             ring.position.z += speed * 2;
+             
+             if (ring.position.z > 10) {
+                 ring.position.z = -150;
+             }
+
+             ring.rotation.z += speed * 0.1 * (i % 2 === 0 ? 1 : -1);
+
+             const val = (i < 10) ? bass : treble;
+             const scale = 1 + (val / 255) * currentSensitivity * 0.8;
+             ring.scale.set(scale, scale, 1);
+             
+             ring.material.opacity = 0.3 + (val / 255) * 0.5;
+        });
     }
     function switchVisualization(type) {
       scene.remove(particles, waves, sphere, tunnel);
@@ -481,12 +568,23 @@
     function switchColorScheme(scheme) {
       currentColorScheme = scheme;
       const newColor = new THREE.Color(colorSchemes[scheme][0]);
-      waves.material.color.set(newColor); sphere.material.color.set(newColor); tunnel.material.color.set(newColor);
-      const particleColors = particles.geometry.attributes.color.array;
-      for (let i = 0; i < particleColors.length; i += 3) {
-        particleColors[i] = newColor.r; particleColors[i + 1] = newColor.g; particleColors[i + 2] = newColor.b;
+      
+      if (waves) waves.material.color.set(newColor);
+      if (sphere) sphere.material.color.set(newColor);
+      
+      if (tunnel && tunnel.children) {
+         tunnel.children.forEach(ring => ring.material.color.set(newColor));
       }
-      particles.geometry.attributes.color.needsUpdate = true;
+
+      if (particles) {
+          const particleColors = particles.geometry.attributes.color.array;
+          for (let i = 0; i < particleColors.length; i += 3) {
+            particleColors[i] = newColor.r;
+            particleColors[i + 1] = newColor.g;
+            particleColors[i + 2] = newColor.b;
+          }
+          particles.geometry.attributes.color.needsUpdate = true;
+      }
       document.querySelectorAll('.color-scheme').forEach(btn => {
         const pressed = btn.dataset.scheme === scheme;
         btn.setAttribute('aria-pressed', pressed);
