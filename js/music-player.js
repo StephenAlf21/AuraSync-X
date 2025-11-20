@@ -41,10 +41,11 @@
     const playlistToggleIcon = document.getElementById('playlistToggleIcon');
     const playPauseBtn = document.getElementById('playPauseBtn');
     const playPauseBtnMobile = document.getElementById('playPauseBtnMobile');
+    const settingsHeaderBtn = document.getElementById('settingsHeaderBtn');
+    const settingsInlineBtn = document.getElementById('settingsInlineBtn');
     const nextBtn = document.getElementById('nextBtn');
     const prevBtn = document.getElementById('prevBtn');
     const fileInput = document.getElementById('fileInput');
-    const mobileSettingsFab = document.getElementById('mobileSettingsFab');
     const settingsDrawer = document.getElementById('settingsDrawer');
     const closeDrawerBtn = document.getElementById('closeDrawerBtn');
     const drawerHandle = document.getElementById('drawerHandle');
@@ -751,7 +752,8 @@
           setTimeout(() => settingsOverlay.classList.add('hidden'), 300);
         }
       };
-      if (mobileSettingsFab) mobileSettingsFab.addEventListener('click', openDrawer);
+      if (settingsHeaderBtn) settingsHeaderBtn.addEventListener('click', openDrawer);
+      if (settingsInlineBtn) settingsInlineBtn.addEventListener('click', openDrawer);
       if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
       if (drawerHandle) drawerHandle.addEventListener('click', closeDrawer);
       if (settingsOverlay) settingsOverlay.addEventListener('click', closeDrawer);

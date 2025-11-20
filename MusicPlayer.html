@@ -136,6 +136,11 @@
             <button id="helpBtn" class="glass-button p-2 rounded-lg text-gray-300" aria-label="Help">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </button>
+            <button id="settingsHeaderBtn" class="hidden sm:flex glass-button p-2 rounded-lg text-indigo-300 border border-indigo-500/40" aria-label="Visualizer settings">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+            </button>
           </div>
           
           <!-- Playlist Toggle -->
@@ -179,9 +184,14 @@
                         </div>
 
                         <!-- Mobile Play Button -->
-                        <button id="playPauseBtnMobile" class="lg:hidden p-3 rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 disabled:bg-gray-600 disabled:text-gray-300" disabled>
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>
-                        </button>
+                        <div class="flex items-center gap-2">
+                          <button id="playPauseBtnMobile" class="lg:hidden p-3 rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 disabled:bg-gray-600 disabled:text-gray-300" disabled>
+                              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>
+                          </button>
+                          <button id="settingsInlineBtn" class="lg:hidden p-3 rounded-full bg-gray-800 text-indigo-300 border border-indigo-500/40 shadow-md active:scale-95 transition" aria-label="Visualizer settings">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
+                          </button>
+                        </div>
                     </div>
 
                     <!-- Desktop Controls & Progress -->
@@ -214,14 +224,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- Mobile Settings FAB -->
-        <button id="mobileSettingsFab" 
-                class="lg:hidden fixed safe-fab z-30 w-14 h-14 rounded-full bg-gray-800/90 border border-indigo-500/50 text-indigo-400 shadow-xl flex items-center justify-center active:scale-95 transition-transform backdrop-blur-md">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
-        </button>
 
         <!-- Control Panel / Drawer -->
         <aside id="settingsDrawer" 
