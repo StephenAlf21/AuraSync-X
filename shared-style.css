@@ -3,8 +3,8 @@
 
 /* Set custom text selection color */
 ::selection {
-    background-color: #ef4444; /* red-500 */
-    color: #ffffff;
+    background-color: #ef4444 !important; /* red-500 */
+    color: #ffffff !important;
 }
 
 .glow {
@@ -163,6 +163,12 @@ button:focus-visible, input:focus-visible {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #4338ca;
+}
+
+/* Firefox selection fallback */
+::-moz-selection {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
 }
 
 /* Canvas background for p5 instances when used as a page backdrop */
