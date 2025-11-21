@@ -1,0 +1,45 @@
+/* terms.css -- scoped styles for the Terms of Service page */
+
+/* Scrollbar styling scoped to the terms page */
+.terms-page ::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terms-page ::-webkit-scrollbar-track {
+  background: #05050a;
+}
+
+.terms-page ::-webkit-scrollbar-thumb {
+  background: #3730a3;
+  border-radius: 4px;
+}
+
+.terms-page ::-webkit-scrollbar-thumb:hover {
+  background: #4f46e5;
+}
+
+/* Glass navigation and cards tuned for the redesigned layout */
+.terms-page .glass-nav {
+  background: rgba(5, 5, 10, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.terms-page .glass-card {
+  background: rgba(20, 20, 35, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.terms-page .glass-card:hover {
+  background: rgba(25, 25, 45, 0.8);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.terms-page section {
+  scroll-margin-top: 8rem;
+}

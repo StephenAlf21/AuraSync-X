@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,10 +14,11 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
 
     <!-- Shared styles -->
     <link rel="stylesheet" href="shared-style.css">
+    <link rel="stylesheet" href="terms.css">
 
     <!-- Favicon -->
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -34,262 +35,362 @@
                     colors: {
                         aura: {
                             dark: '#05050a',
-                            card: 'rgba(20, 20, 35, 0.6)',
+                            accent: '#6366f1',
+                            glow: 'rgba(99, 102, 241, 0.15)'
                         }
                     },
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
-                    }
+                    typography: (theme) => ({
+                        DEFAULT: {
+                            css: {
+                                color: theme('colors.gray.300'),
+                                h2: { color: theme('colors.white'), fontFamily: 'Orbitron', margin: '0 0 0.5em 0' },
+                                h3: { color: theme('colors.indigo.300'), fontFamily: 'Inter', fontWeight: '600', marginTop: '1.5em' },
+                                strong: { color: theme('colors.white') },
+                                a: { color: theme('colors.indigo.400'), '&:hover': { color: theme('colors.indigo.300') } },
+                                p: { marginTop: '0.5em', marginBottom: '0.5em' },
+                                ul: { marginTop: '0.5em', marginBottom: '0.5em' },
+                            },
+                        },
+                    }),
                 }
             }
         }
     </script>
 </head>
-<body class="landing-body flex flex-col min-h-screen font-sans selection:bg-indigo-500 selection:text-white">
+<body class="bg-aura-dark text-gray-300 antialiased selection:bg-indigo-500 selection:text-white min-h-screen flex flex-col terms-page">
 
-    <!-- p5.js Background (driven by particles-bg.js) -->
-    <div id="p5-canvas-container" data-count="100" data-dot="rgba(167, 139, 250, 0.5)" data-line="rgba(167, 139, 250, 0.2)"></div>
+    <!-- Background Canvas -->
+    <div id="p5-canvas-container"></div>
 
-    <!-- Top Nav / Back -->
-    <nav class="h-20 flex-none glass-panel border-b border-b-indigo-500/10 z-30 relative flex items-center justify-between px-4 sm:px-6 lg:px-8">
-        <a href="index.html" class="flex items-center gap-2 group text-gray-400 hover:text-white transition">
-            <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-            <span class="font-display font-bold text-sm tracking-widest uppercase">Return Home</span>
-        </a>
-        
-        <div class="flex items-center gap-3">
-            <div class="w-8 h-8 flex items-center justify-center bg-indigo-900/50 rounded border border-indigo-500/30 text-indigo-400">
-                <img src="favicon.svg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" class="w-5 h-5" alt="Logo">
-                <svg style="display:none" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+    <!-- Navigation -->
+    <nav class="glass-nav fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Left: Back Link -->
+            <a href="index.html" class="group flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                <div class="p-1.5 rounded-full bg-white/5 group-hover:bg-indigo-500/20 transition-colors">
+                    <svg class="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                </div>
+                <span class="hidden sm:inline font-display tracking-wider uppercase text-xs">Return Home</span>
+            </a>
+
+            <!-- Center: Logo/Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700 rounded text-white shadow-lg shadow-indigo-500/20">
+                     <!-- SVG Logo Placeholder -->
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </div>
+                <span class="font-display font-bold text-xl tracking-wider text-white">AuraSync <span class="text-indigo-500">X</span></span>
             </div>
-            <span class="font-display font-bold text-lg tracking-wider text-white">Terms of <span class="text-gradient">Service</span></span>
+            <div class="w-24 flex justify-end"></div>
         </div>
     </nav>
 
-    <!-- Content -->
-    <main class="flex-1 mx-auto w-full max-w-6xl px-4 md:px-10 lg:px-20 py-12">
+    <!-- Main Layout -->
+    <div class="flex-1 pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col lg:flex-row gap-12">
         
-        <!-- Header -->
-        <header class="text-center mb-16 animate-float">
-            <h1 class="text-4xl md:text-5xl font-display font-black tracking-tight mb-4">
-                AuraSync X <span class="text-gradient">Terms</span>
-            </h1>
-            <p class="text-sm font-mono text-indigo-400">
-                Last updated: August 4, 2025
-            </p>
-        </header>
-
-        <!-- Legal Document Container -->
-        <div class="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden">
-            <!-- Decorative Top Border -->
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500"></div>
-
-            <article class="prose prose-invert prose-indigo max-w-none font-light text-gray-300 leading-relaxed">
-                
-                <!-- Section 1 -->
-                <h2 class="text-white font-display font-bold mt-0">1. Introduction</h2>
-                <p>
-                    Welcome to AuraSync X (“AuraSync”, “Service”, “we”, “our”, or “us”).
-                    These Terms of Service (“Terms”) form a legally binding contract between you (“you”, “your”, or “User”)
-                    and us regarding your use of the AuraSync web application, including its 3D Music Visualizer and MP4
-                    Video Player (collectively, the “Applications”). By accessing or using any part of the Service,
-                    you acknowledge that you have read, understood, and agree to be bound by these Terms. If you do not
-                    agree, you must not use the Service.
-                </p>
-
-                <!-- Section 2 -->
-                <h2 class="text-white font-display font-bold">2. Definitions</h2>
-                <ul class="list-disc pl-5 space-y-2 marker:text-indigo-500">
-                    <li><strong class="text-white">Content:</strong> Any text, graphics, audio, video, code, or other materials uploaded, streamed, or otherwise made available through the Service.</li>
-                    <li><strong class="text-white">Local Processing:</strong> Execution of code entirely within your browser or device without transmission of files to our servers.</li>
-                    <li><strong class="text-white">Personal Data:</strong> Information relating to an identified or identifiable natural person, as defined under applicable privacy laws.</li>
-                </ul>
-
-                <!-- Section 3 -->
-                <h2 class="text-white font-display font-bold">3. Eligibility &amp; Age Requirements</h2>
-                <p>
-                    You must be (a) at least the age of majority in your province, state, or country; or (b) 13 years or
-                    older and have your parent or legal guardian’s consent to use the Service. By using the Service, you
-                    represent and warrant that you meet these requirements.
-                </p>
-
-                <!-- Section 4 -->
-                <h2 class="text-white font-display font-bold">4. Changes to the Service or Terms</h2>
-                <p>
-                    We may modify the Service or these Terms at any time. Material changes will be announced via an in-app
-                    notice or on our website at least 30 days before taking effect whenever required by Canadian or U.S.
-                    consumer-protection law. Your continued use of the Service after changes become effective constitutes
-                    acceptance of the revised Terms.
-                </p>
-
-                <!-- Section 5 -->
-                <h2 class="text-white font-display font-bold">5. License &amp; Intellectual-Property Rights</h2>
-                <h3 class="text-indigo-300 font-bold text-lg mt-4">License to You</h3>
-                <p>
-                    We grant you a limited, revocable, non-exclusive, non-transferable licence to access and use the
-                    Applications for personal, non-commercial purposes, subject to these Terms.
-                </p>
-                <h3 class="text-indigo-300 font-bold text-lg mt-4">Ownership</h3>
-                <p>
-                    All right, title, and interest in the Service (including source code, visual interfaces, trademarks,
-                    and logos) remain with us and our licensors. These Terms do not transfer any intellectual-property
-                    rights except the limited licence above.
-                </p>
-                <h3 class="text-indigo-300 font-bold text-lg mt-4">Feedback</h3>
-                <p>
-                    If you submit ideas or suggestions, you grant us a perpetual, worldwide, royalty-free licence to use,
-                    reproduce, and exploit that feedback without obligation to you.
-                </p>
-
-                <!-- Section 6 -->
-                <h2 class="text-white font-display font-bold">6. User Content &amp; Conduct</h2>
-                <h3 class="text-indigo-300 font-bold text-lg mt-4">Responsibility</h3>
-                <p>
-                    All Content you load, stream, or display via the Service remains your sole responsibility.
-                </p>
-                <h3 class="text-indigo-300 font-bold text-lg mt-4">Permissions</h3>
-                <p>
-                    You must have all necessary rights (including copyright, neighbouring rights, and public-performance
-                    rights) for any Content you use.
-                </p>
-                <h3 class="text-indigo-300 font-bold text-lg mt-4">Prohibited Conduct</h3>
-                <p>You agree not to:</p>
-                <ul class="list-disc pl-5 space-y-1 marker:text-indigo-500">
-                    <li>Use Content that is unlawful, defamatory, obscene, hateful, or infringes intellectual-property or privacy rights;</li>
-                    <li>Circumvent or interfere with security features;</li>
-                    <li>Use automated means (bots, scrapers) to access or modify the Service;</li>
-                    <li>Reverse engineer, de-compile, or attempt to extract source code, except to the limited extent allowed by applicable law;</li>
-                    <li>Use the Service for commercial streaming, public performance, or any activity that violates applicable broadcasting statutes (for example, the Canadian Broadcasting Act or U.S. Copyright Act §§ 106–114).</li>
-                </ul>
-
-                <!-- Section 7 -->
-                <h2 class="text-white font-display font-bold">7. Privacy &amp; Data Processing</h2>
-                <h3 class="text-indigo-300 font-bold text-lg mt-4">No Server-Side Collection</h3>
-                <p>
-                    AuraSync is designed for fully local processing. We do not collect, retain, or otherwise process
-                    Personal Data or media files on our servers.
-                </p>
-                <h3 class="text-indigo-300 font-bold text-lg mt-4">Diagnostic Data</h3>
-                <p>
-                    We may collect minimal, non-identifying diagnostic information (for example, error logs) solely to
-                    maintain and improve Service stability. Such data are anonymised and never linked to an individual
-                    User.
-                </p>
-                <h3 class="text-indigo-300 font-bold text-lg mt-4">EU/EEA Users</h3>
-                <p>
-                    Because no Personal Data is processed, AuraSync is generally outside the material scope of the EU
-                    General Data Protection Regulation (GDPR). Should limited diagnostic data be deemed personal under
-                    GDPR, we rely on our legitimate interest (Art. 6(1)(f) GDPR) in ensuring Service security.
-                </p>
-
-                <!-- Section 8 -->
-                <h2 class="text-white font-display font-bold">8. Third-Party Content &amp; Links</h2>
-                <p>
-                    The Service may contain links to third-party websites, radio streams, or other resources. We do not
-                    endorse, control, or assume responsibility for any third-party content. Accessing third-party resources
-                    is at your own risk and subject to their separate terms.
-                </p>
-
-                <!-- Section 9 -->
-                <h2 class="text-white font-display font-bold">9. Disclaimer of Warranties</h2>
-                <div class="p-4 rounded-lg bg-white/5 border border-white/10 text-sm italic">
-                    <p class="m-0">
-                        The Service is provided “AS IS” and “AS AVAILABLE.” To the fullest extent permitted by applicable law,
-                        we disclaim all warranties, express or implied, including merchantability, fitness for a particular
-                        purpose, non-infringement, and uninterrupted or error-free operation. Because some jurisdictions do
-                        not allow exclusions of certain warranties, these disclaimers may not apply to you in whole or in
-                        part.
-                    </p>
+        <!-- Sidebar: Table of Contents (Desktop Sticky) -->
+        <aside class="hidden lg:block w-64 flex-none">
+            <div class="sticky top-28 space-y-6">
+                <div class="glass-card p-5 rounded-xl !bg-black/40">
+                    <h4 class="text-white font-display font-bold text-sm uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Direct Access</h4>
+                    <nav class="space-y-0.5">
+                        <a href="#intro" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-indigo-400 hover:text-white transition-colors">1. Introduction</a>
+                        <a href="#definitions" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">2. Definitions</a>
+                        <a href="#eligibility" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">3. Eligibility</a>
+                        <a href="#changes" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">4. Changes</a>
+                        <a href="#license" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">5. License & IP</a>
+                        <a href="#user-content" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">6. Content & Conduct</a>
+                        <a href="#privacy" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">7. Privacy</a>
+                        <a href="#liability" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">10. Liability</a>
+                        <a href="#contact" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">17. Contact</a>
+                    </nav>
                 </div>
+            </div>
+        </aside>
 
-                <!-- Section 10 -->
-                <h2 class="text-white font-display font-bold">10. Limitation of Liability</h2>
-                <p>
-                    To the maximum extent permitted by law, in no event shall we (or our directors, officers, employees, or
-                    licensors) be liable for any indirect, incidental, special, consequential, or punitive damages (including
-                    loss of profits, data, goodwill, or other intangible losses) arising out of or relating to the Service,
-                    even if we have been advised of the possibility of such damages. Our aggregate liability for all claims
-                    under these Terms shall not exceed CAD 100 (or the equivalent in your local currency). This clause does
-                    not override any mandatory consumer-protection rights that apply in your jurisdiction.
-                </p>
-
-                <!-- Section 11 -->
-                <h2 class="text-white font-display font-bold">11. Indemnification</h2>
-                <p>
-                    You agree to indemnify, defend, and hold us harmless from any claims, liabilities, damages, losses, and
-                    expenses (including reasonable legal fees) arising from: (a) your breach of these Terms; (b) Content you
-                    load or stream via the Service; or (c) your violation of any law or third-party right.
-                </p>
-
-                <!-- Section 12 -->
-                <h2 class="text-white font-display font-bold">12. Termination</h2>
-                <p>
-                    We may suspend or terminate your access to the Service immediately, without notice, if you breach these
-                    Terms. Upon termination, Sections 5–16 will survive.
-                </p>
-
-                <!-- Section 13 -->
-                <h2 class="text-white font-display font-bold">13. Governing Law &amp; Jurisdiction</h2>
-                <p>
-                    These Terms are governed by the laws of the Province of Nova Scotia and the federal laws of Canada
-                    applicable therein, without regard to conflict-of-law principles. You and we agree to submit to the
-                    exclusive jurisdiction of the courts located in Halifax, Nova Scotia, Canada.
-                </p>
-
-                <!-- Section 14 -->
-                <h2 class="text-white font-display font-bold">14. International Users</h2>
-                <p>
-                    AuraSync is controlled from Canada. If you access the Service from outside Canada or the United States,
-                    you are responsible for compliance with local laws, including any applicable export-control regulations.
-                    Nothing in these Terms limits mandatory rights you have under the laws of your country of habitual
-                    residence.
-                </p>
-
-                <!-- Section 15 -->
-                <h2 class="text-white font-display font-bold">15. Severability</h2>
-                <p>
-                    If any provision of these Terms is held invalid or unenforceable, the remaining provisions will remain
-                    in full force and effect, and the invalid provision will be interpreted to fulfil its intended purpose
-                    to the maximum lawful extent.
-                </p>
-
-                <!-- Section 16 -->
-                <h2 class="text-white font-display font-bold">16. Entire Agreement</h2>
-                <p>
-                    These Terms constitute the entire agreement between you and us regarding the Service and supersede all
-                    prior or contemporaneous agreements, communications, and understandings, whether oral or written.
-                </p>
-
-                <!-- Section 17 -->
-                <h2 class="text-white font-display font-bold">17. Contact Information</h2>
-                <p>
-                    If you have any questions about these Terms, alleged copyright infringement, or wish to exercise
-                    statutory rights, please contact:
-                </p>
-                <div class="not-italic bg-indigo-900/30 p-6 rounded-xl border border-indigo-500/30">
-                    <strong class="text-white block mb-2">AuraSync X Legal</strong>
-                    <span class="block text-gray-300">c/o Stephen Alfred</span>
-                    <span class="block text-gray-300">Halifax, Nova Scotia, Canada</span>
-                    <a href="mailto:support@aurasyncx.example" class="text-indigo-400 hover:text-white transition block mt-2">support@aurasyncx.example</a>
+        <!-- Main Content Area -->
+        <main class="flex-1 min-w-0">
+            
+            <!-- Header Section -->
+            <header class="mb-10 border-b border-white/10 pb-8">
+                <h1 class="text-4xl sm:text-5xl font-display font-black text-white tracking-tight mb-4">
+                    Terms of <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">Service</span>
+                </h1>
+                <div class="flex items-center gap-4 text-sm text-gray-400 font-mono">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        August 4, 2025
+                    </span>
+                    <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+                    <span>Document ID: TOS-2025-A</span>
                 </div>
-            </article>
-        </div>
+            </header>
 
-    </main>
+            <!-- Card Grid / Stack -->
+            <div class="flex flex-col gap-8 pb-20">
 
-    <!-- Footer -->
-    <footer class="py-8 text-center text-gray-600 text-sm relative z-10 border-t border-white/5 bg-black/20 mt-12">
-        &copy; 2025 AuraSync X. Built with <span class="text-red-500">&hearts;</span> in Nova Scotia.
-    </footer>
+                <!-- Card 1: Introduction -->
+                <section id="intro" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-indigo-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2>1. Introduction</h2>
+                        <p>
+                            Welcome to AuraSync X ("AuraSync", "Service", "we", "our", or "us"). These Terms of Service ("Terms") form a legally binding contract between you ("you", "your", or "User") and us regarding your use of the AuraSync web application, including its 3D Music Visualizer and MP4 Video Player (collectively, the "Applications"). By accessing or using any part of the Service, you acknowledge that you have read, understood, and agree to be bound by these Terms. If you do not agree, you must not use the Service.
+                        </p>
+                    </article>
+                </section>
 
-    <!-- Background constellation for terms page -->
+                <!-- Card 2: Definitions -->
+                <section id="definitions" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-purple-500 transition-all group-hover:w-2"></div>
+                    <h2 class="text-2xl font-display font-bold text-white mb-6">2. Definitions</h2>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-white/5 p-4 rounded-lg border border-white/5 hover:border-purple-500/30 transition-colors">
+                            <strong class="text-indigo-300 block mb-2 font-display text-sm uppercase tracking-wide">Content</strong>
+                            <p class="text-sm text-gray-400 m-0 leading-relaxed">Any text, graphics, audio, video, code, or other materials uploaded, streamed, or otherwise made available.</p>
+                        </div>
+                        <div class="bg-white/5 p-4 rounded-lg border border-white/5 hover:border-purple-500/30 transition-colors">
+                            <strong class="text-indigo-300 block mb-2 font-display text-sm uppercase tracking-wide">Local Processing</strong>
+                            <p class="text-sm text-gray-400 m-0 leading-relaxed">Execution of code entirely within your browser or device without transmission of files to our servers.</p>
+                        </div>
+                        <div class="bg-white/5 p-4 rounded-lg border border-white/5 hover:border-purple-500/30 transition-colors">
+                            <strong class="text-indigo-300 block mb-2 font-display text-sm uppercase tracking-wide">Personal Data</strong>
+                            <p class="text-sm text-gray-400 m-0 leading-relaxed">Information relating to an identified or identifiable natural person, as defined under privacy laws.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Card 3: Eligibility -->
+                <section id="eligibility" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-cyan-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2>3. Eligibility &amp; Age Requirements</h2>
+                        <p>
+                            You must be (a) at least the age of majority in your province, state, or country; or (b) 13 years or older and have your parent or legal guardian's consent to use the Service. By using the Service, you represent and warrant that you meet these requirements.
+                        </p>
+                    </article>
+                </section>
+
+                <!-- Card 4: Changes -->
+                <section id="changes" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-gray-600 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2>4. Changes to the Service or Terms</h2>
+                        <p>
+                            We may modify the Service or these Terms at any time. Material changes will be announced via an in-app notice or on our website at least 30 days before taking effect whenever required by Canadian or U.S. consumer-protection law. Your continued use of the Service after changes become effective constitutes acceptance of the revised Terms.
+                        </p>
+                    </article>
+                </section>
+
+                <!-- Card 5: License -->
+                <section id="license" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-indigo-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2>5. License &amp; Intellectual-Property Rights</h2>
+                        <div class="grid md:grid-cols-2 gap-8 mt-4">
+                            <div>
+                                <h3>License to You</h3>
+                                <p>
+                                    We grant you a limited, revocable, non-exclusive, non-transferable licence to access and use the Applications for personal, non-commercial purposes, subject to these Terms.
+                                </p>
+                            </div>
+                            <div>
+                                <h3>Ownership</h3>
+                                <p>
+                                    All right, title, and interest in the Service (including source code, visual interfaces, trademarks, and logos) remain with us and our licensors. These Terms do not transfer any intellectual-property rights except the limited licence above.
+                                </p>
+                            </div>
+                        </div>
+                        <h3>Feedback</h3>
+                        <p>
+                            If you submit ideas or suggestions, you grant us a perpetual, worldwide, royalty-free licence to use, reproduce, and exploit that feedback without obligation to you.
+                        </p>
+                    </article>
+                </section>
+
+                <!-- Card 6: User Content -->
+                <section id="user-content" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-pink-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <div class="flex flex-col md:flex-row gap-8">
+                            <div class="flex-1">
+                                <h2>6. User Content &amp; Conduct</h2>
+                                <h3>Responsibility</h3>
+                                <p>All Content you load, stream, or display via the Service remains your sole responsibility.</p>
+                                <h3>Permissions</h3>
+                                <p>You must have all necessary rights (including copyright and public-performance rights) for any Content you use.</p>
+                            </div>
+                            <div class="flex-1 bg-red-500/5 p-6 rounded-xl border border-red-500/10">
+                                <h3 class="text-red-300 mt-0">Prohibited Conduct</h3>
+                                <p class="text-sm">You agree not to:</p>
+                                <ul class="text-sm space-y-1">
+                                    <li>Use Content that is unlawful, defamatory, obscene, hateful, or infringes rights;</li>
+                                    <li>Circumvent or interfere with security features;</li>
+                                    <li>Use automated means (bots, scrapers);</li>
+                                    <li>Reverse engineer or extract source code;</li>
+                                    <li>Use the Service for commercial streaming or public performance in violation of broadcasting statutes.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- Card 7: Privacy -->
+                <section id="privacy" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-green-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <div class="flex items-baseline justify-between flex-wrap gap-4">
+                            <h2 class="mb-0">7. Privacy &amp; Data Processing</h2>
+                            <span class="px-2 py-1 rounded bg-green-500/20 text-green-400 text-xs font-mono border border-green-500/30">GDPR COMPLIANT</span>
+                        </div>
+                        
+                        <div class="mt-6 p-4 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+                            <p class="m-0 font-medium text-indigo-200">
+                                <strong>No Server-Side Collection:</strong> AuraSync is designed for fully local processing. We do not collect, retain, or otherwise process Personal Data or media files on our servers.
+                            </p>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6 mt-4">
+                            <div>
+                                <h3>Diagnostic Data</h3>
+                                <p>
+                                    We may collect minimal, non-identifying diagnostic information (for example, error logs) solely to maintain and improve Service stability. Such data are anonymised.
+                                </p>
+                            </div>
+                            <div>
+                                <h3>EU/EEA Users</h3>
+                                <p>
+                                    Generally outside the material scope of GDPR because we do not process personal data. We rely on legitimate interest (Art. 6(1)(f) GDPR) for security data.
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- Card 8: Third Party -->
+                <section class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-gray-600 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2>8. Third-Party Content &amp; Links</h2>
+                        <p>
+                            The Service may contain links to third-party websites, radio streams, or other resources. We do not endorse, control, or assume responsibility for any third-party content. Accessing third-party resources is at your own risk and subject to their separate terms.
+                        </p>
+                    </article>
+                </section>
+
+                <!-- Card 9: Warning / Disclaimer -->
+                <section class="glass-card rounded-2xl p-8 relative overflow-hidden group border-red-500/30 bg-red-900/10">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-red-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2 class="text-red-100">9. Disclaimer of Warranties</h2>
+                        <p class="text-red-200 italic text-lg">
+                            The Service is provided "AS IS" and "AS AVAILABLE." To the fullest extent permitted by applicable law, we disclaim all warranties, express or implied, including merchantability, fitness for a particular purpose, non-infringement, and uninterrupted or error-free operation.
+                        </p>
+                    </article>
+                </section>
+
+                <!-- Card 10: Liability -->
+                <section id="liability" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-orange-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2>10. Limitation of Liability</h2>
+                        <p>
+                            To the maximum extent permitted by law, in no event shall we (or our directors, officers, employees, or licensors) be liable for any indirect, incidental, special, consequential, or punitive damages (including loss of profits, data, goodwill, or other intangible losses) arising out of or relating to the Service, even if we have been advised of the possibility of such damages. Our aggregate liability for all claims under these Terms shall not exceed CAD 100 (or the equivalent in your local currency).
+                        </p>
+                    </article>
+                </section>
+
+                <!-- Combined Legal Misc -->
+                <section class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-gray-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <div class="grid md:grid-cols-2 gap-12">
+                            <div>
+                                <h2>11. Indemnification</h2>
+                                <p>
+                                    You agree to indemnify, defend, and hold us harmless from any claims arising from: (a) your breach of these Terms; (b) Content you load; or (c) your violation of law.
+                                </p>
+                                <h2 class="mt-8">12. Termination</h2>
+                                <p>
+                                    We may suspend or terminate your access immediately if you breach these Terms. Sections 5-16 survive termination.
+                                </p>
+                            </div>
+                            <div>
+                                <h2>13. Governing Law</h2>
+                                <p>
+                                    Governed by the laws of <strong>Nova Scotia, Canada</strong>. Exclusive jurisdiction of courts in Halifax, Nova Scotia.
+                                </p>
+                                <h2 class="mt-8">14. International</h2>
+                                <p>
+                                    Controlled from Canada. You are responsible for local law compliance.
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- Card 12: Final Provisions -->
+                <section class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-blue-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h2>15. Severability</h2>
+                                <p>
+                                    If any provision is invalid, the remaining provisions remain in full force.
+                                </p>
+                            </div>
+                            <div>
+                                <h2>16. Entire Agreement</h2>
+                                <p>
+                                    These Terms constitute the entire agreement between you and us regarding the Service.
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- Card 13: Contact -->
+                <section id="contact" class="glass-card rounded-2xl p-0 relative overflow-hidden group border-indigo-500/30">
+                     <div class="p-8 bg-gradient-to-br from-indigo-900/40 to-transparent">
+                        <h2 class="font-display font-bold text-2xl text-white mb-6">17. Contact Information</h2>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="bg-black/20 p-6 rounded-xl border border-white/5">
+                                <strong class="text-indigo-300 block mb-2 font-display">AuraSync X Legal</strong>
+                                <span class="block text-gray-400 text-sm mb-1">c/o Stephen Alfred</span>
+                                <span class="block text-gray-400 text-sm">Halifax, Nova Scotia, Canada</span>
+                            </div>
+                            <div class="bg-black/20 p-6 rounded-xl border border-white/5 flex flex-col justify-center">
+                                <strong class="text-indigo-300 block mb-2 font-display">Digital Inquiries</strong>
+                                <a href="mailto:support@aurasyncx.example" class="text-white hover:text-indigo-400 transition flex items-center gap-2 group-link">
+                                    <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                    support@aurasyncx.example
+                                </a>
+                            </div>
+                        </div>
+                     </div>
+                </section>
+
+            </div>
+
+            <!-- Footer -->
+            <footer class="mt-16 pt-8 border-t border-white/5 text-center pb-8">
+                <p class="text-gray-500 text-sm">
+                    &copy; 2025 AuraSync X. Built with <span class="text-red-500 animate-pulse">&hearts;</span> in Nova Scotia.
+                </p>
+                <div class="flex justify-center gap-4 mt-4 text-xs text-gray-600">
+                    <a href="#" class="hover:text-gray-400">Privacy Policy</a>
+                    <span>&bull;</span>
+                    <a href="#" class="hover:text-gray-400">Status</a>
+                </div>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- p5.js Background Script -->
     <script src="js/particles-bg.js"></script>
-
 </body>
 </html>

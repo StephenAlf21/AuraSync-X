@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,10 +14,11 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
 
     <!-- Shared styles -->
     <link rel="stylesheet" href="shared-style.css">
+    <link rel="stylesheet" href="privacy.css">
 
     <!-- Favicon -->
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -34,261 +35,351 @@
                     colors: {
                         aura: {
                             dark: '#05050a',
-                            card: 'rgba(20, 20, 35, 0.6)',
+                            accent: '#6366f1',
+                            glow: 'rgba(99, 102, 241, 0.15)'
                         }
                     },
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
-                    }
+                    typography: (theme) => ({
+                        DEFAULT: {
+                            css: {
+                                color: theme('colors.gray.300'),
+                                h2: { color: theme('colors.white'), fontFamily: 'Orbitron', margin: '0 0 0.5em 0' },
+                                h3: { color: theme('colors.indigo.300'), fontFamily: 'Inter', fontWeight: '600', marginTop: '1.5em' },
+                                strong: { color: theme('colors.white') },
+                                a: { color: theme('colors.indigo.400'), '&:hover': { color: theme('colors.indigo.300') } },
+                                p: { marginTop: '0.5em', marginBottom: '0.5em' },
+                                ul: { marginTop: '0.5em', marginBottom: '0.5em' },
+                            },
+                        },
+                    }),
                 }
             }
         }
     </script>
 </head>
-<body class="landing-body flex flex-col min-h-screen font-sans selection:bg-indigo-500 selection:text-white">
+<body class="bg-aura-dark text-gray-300 antialiased selection:bg-indigo-500 selection:text-white min-h-screen flex flex-col privacy-page">
 
-    <!-- p5.js Background (driven by particles-bg.js) -->
-    <div id="p5-canvas-container" data-count="100" data-dot="rgba(167, 139, 250, 0.5)" data-line="rgba(167, 139, 250, 0.2)"></div>
+    <!-- Background Canvas -->
+    <div id="p5-canvas-container"></div>
 
-    <!-- Top Nav / Back -->
-    <nav class="h-20 flex-none glass-panel border-b border-b-indigo-500/10 z-30 relative flex items-center justify-between px-4 sm:px-6 lg:px-8">
-        <a href="index.html" class="flex items-center gap-2 group text-gray-400 hover:text-white transition">
-            <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-            <span class="font-display font-bold text-sm tracking-widest uppercase">Return Home</span>
-        </a>
-        
-        <div class="flex items-center gap-3">
-            <div class="w-8 h-8 flex items-center justify-center bg-indigo-900/50 rounded border border-indigo-500/30 text-indigo-400">
-                <img src="favicon.svg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" class="w-5 h-5" alt="Logo">
-                <svg style="display:none" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <!-- Navigation -->
+    <nav class="glass-nav fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Left: Back Link -->
+            <a href="index.html" class="group flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                <div class="p-1.5 rounded-full bg-white/5 group-hover:bg-indigo-500/20 transition-colors">
+                    <svg class="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                </div>
+                <span class="hidden sm:inline font-display tracking-wider uppercase text-xs">Return Home</span>
+            </a>
+
+            <!-- Center: Logo/Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700 rounded text-white shadow-lg shadow-indigo-500/20">
+                     <!-- SVG Logo Placeholder -->
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <span class="font-display font-bold text-xl tracking-wider text-white">AuraSync <span class="text-indigo-500">X</span></span>
             </div>
-            <span class="font-display font-bold text-lg tracking-wider text-white">AuraSync X <span class="text-gradient">Privacy</span></span>
+            <div class="w-24 flex justify-end"></div>
         </div>
     </nav>
 
-    <!-- Content -->
-    <main class="flex-1 container mx-auto px-4 py-12 max-w-4xl">
+    <!-- Main Layout -->
+    <div class="flex-1 pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col lg:flex-row gap-12">
         
-        <!-- Header -->
-        <header class="text-center mb-16 animate-float">
-            <h1 class="text-4xl md:text-5xl font-display font-black tracking-tight mb-4">
-                Your Data, Your <span class="text-gradient">Control</span>
-            </h1>
-            <p class="text-sm font-mono text-indigo-400">
-                Last updated: August 4, 2025
-            </p>
-        </header>
+        <!-- Sidebar: Table of Contents (Desktop Sticky) -->
+        <aside class="hidden lg:block w-64 flex-none">
+            <div class="sticky top-28 space-y-6">
+                <div class="glass-card p-5 rounded-xl !bg-black/40">
+                    <h4 class="text-white font-display font-bold text-sm uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Contents</h4>
+                    <nav class="space-y-0.5">
+                        <a href="#purpose" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-indigo-400 hover:text-white transition-colors">1. Purpose & Scope</a>
+                        <a href="#principles" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">2. Key Principles</a>
+                        <a href="#no-collection" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">3. What We Don't Collect</a>
+                        <a href="#diagnostics" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">4. Diagnostic Data</a>
+                        <a href="#cookies" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">5. Cookies & Storage</a>
+                        <a href="#third-party" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">6. Third Party Links</a>
+                        <a href="#children" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">7. Children's Privacy</a>
+                        <a href="#international" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">8. International</a>
+                        <a href="#rights" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">9. Your Rights</a>
+                        <a href="#contact" class="block text-xs py-1.5 px-2 rounded hover:bg-white/5 text-gray-400 hover:text-white transition-colors">13. Contact</a>
+                    </nav>
+                </div>
+            </div>
+        </aside>
 
-        <!-- Policy Document Container -->
-        <div class="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden">
-            <!-- Decorative Top Border -->
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500"></div>
+        <!-- Main Content Area -->
+        <main class="flex-1 min-w-0">
+            
+            <!-- Header Section -->
+            <header class="mb-10 border-b border-white/10 pb-8">
+                <h1 class="text-4xl sm:text-5xl font-display font-black text-white tracking-tight mb-4">
+                    Your Data, Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">Control</span>
+                </h1>
+                <div class="flex items-center gap-4 text-sm text-gray-400 font-mono">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        August 4, 2025
+                    </span>
+                    <span class="w-1 h-1 rounded-full bg-gray-600"></span>
+                    <span>Policy ID: PRIV-2025-A</span>
+                </div>
+            </header>
 
-            <article class="prose prose-invert prose-indigo max-w-none font-light text-gray-300 leading-relaxed">
+            <!-- Card Grid / Stack -->
+            <div class="flex flex-col gap-8 pb-20">
+
+                <!-- Card 1: Purpose -->
+                <section id="purpose" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-indigo-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2>1. Purpose &amp; Scope</h2>
+                        <p>
+                            This Privacy Policy describes how zombies21 ("AuraSync X", "we", "our", or "us") processes information when you access or use the AuraSync web application — including its 3-D Music Visualizer and MP4 Video Player (the "Service"). It applies to all users worldwide, with specific disclosures required under the laws of Canada, the United States, the European Union/EEA, the United Kingdom, and other applicable jurisdictions.
+                        </p>
+                    </article>
+                </section>
+
+                <!-- Card 2: Key Principles (Table) -->
+                <section id="principles" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-purple-500 transition-all group-hover:w-2"></div>
+                    <h2 class="text-2xl font-display font-bold text-white mb-6">2. Key Principles</h2>
+                    <p class="text-sm text-gray-400 mb-6">
+                        We built AuraSync X as a fully client-side experience. All media rendering and playback occur locally in your browser. We do not collect, store, or share any personally identifiable information ("Personal Data").
+                    </p>
+                    <div class="overflow-x-auto rounded-lg border border-white/5">
+                        <table class="glass-table">
+                            <thead class="bg-white/5">
+                                <tr>
+                                    <th class="w-1/3">Principle</th>
+                                    <th>What It Means for You</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-semibold text-white">Data Minimisation</td>
+                                    <td>We avoid collecting data unless it is strictly necessary to provide or secure the Service.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-white">Purpose Limitation</td>
+                                    <td>Any data we do process is used only for the purpose stated in this Policy.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-white">User Control</td>
+                                    <td>Settings (e.g., visualiser preferences) are stored only in your browser's localStorage; you can delete them at any time.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-white">Security by Design</td>
+                                    <td>All processing takes place locally; no media files leave your device, eliminating server-side breach risk.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Card 3: What We Don't Collect -->
+                <section id="no-collection" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-cyan-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2>3. Information We Do Not Collect</h2>
+                        <p>We intentionally do not gather:</p>
+                        <ul class="grid md:grid-cols-2 gap-x-4 gap-y-2 list-none pl-0">
+                            <li class="flex items-center gap-3 bg-white/5 p-3 rounded-lg border border-white/5">
+                                <span class="text-red-400 text-xl">&times;</span> Names, e-mail addresses, or phone numbers.
+                            </li>
+                            <li class="flex items-center gap-3 bg-white/5 p-3 rounded-lg border border-white/5">
+                                <span class="text-red-400 text-xl">&times;</span> IP addresses or device fingerprints.
+                            </li>
+                            <li class="flex items-center gap-3 bg-white/5 p-3 rounded-lg border border-white/5">
+                                <span class="text-red-400 text-xl">&times;</span> Usage analytics (pages, clicks).
+                            </li>
+                            <li class="flex items-center gap-3 bg-white/5 p-3 rounded-lg border border-white/5">
+                                <span class="text-red-400 text-xl">&times;</span> Media content you load or stream.
+                            </li>
+                        </ul>
+                        <div class="mt-6 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-lg text-sm">
+                            <strong>Note:</strong> Because we do not process the above data, concepts such as "sale" or "sharing" under the CCPA/CPRA or "targeted advertising" under VCDPA are inapplicable.
+                        </div>
+                    </article>
+                </section>
+
+                <!-- Card 4: Diagnostics -->
+                <section id="diagnostics" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-blue-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2>4. Limited Diagnostic Data</h2>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h3>What we receive</h3>
+                                <p>
+                                    When a fatal JavaScript error occurs, the Application may send a one-line crash hash (a non-reversible SHA-256 digest) to our GitHub issue tracker. This contains no Personal Data.
+                                </p>
+                            </div>
+                            <div>
+                                <h3>Legal basis &amp; retention</h3>
+                                <ul class="text-sm">
+                                    <li><strong>Legitimate Interest</strong> (GDPR Art. 6(1)(f)) / Canada's PIPEDA.</li>
+                                    <li>Auto-deleted after 30 days.</li>
+                                    <li>Opt-out available in Settings.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- Card 5: Cookies -->
+                <section id="cookies" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-yellow-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2>5. Cookies &amp; LocalStorage</h2>
+                        <p>
+                            AuraSync X never sets traditional HTTP cookies. Instead, optional preferences (e.g., themes) are stored in the <code>localStorage</code> area of your own browser. This data never leaves your device.
+                        </p>
+                    </article>
+                </section>
+
+                <!-- Card 6: Third Party -->
+                <section id="third-party" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-gray-600 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2>6. Third-Party Streams &amp; Links</h2>
+                        <p>
+                            If you choose to stream content hosted on third-party platforms (e.g., a public radio station's HLS URL), your interaction is governed by that provider's privacy policy. AuraSync X merely passes the stream URL to the HTML5 player.
+                        </p>
+                    </article>
+                </section>
+
+                <!-- Card 7: Children -->
+                <section id="children" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-pink-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2>7. Children's Privacy (COPPA)</h2>
+                        <p>
+                            AuraSync X is not directed to children under 13 years. We do not knowingly collect Personal Data from anyone. If you believe a child has provided data via our crash-report opt-in, contact us for immediate deletion.
+                        </p>
+                    </article>
+                </section>
+
+                <!-- Card 8: International (Table) -->
+                <section id="international" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-teal-500 transition-all group-hover:w-2"></div>
+                    <h2 class="text-2xl font-display font-bold text-white mb-6">8. International Compliance</h2>
+                    <div class="overflow-x-auto rounded-lg border border-white/5">
+                        <table class="glass-table">
+                            <thead class="bg-white/5">
+                                <tr>
+                                    <th class="w-1/3">Region</th>
+                                    <th>Compliance Approach</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-semibold text-white">Canada (PIPEDA)</td>
+                                    <td>No "personal information" collected; no breach notification obligations triggered.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-white">United States (CCPA/CPRA)</td>
+                                    <td>We do not collect "personal information" or engage in "selling/sharing".</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-white">EU / UK (GDPR)</td>
+                                    <td>Processing crash hashes via legitimate interest; no cross-border profiling.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-white">Global (LGPD, etc.)</td>
+                                    <td>Because no Personal Data is collected, most transfer impact assessments do not arise.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Card 9: Rights -->
+                <section id="rights" class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-green-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2>9. Your Rights &amp; Security</h2>
+                        <p>
+                            Since we hold no Personal Data, there is nothing to produce or delete. However, you may request confirmation that we maintain no server-side data, or disable diagnostic reporting.
+                        </p>
+                        
+                        <div class="mt-6 grid md:grid-cols-2 gap-6">
+                            <div class="bg-white/5 p-5 rounded-xl border border-white/10">
+                                <strong class="block text-indigo-300 font-display mb-2">10. Security</strong>
+                                <ul class="text-sm space-y-1 pl-4 list-disc marker:text-indigo-500">
+                                    <li>TLS 1.3 encryption.</li>
+                                    <li>Encrypted log storage.</li>
+                                    <li>Annual penetration testing.</li>
+                                </ul>
+                            </div>
+                             <div class="bg-white/5 p-5 rounded-xl border border-white/10">
+                                <strong class="block text-indigo-300 font-display mb-2">11. Retention</strong>
+                                <table class="w-full text-sm text-left">
+                                    <tr><td class="py-1 text-gray-400">Crash hashes:</td><td class="text-white text-right">30 Days</td></tr>
+                                    <tr><td class="py-1 text-gray-400">Preferences:</td><td class="text-white text-right">Until Cleared</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </article>
+                </section>
                 
-                <!-- Section 1 -->
-                <h2 class="text-white font-display font-bold mt-0">1. Purpose &amp; Scope</h2>
-                <p>
-                    This Privacy Policy describes how zombies21 ("AuraSync X", "we", "our", or "us") processes information when you access or use the AuraSync web application &mdash; including its 3-D Music Visualizer and MP4 Video Player (the "Service"). It applies to all users worldwide, with specific disclosures required under the laws of Canada, the United States, the European Union/EEA, the United Kingdom, and other applicable jurisdictions.
-                </p>
+                 <!-- Card 10: Changes -->
+                <section class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-orange-500 transition-all group-hover:w-2"></div>
+                    <article class="prose prose-invert max-w-none">
+                        <h2>12. Changes to This Policy</h2>
+                        <p>
+                           We may update this Privacy Policy. If changes materially affect your rights, we will post a prominent notice at least 30 days before they take effect.
+                        </p>
+                    </article>
+                </section>
 
-                <!-- Section 2 -->
-                <h2 class="text-white font-display font-bold">2. Key Principles</h2>
-                <p>
-                    We built AuraSync X as a fully client-side experience. All media rendering and playback occur locally in your browser. We do not collect, store, or share any personally identifiable information ("Personal Data"). Our privacy commitments are grounded in:
+                <!-- Card 11: Contact -->
+                <section id="contact" class="glass-card rounded-2xl p-0 relative overflow-hidden group border-indigo-500/30">
+                     <div class="p-8 bg-gradient-to-br from-indigo-900/40 to-transparent">
+                        <h2 class="font-display font-bold text-2xl text-white mb-6">13. Contact Information</h2>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="bg-black/20 p-6 rounded-xl border border-white/5">
+                                <strong class="text-indigo-300 block mb-2 font-display">AuraSync X Privacy Office</strong>
+                                <span class="block text-gray-400 text-sm mb-1">c/o Stephen Alfred</span>
+                                <span class="block text-gray-400 text-sm">PO Box 1337, Halifax, Nova Scotia B3J 3A5</span>
+                            </div>
+                            <div class="bg-black/20 p-6 rounded-xl border border-white/5 flex flex-col justify-center">
+                                <strong class="text-indigo-300 block mb-2 font-display">Privacy Inquiries</strong>
+                                <a href="mailto:privacy@aurasyncx.example" class="text-white hover:text-indigo-400 transition flex items-center gap-2 group-link">
+                                    <svg class="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                    privacy@aurasyncx.example
+                                </a>
+                                <span class="text-xs text-gray-500 mt-2">Tel: +1 902 555-0142</span>
+                            </div>
+                        </div>
+                        <p class="mt-6 text-xs text-gray-500 max-w-2xl">
+                            You have the right to lodge a complaint with the Office of the Privacy Commissioner of Canada, your provincial privacy regulator, or (for EU/UK residents) your supervisory authority.
+                        </p>
+                     </div>
+                </section>
+
+            </div>
+
+            <!-- Footer -->
+            <footer class="mt-16 pt-8 border-t border-white/5 text-center pb-8">
+                <p class="text-gray-500 text-sm">
+                    &copy; 2025 AuraSync X. Built with <span class="text-red-500 animate-pulse">&hearts;</span> in Nova Scotia.
                 </p>
-                
-                <div class="overflow-x-auto rounded-lg border border-white/10 mt-6 mb-8">
-                    <table class="glass-table w-full text-sm">
-                        <thead>
-                            <tr>
-                                <th class="w-1/3">Principle</th>
-                                <th>What It Means for You</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="text-white font-semibold">Data Minimisation</td>
-                                <td>We avoid collecting data unless it is strictly necessary to provide or secure the Service.</td>
-                            </tr>
-                            <tr>
-                                <td class="text-white font-semibold">Purpose Limitation</td>
-                                <td>Any data we do process is used only for the purpose stated in this Policy.</td>
-                            </tr>
-                            <tr>
-                                <td class="text-white font-semibold">User Control</td>
-                                <td>Settings &mdash; such as visualiser preferences &mdash; are stored only in your browser's localStorage; you can delete them at any time.</td>
-                            </tr>
-                            <tr>
-                                <td class="text-white font-semibold">Security by Design</td>
-                                <td>All processing takes place locally; no media files leave your device, eliminating server-side breach risk.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="flex justify-center gap-4 mt-4 text-xs text-gray-600">
+                    <a href="Terms.html" class="hover:text-gray-400">Terms of Service</a>
+                    <span>&bull;</span>
+                    <a href="#" class="hover:text-gray-400">Status</a>
                 </div>
+            </footer>
 
-                <!-- Section 3 -->
-                <h2 class="text-white font-display font-bold">3. Information We Do Not Collect</h2>
-                <p>We intentionally do not gather:</p>
-                <ul class="list-disc pl-5 space-y-1 marker:text-indigo-500">
-                    <li>Names, e-mail addresses, telephone numbers, or other direct identifiers.</li>
-                    <li>IP addresses, device identifiers, or browser fingerprints.</li>
-                    <li>Usage analytics (pages viewed, session length, clickstream data).</li>
-                    <li>Media content (audio/video) that you load or stream in the Applications.</li>
-                </ul>
-                <p class="text-sm bg-white/5 p-4 rounded-lg border-l-4 border-indigo-500 mt-4">
-                    Because we do not process the above data, concepts such as "sale" or "sharing" under the California Consumer Privacy Act ("CCPA/CPRA") or "targeted advertising" under Virginia's VCDPA are inapplicable.
-                </p>
+        </main>
+    </div>
 
-                <!-- Section 4 -->
-                <h2 class="text-white font-display font-bold">4. Limited Diagnostic Data</h2>
-                <h3 class="text-indigo-300 font-bold text-lg mt-4">What we receive</h3>
-                <p>
-                    When a fatal JavaScript error occurs, the Application may send a one-line crash hash (a non-reversible SHA-256 digest of the stack trace) to our GitHub issue tracker via an HTTPS POST. This hash cannot be linked to an individual and contains no Personal Data.
-                </p>
-                <h3 class="text-indigo-300 font-bold text-lg mt-4">Legal basis &amp; retention</h3>
-                <ul class="list-disc pl-5 space-y-1 marker:text-indigo-500">
-                    <li><strong class="text-white">Legitimate Interest</strong> (GDPR Art. 6(1)(f)) / Section 7(1)(a) of Canada's PIPEDA &mdash; to maintain Service stability.</li>
-                    <li>The hash is auto-deleted from logs after 30 days.</li>
-                    <li>You may opt-out by disabling the "Send error reports" toggle in Settings.</li>
-                </ul>
-
-                <!-- Section 5 -->
-                <h2 class="text-white font-display font-bold">5. Cookies, LocalStorage &amp; Similar Technologies</h2>
-                <p>
-                    AuraSync X never sets traditional HTTP cookies. Instead, optional preferences (for example, theme or last-used playlist) are stored in the localStorage area of your own browser. This data never leaves your device, and you may clear it using your browser's "Clear Site Data" controls.
-                </p>
-
-                <!-- Section 6 -->
-                <h2 class="text-white font-display font-bold">6. Third-Party Streams &amp; Links</h2>
-                <p>
-                    If you choose to stream content hosted on third-party platforms (for example, a public radio station's HLS URL), your interaction is governed by that provider's privacy policy. AuraSync X merely passes the stream URL to the HTML5 audio/video element and has no server visibility into those requests.
-                </p>
-
-                <!-- Section 7 -->
-                <h2 class="text-white font-display font-bold">7. Children's Privacy (COPPA &amp; Equivalent Laws)</h2>
-                <p>
-                    AuraSync X is not directed to children under 13 years. We do not knowingly collect Personal Data from anyone &mdash; so no parental-consent mechanism is required under the U.S. Children's Online Privacy Protection Act ("COPPA"). If you believe a child has provided Personal Data via our crash-report opt-in, contact us and we will promptly delete the diagnostic entry.
-                </p>
-
-                <!-- Section 8 -->
-                <h2 class="text-white font-display font-bold">8. International Compliance Statements</h2>
-                <div class="overflow-x-auto rounded-lg border border-white/10 mt-6 mb-8">
-                    <table class="glass-table w-full text-sm">
-                        <thead>
-                            <tr>
-                                <th class="w-1/3">Region</th>
-                                <th>Compliance Approach</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="text-white font-semibold">Canada (PIPEDA; Quebec Law 25)</td>
-                                <td>No "personal information" is collected; therefore, obligations on consent, breach notification, and data-subject access are generally not triggered.</td>
-                            </tr>
-                            <tr>
-                                <td class="text-white font-semibold">United States (CalOPPA, CCPA/CPRA)</td>
-                                <td>We do not collect "personal information" or engage in "selling/sharing"; thus, consumer opt-out mechanisms are not applicable.</td>
-                            </tr>
-                            <tr>
-                                <td class="text-white font-semibold">European Union / EEA (GDPR)</td>
-                                <td>Processing of crash hashes relies on legitimate interest; no automated profiling or cross-border transfers take place.</td>
-                            </tr>
-                            <tr>
-                                <td class="text-white font-semibold">United Kingdom (UK GDPR &amp; DPA 2018)</td>
-                                <td>Same rationale as EU GDPR; no Personal Data processed.</td>
-                            </tr>
-                            <tr>
-                                <td class="text-white font-semibold">Other Markets (for example, Brazil LGPD)</td>
-                                <td>Because no Personal Data is collected, most obligations regarding notice, consent, and transfer impact assessments do not arise.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Section 9 -->
-                <h2 class="text-white font-display font-bold">9. Your Rights</h2>
-                <p>
-                    In theory, privacy statutes may grant you rights to access, correct, erase, or port your Personal Data. Since AuraSync X holds no Personal Data, there is nothing for us to produce or delete. Nevertheless, you may:
-                </p>
-                <ul class="list-disc pl-5 space-y-1 marker:text-indigo-500">
-                    <li>Request confirmation that we maintain no server-side data about you.</li>
-                    <li>Disable diagnostic reporting at any time (Settings &rarr; Error Reporting).</li>
-                </ul>
-                <p>
-                    We respond to rights requests within 30 days as required by GDPR Art. 12 and PIPEDA s. 8.
-                </p>
-
-                <!-- Section 10 -->
-                <h2 class="text-white font-display font-bold">10. Data Security Measures</h2>
-                <ul class="list-disc pl-5 space-y-1 marker:text-indigo-500">
-                    <li>All communication with our website uses TLS 1.3.</li>
-                    <li>Diagnostic hashes are retained only in encrypted log storage with strict access controls.</li>
-                    <li>We undergo annual penetration testing to confirm no inadvertent server-side data flows.</li>
-                </ul>
-                
-                <!-- Section 11 -->
-                <h2 class="text-white font-display font-bold">11. Data Retention &amp; Deletion</h2>
-                <div class="overflow-x-auto rounded-lg border border-white/10 mt-6 mb-8">
-                    <table class="glass-table w-full text-sm">
-                        <thead>
-                            <tr>
-                                <th>Data Type</th>
-                                <th>Retention Period</th>
-                                <th>Deletion Method</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="text-white font-semibold">Crash-report hash</td>
-                                <td>30 days</td>
-                                <td>Automatic log rotation &amp; secure wipe</td>
-                            </tr>
-                            <tr>
-                                <td class="text-white font-semibold">localStorage preferences</td>
-                                <td>Until cleared by user</td>
-                                <td>Manual deletion via browser</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Section 12 -->
-                <h2 class="text-white font-display font-bold">12. Changes to This Policy</h2>
-                <p>
-                    We may update this Privacy Policy to reflect legal, technical, or business developments. If changes materially affect your rights, we will post a prominent notice at least 30 days before they take effect (or sooner if required by law).
-                </p>
-
-                <!-- Section 13 -->
-                <h2 class="text-white font-display font-bold">13. Contact Us</h2>
-                <p>
-                    You have the right to lodge a complaint with the Office of the Privacy Commissioner of Canada, your provincial privacy regulator, or (for EU/UK residents) your supervisory authority.
-                </p>
-                <div class="not-italic bg-indigo-900/30 p-6 rounded-xl border border-indigo-500/30 mt-6">
-                    <strong class="text-white block mb-2">AuraSync X Privacy Office</strong>
-                    <span class="block text-gray-300">c/o Stephen Alfred</span>
-                    <span class="block text-gray-300">PO Box 1337, Halifax, Nova Scotia B3J 3A5</span>
-                    <a href="mailto:privacy@aurasyncx.example" class="text-indigo-400 hover:text-white transition block mt-2">privacy@aurasyncx.example</a>
-                    <span class="block text-gray-400 mt-1">Tel: +1 902 555-0142</span>
-                </div>
-            </article>
-        </div>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="py-8 text-center text-gray-600 text-sm relative z-10 border-t border-white/5 bg-black/20 mt-12">
-        &copy; 2025 AuraSync X. Built with <span class="text-red-500">&hearts;</span> in Nova Scotia.
-    </footer>
-
-    <!-- Background constellation for privacy page -->
+    <!-- p5.js Background Script -->
     <script src="js/particles-bg.js"></script>
-
 </body>
 </html>
