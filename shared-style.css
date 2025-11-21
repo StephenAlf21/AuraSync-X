@@ -92,23 +92,21 @@ button:focus-visible, input:focus-visible {
   pointer-events: none;
 }
 
-/* Gradient chip used for modal headings */
+/* Gradient text chip for modal headings */
 .modal-chip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  padding: 0.4rem 0.85rem;
-  border-radius: 999px;
-  background: linear-gradient(120deg, #f97316, #ef4444, #8b5cf6, #22d3ee);
-  color: #fdf2f8;
-  letter-spacing: 0.08em;
-  font-weight: 700;
+  padding: 0.1rem 0.2rem;
   text-transform: uppercase;
-  font-size: 0.82rem;
-  box-shadow:
-    0 4px 18px rgba(239, 68, 68, 0.35),
-    0 6px 22px rgba(139, 92, 246, 0.25);
+  letter-spacing: 0.08em;
+  font-weight: 800;
+  font-size: 0.9rem;
+  background: linear-gradient(115deg, #f97316, #ef4444, #a855f7, #22d3ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Pop animations for modal card */
@@ -168,6 +166,47 @@ button:focus-visible, input:focus-visible {
 
 /* Mouse glow position for cards */
 .site-card { --mx: 50%; --my: 0%; }
+
+/* Color accents for site cards */
+.site-amber {
+  background: rgba(251, 146, 60, 0.2);
+  border-color: rgba(251, 146, 60, 0.7);
+  box-shadow: 0 10px 30px rgba(251, 146, 60, 0.25), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.site-amber:hover {
+  background: rgba(251, 146, 60, 0.28);
+  border-color: rgba(251, 146, 60, 0.85);
+}
+
+.site-cyan {
+  background: rgba(34, 211, 238, 0.2);
+  border-color: rgba(34, 211, 238, 0.7);
+  box-shadow: 0 10px 30px rgba(34, 211, 238, 0.25), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.site-cyan:hover {
+  background: rgba(34, 211, 238, 0.28);
+  border-color: rgba(34, 211, 238, 0.85);
+}
+
+.site-emerald {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.7);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.site-emerald:hover {
+  background: rgba(16, 185, 129, 0.28);
+  border-color: rgba(16, 185, 129, 0.85);
+}
+
+.site-fuchsia {
+  background: rgba(236, 72, 153, 0.22);
+  border-color: rgba(236, 72, 153, 0.7);
+  box-shadow: 0 10px 30px rgba(236, 72, 153, 0.25), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.site-fuchsia:hover {
+  background: rgba(236, 72, 153, 0.3);
+  border-color: rgba(236, 72, 153, 0.85);
+}
 
 /* Global custom scrollbar */
 ::-webkit-scrollbar {
