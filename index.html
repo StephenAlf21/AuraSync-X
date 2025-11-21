@@ -62,7 +62,7 @@
     <!-- Back to Top Button -->
     <button id="backToTopBtn" 
             onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-            class="fixed bottom-6 right-6 bg-indigo-600 hover:bg-indigo-500 text-white p-3 rounded-full shadow-lg transition-all duration-300 opacity-0 translate-y-10 z-40 pointer-events-none">
+            class="fixed bottom-6 right-6 bg-gradient-to-br from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-400 hover:via-rose-400 hover:to-indigo-500 text-white p-3 rounded-full shadow-lg transition-all duration-300 opacity-0 translate-y-10 z-40 pointer-events-none">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
         </svg>
@@ -83,7 +83,7 @@
                         </svg>
                         <div class="absolute inset-0 bg-indigo-500/20 blur-xl group-hover:bg-indigo-400/30 transition-all"></div>
                     </div>
-                    <span class="font-display font-bold text-xl tracking-wider text-white">AuraSync <span class="text-indigo-400">X</span></span>
+                    <span class="font-display font-bold text-xl tracking-wider text-white">AuraSync <span class="text-gradient">X</span></span>
                 </a>
 
                 <!-- Desktop Menu -->
@@ -99,8 +99,8 @@
                         </button>
                         <div id="companyMenu" class="dropdown-enter absolute top-full right-0 w-48 pt-2 transition-all duration-200">
                             <div class="glass-panel rounded-xl overflow-hidden shadow-2xl p-1">
-                                <a href="about.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-indigo-600/30 hover:text-white rounded-lg transition-colors">About Us</a>
-                                <a href="careers.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-indigo-600/30 hover:text-white rounded-lg transition-colors">Careers</a>
+                                <a href="about.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-amber-500/20 hover:text-white rounded-lg transition-colors">About Us</a>
+                                <a href="careers.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-amber-500/20 hover:text-white rounded-lg transition-colors">Careers</a>
                             </div>
                         </div>
                     </div>
@@ -112,8 +112,8 @@
                         </button>
                         <div id="communityMenu" class="dropdown-enter absolute top-full right-0 w-48 pt-2 transition-all duration-200">
                             <div class="glass-panel rounded-xl overflow-hidden shadow-2xl p-1">
-                                <a href="contact.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-indigo-600/30 hover:text-white rounded-lg transition-colors">Contact</a>
-                                <a href="faq.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-indigo-600/30 hover:text-white rounded-lg transition-colors">FAQ</a>
+                                <a href="contact.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-amber-500/20 hover:text-white rounded-lg transition-colors">Contact</a>
+                                <a href="faq.html" class="block px-4 py-2.5 text-sm text-gray-300 hover:bg-amber-500/20 hover:text-white rounded-lg transition-colors">FAQ</a>
                             </div>
                         </div>
                     </div>
@@ -171,17 +171,17 @@
                 Welcome to <span class="text-gradient">AuraSync X</span>
             </h1>
             
-            <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-400 leading-relaxed font-light">
+            <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-300 leading-relaxed font-light">
                 Visualize your reality. A next-generation media hub combining 
-                <span class="text-indigo-400 font-semibold">3D particle physics</span> 
+                <span class="text-amber-400 font-semibold">3D particle physics</span> 
                 with seamless playback.
             </p>
             
             <div class="mt-10 flex justify-center gap-4">
-                <a href="#apps" class="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-semibold shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all hover:-translate-y-1">
+                <a href="#apps" class="px-8 py-4 bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-400 hover:via-rose-400 hover:to-indigo-500 text-white rounded-full font-semibold shadow-lg shadow-amber-500/30 hover:shadow-rose-500/40 transition-all hover:-translate-y-1">
                     Launch Apps
                 </a>
-                <a href="features.html" class="px-8 py-4 glass-button text-indigo-100 rounded-full font-semibold hover:bg-white/10 transition-all hover:-translate-y-1">
+                <a href="features.html" class="px-8 py-4 glass-button text-amber-100 rounded-full font-semibold hover:bg-white/10 transition-all hover:-translate-y-1">
                     Discover Features
                 </a>
             </div>
@@ -193,16 +193,16 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-display font-bold text-white mb-4">Choose Your Experience</h2>
-                <div class="h-1 w-24 bg-indigo-500 mx-auto rounded-full"></div>
+                <div class="h-1 w-24 bg-gradient-to-r from-amber-400 via-rose-500 to-indigo-500 mx-auto rounded-full"></div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto">
                 
                 <!-- Music Player Card -->
                 <div onclick="loadApp('MusicPlayer.html')" class="glass-panel p-8 rounded-3xl cursor-pointer hover-glow group relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-rose-500/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div class="relative z-10 flex flex-col items-center text-center">
-                        <div class="w-20 h-20 rounded-2xl bg-purple-900/40 flex items-center justify-center mb-6 text-purple-400 group-hover:text-purple-300 group-hover:scale-110 transition-transform duration-300">
+                        <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-900/50 via-rose-900/50 to-indigo-900/50 flex items-center justify-center mb-6 text-amber-300 group-hover:text-amber-200 group-hover:scale-110 transition-transform duration-300">
                             <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                             </svg>
@@ -211,7 +211,7 @@
                         <p class="text-gray-400 leading-relaxed">
                             Immerse yourself in a reactive soundscape. Upload audio or stream radio while a WebGL particle engine dances to the beat.
                         </p>
-                        <span class="mt-6 text-purple-400 text-sm font-bold uppercase tracking-widest group-hover:text-purple-300 flex items-center gap-2">
+                        <span class="mt-6 text-amber-400 text-sm font-bold uppercase tracking-widest group-hover:text-amber-300 flex items-center gap-2">
                             Launch <span class="text-lg">&rarr;</span>
                         </span>
                     </div>
@@ -219,9 +219,9 @@
 
                 <!-- Video Player Card -->
                 <div onclick="loadApp('VideoPlayer.html')" class="glass-panel p-8 rounded-3xl cursor-pointer hover-glow group relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-br from-cyan-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div class="relative z-10 flex flex-col items-center text-center">
-                        <div class="w-20 h-20 rounded-2xl bg-cyan-900/40 flex items-center justify-center mb-6 text-cyan-400 group-hover:text-cyan-300 group-hover:scale-110 transition-transform duration-300">
+                        <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-900/40 via-amber-900/40 to-cyan-900/40 flex items-center justify-center mb-6 text-orange-300 group-hover:text-orange-200 group-hover:scale-110 transition-transform duration-300">
                             <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                             </svg>
@@ -230,7 +230,7 @@
                         <p class="text-gray-400 leading-relaxed">
                             A sleek, minimalist video player. Supports local MP4 files and remote streams with curated playlists and distraction-free viewing.
                         </p>
-                        <span class="mt-6 text-cyan-400 text-sm font-bold uppercase tracking-widest group-hover:text-cyan-300 flex items-center gap-2">
+                        <span class="mt-6 text-orange-400 text-sm font-bold uppercase tracking-widest group-hover:text-orange-300 flex items-center gap-2">
                             Launch <span class="text-lg">&rarr;</span>
                         </span>
                     </div>
@@ -245,21 +245,21 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
                 <div class="p-6 rounded-2xl hover:bg-white/5 transition duration-300">
-                    <div class="w-12 h-12 bg-indigo-500/20 rounded-lg flex items-center justify-center mb-4 text-indigo-400 mx-auto md:mx-0">
+                    <div class="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center mb-4 text-amber-300 mx-auto md:mx-0">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
                     </div>
                     <h3 class="text-lg font-bold text-white mb-2">Scientific Visualization</h3>
                     <p class="text-sm text-gray-400">Built on real-time mathematical models. The particle engine simulates fluid dynamics and wave physics.</p>
                 </div>
                 <div class="p-6 rounded-2xl hover:bg-white/5 transition duration-300">
-                    <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4 text-blue-400 mx-auto md:mx-0">
+                    <div class="w-12 h-12 bg-indigo-500/20 rounded-lg flex items-center justify-center mb-4 text-indigo-300 mx-auto md:mx-0">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                     </div>
                     <h3 class="text-lg font-bold text-white mb-2">Performance First</h3>
                     <p class="text-sm text-gray-400">Optimized for high frame rates using GPU acceleration via WebGL. Smooth even on integrated graphics.</p>
                 </div>
                 <div class="p-6 rounded-2xl hover:bg-white/5 transition duration-300">
-                    <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4 text-purple-400 mx-auto md:mx-0">
+                    <div class="w-12 h-12 bg-rose-500/20 rounded-lg flex items-center justify-center mb-4 text-rose-300 mx-auto md:mx-0">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                     </div>
                     <h3 class="text-lg font-bold text-white mb-2">Fully Customizable</h3>
@@ -277,14 +277,14 @@
                 <!-- Brand Column -->
                 <div class="lg:col-span-2">
                     <a href="#" class="flex items-center gap-2 mb-4">
-                        <span class="font-display font-bold text-xl text-white">AuraSync <span class="text-indigo-400">X</span></span>
+                        <span class="font-display font-bold text-xl text-white">AuraSync <span class="text-amber-300">X</span></span>
                     </a>
                     <p class="text-gray-400 text-sm mb-6 max-w-xs">
                         Pushing the boundaries of web-based media visualization. Join the revolution.
                     </p>
                     <form class="flex gap-2" onsubmit="event.preventDefault(); alert('Thank you for subscribing!');">
                         <input type="email" placeholder="Enter your email" class="bg-gray-800/50 border border-gray-700 rounded-md px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500 w-full max-w-[200px]">
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-md text-sm font-semibold text-white transition-colors">
+                        <button type="submit" class="bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-400 hover:via-rose-400 hover:to-indigo-500 px-4 py-2 rounded-md text-sm font-semibold text-white transition-colors">
                             Join
                         </button>
                     </form>
@@ -294,22 +294,22 @@
                 <div>
                     <h4 class="font-bold text-white mb-4 uppercase text-xs tracking-wider">Company</h4>
                     <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="about.html" class="hover:text-indigo-400 transition">About</a></li>
-                        <li><a href="careers.html" class="hover:text-indigo-400 transition">Careers</a></li>
+                        <li><a href="about.html" class="hover:text-amber-300 transition">About</a></li>
+                        <li><a href="careers.html" class="hover:text-amber-300 transition">Careers</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-bold text-white mb-4 uppercase text-xs tracking-wider">Community</h4>
                     <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="contact.html" class="hover:text-indigo-400 transition">Contact</a></li>
-                        <li><a href="faq.html" class="hover:text-indigo-400 transition">FAQ</a></li>
+                        <li><a href="contact.html" class="hover:text-amber-300 transition">Contact</a></li>
+                        <li><a href="faq.html" class="hover:text-amber-300 transition">FAQ</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-bold text-white mb-4 uppercase text-xs tracking-wider">Legal</h4>
                     <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="Terms.html" class="hover:text-indigo-400 transition">Terms</a></li>
-                        <li><a href="privacy.html" class="hover:text-indigo-400 transition">Privacy</a></li>
+                        <li><a href="Terms.html" class="hover:text-amber-300 transition">Terms</a></li>
+                        <li><a href="privacy.html" class="hover:text-amber-300 transition">Privacy</a></li>
                     </ul>
                 </div>
             </div>
@@ -364,8 +364,8 @@
     <div id="sitesModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-[60] hidden" role="dialog" aria-modal="true" aria-labelledby="sitesTitle">
         <div class="modal-card w-full max-w-xl will-change-transform">
             <div class="flex justify-between items-center mb-4">
-                <h2 id="sitesTitle" class="text-xl font-bold text-indigo-300 tracking-wide flex items-center gap-2">
-                    Network Projects
+                <h2 id="sitesTitle" class="text-xl font-bold text-white tracking-wide flex items-center gap-3">
+                    <span class="modal-chip">Network Projects</span>
                 </h2>
                 <button id="closeSites" class="p-2 rounded-full hover:bg-white/10 transition" aria-label="Close">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

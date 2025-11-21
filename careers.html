@@ -72,7 +72,7 @@
         }
 
         .text-gradient {
-            background: linear-gradient(to right, #818cf8, #c084fc, #22d3ee);
+            background: linear-gradient(115deg, #f97316, #ef4444, #a855f7, #22d3ee);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -98,7 +98,7 @@
                         </svg>
                         <div class="absolute inset-0 bg-indigo-500/20 blur-xl group-hover:bg-indigo-400/30 transition-all"></div>
                     </div>
-                    <span class="font-display font-bold text-xl tracking-wider text-white">AuraSync <span class="text-indigo-400">X</span></span>
+                    <span class="font-display font-bold text-xl tracking-wider text-white">AuraSync <span class="text-gradient">X</span></span>
                 </a>
 
                 <!-- Desktop Menu -->
@@ -185,7 +185,7 @@
             
             <!-- Header -->
             <header class="text-center mb-12">
-                <p class="inline-flex items-center px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-xs font-mono uppercase tracking-[0.2em] text-indigo-300 mb-4">
+                <p class="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/15 via-rose-500/15 to-indigo-500/15 border border-amber-400/40 text-xs font-mono uppercase tracking-[0.2em] text-amber-200 mb-4">
                     Collaborate · Create · Amplify
                 </p>
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black font-display text-gradient mb-4">
@@ -200,8 +200,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
                 
                 <!-- Careers Section -->
-                <div class="glass-panel p-8 rounded-3xl flex flex-col hover:border-indigo-500/40 transition duration-300">
-                    <div class="w-12 h-12 bg-indigo-500/20 rounded-xl flex items-center justify-center mb-6 text-indigo-400">
+                <div class="glass-panel p-8 rounded-3xl flex flex-col hover:border-amber-400/50 transition duration-300">
+                    <div class="w-12 h-12 bg-gradient-to-br from-amber-500/25 via-rose-500/25 to-indigo-500/25 rounded-xl flex items-center justify-center mb-6 text-amber-200">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                     </div>
                     <h2 class="text-2xl font-display font-bold text-white mb-4">Careers</h2>
@@ -214,8 +214,8 @@
                 </div>
 
                 <!-- Press & Media Section -->
-                <div class="glass-panel p-8 rounded-3xl flex flex-col hover:border-purple-500/40 transition duration-300">
-                    <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6 text-purple-400">
+                <div class="glass-panel p-8 rounded-3xl flex flex-col hover:border-rose-400/50 transition duration-300">
+                    <div class="w-12 h-12 bg-gradient-to-br from-rose-500/25 via-amber-500/25 to-indigo-500/25 rounded-xl flex items-center justify-center mb-6 text-rose-200">
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
                     </div>
                     <h2 class="text-2xl font-display font-bold text-white mb-4">Press &amp; Media</h2>
@@ -271,7 +271,7 @@
                 <!-- Brand Column -->
                 <div class="lg:col-span-2">
                     <a href="#" class="flex items-center gap-2 mb-4">
-                        <span class="font-display font-bold text-xl text-white">AuraSync <span class="text-indigo-400">X</span></span>
+                        <span class="font-display font-bold text-xl text-white">AuraSync <span class="text-gradient">X</span></span>
                     </a>
                     <p class="text-gray-400 text-sm mb-6 max-w-xs">
                         Pushing the boundaries of web-based media visualization. Join the revolution.
@@ -355,8 +355,8 @@
     <div id="sitesModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-[60] hidden" role="dialog" aria-modal="true" aria-labelledby="sitesTitle">
         <div class="modal-card w-full max-w-xl will-change-transform">
             <div class="flex justify-between items-center mb-4">
-                <h2 id="sitesTitle" class="text-xl font-bold text-indigo-300 tracking-wide flex items-center gap-2">
-                    <span class="text-indigo-400">///</span> Network Projects
+                <h2 id="sitesTitle" class="text-xl font-bold text-white tracking-wide flex items-center gap-3">
+                    <span class="modal-chip">Network Projects</span>
                 </h2>
                 <button id="closeSites" class="p-2 rounded-full hover:bg-white/10 transition" aria-label="Close">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -420,3 +420,4 @@
 
 </body>
 </html>
+
